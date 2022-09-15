@@ -1,7 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 
-/**
+/** test
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
