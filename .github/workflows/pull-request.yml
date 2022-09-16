@@ -11,6 +11,7 @@ defaults:
 
 env:
   DOCKER_BUILDKIT: 1
+  PLAYWRIGHT_BROWSERS_PATH: 0 # Browsers will be downloaded to node_modules and thus cached by actions/setup-node@v2
 
 jobs:
   unit-tests:
@@ -55,66 +56,12 @@ jobs:
           docker-compose -f docker/docker-compose.yml up -d app-for-playwright
           npx playwright install chromium
           npx playwright test
-      - name: Upload test results 1
+      - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: playwright-report
-          path: playwright-report
-      - name: Upload test results 2
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
-          path: /playwright-report
-      - name: Upload test results 3
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
-          path: playwright-report/
-      - name: Upload test results 4
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
-          path: ./playwright-report
-      - name: Upload test results 5
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
-          path: /home/runner/work/web-languageforge/web-languageforge/playwright-report
-      - name: Upload test results 6
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
+          name: playwright-test-results
           path: test-results
-      - name: Upload test results 7
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
-          path: /test-results
-      - name: Upload test results 8
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
-          path: test-results/
-      - name: Upload test results 9
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
-          path: ./test-results
-      - name: Upload test results 10
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: playwright-report
-          path: /home/runner/work/web-languageforge/web-languageforge/test-results
           
           
           
