@@ -60,12 +60,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: playwright-test-results
+          name: test-results
           path: test-results
-
-
-
-
 
   # protractor-tests:
   #   runs-on: ubuntu-latest
