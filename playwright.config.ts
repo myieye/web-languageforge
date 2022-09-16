@@ -22,7 +22,7 @@ const config: PlaywrightTestConfig = {
     timeout: 5000
   },
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
+  forbidOnly: false,//!!process.env.CI,
   /* Global setup for things like logging in users and saving login cookies */
   globalSetup: require.resolve('./test/e2e/utils/globalSetup'),
   /* Retry on CI only */
