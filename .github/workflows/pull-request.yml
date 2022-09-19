@@ -11,6 +11,7 @@ defaults:
 
 env:
   DOCKER_BUILDKIT: 1
+  PLAYWRIGHT_BROWSERS_PATH: 0 # Browsers will be downloaded to node_modules and thus cached by actions/setup-node@v2
 
 jobs:
   unit-tests:
