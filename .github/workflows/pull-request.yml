@@ -11,7 +11,6 @@ defaults:
 
 env:
   DOCKER_BUILDKIT: 1
-  PLAYWRIGHT_BROWSERS_PATH: 0 # Browsers will be downloaded to node_modules and thus cached by actions/setup-node@v2
 
 jobs:
   unit-tests:
@@ -49,6 +48,20 @@ jobs:
           npm ci
           docker-compose build app
       -
+        name: Get installed Playwright version
+        id: playwright-version
+        # https://github.com/microsoft/playwright/issues/7249#issuecomment-1201476980
+        run: echo -n "::set-output name=version::$(npm ls @playwright/test --json | jq --raw-output '.dependencies["@playwright/test"].version')"
+
+        # https://github.com/microsoft/playwright/issues/7249#issuecomment-1154603556
+      - name: Cache playwright browsers
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: '~/.cache/ms-playwright'
+          key: 'playwright-${{ steps.playwright-version.outputs.version }}'
+
+      -
         name: Playwright E2E Tests
         working-directory: .
         # see https://playwright.dev/docs/ci#github-actions
@@ -56,12 +69,14 @@ jobs:
           docker-compose -f docker/docker-compose.yml up -d app-for-playwright
           npx playwright install chromium
           npx playwright test
-      - name: Upload test results
+      -
+        name: Upload test results
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: test-results
           path: test-results
+          retention-days: 7
 
   # protractor-tests:
   #   runs-on: ubuntu-latest
