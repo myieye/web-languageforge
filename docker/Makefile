@@ -12,6 +12,9 @@ dev: start
 .PHONY: playwright-tests
 playwright-tests:
 
+    # delete old test storage files
+	cd .. && rm -f *-*-storageState.json
+
     # stop any containers that are running
 	docker compose down
 
