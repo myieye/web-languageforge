@@ -69,6 +69,18 @@ jobs:
           name: test-results
           path: test-results
 
+  check-code-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.14.0'
+          cache: 'npm'
+      - name: Run prettier check
+        working-directory: .
+        run: npx prettier --check .
+
   # protractor-tests:
   #   runs-on: ubuntu-latest
 
