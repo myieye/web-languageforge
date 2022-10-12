@@ -1,10 +1,10 @@
 import * as angular from 'angular';
 
-import {PuiAutoFocus} from './pui-auto-focus.directive';
-import {PuiCompositionInput} from './pui-composition-input.directive';
-import {PuiIdleValidate} from './pui-idle-validate.directive';
-import {PuiInfiniteScroll} from './pui-infinite-scroll.directive';
-import {PuiShowOverflow} from './pui-show-overflow.directive';
+import { PuiAutoFocus } from './pui-auto-focus.directive';
+import { PuiCompositionInput } from './pui-composition-input.directive';
+import { PuiIdleValidate } from './pui-idle-validate.directive';
+import { PuiInfiniteScroll } from './pui-infinite-scroll.directive';
+import { PuiShowOverflow } from './pui-show-overflow.directive';
 
 export const PuiUtilityModule = angular
   .module('palaso.ui.utils', [])
@@ -15,5 +15,4 @@ export const PuiUtilityModule = angular
   // Shouldn't use scope or require in directives
   .directive('compositionInput', PuiCompositionInput)
   .directive('idleValidate', PuiIdleValidate)
-  .directive('puiShowOverflow', PuiShowOverflow)
-  .name;
+  .directive('puiShowOverflow', PuiShowOverflow).name;

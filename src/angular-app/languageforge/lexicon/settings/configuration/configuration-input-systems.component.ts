@@ -1,21 +1,29 @@
 import * as angular from 'angular';
 
-import {ModalService} from '../../../../bellows/core/modal/modal.service';
-import {NoticeService} from '../../../../bellows/core/notice/notice.service';
-import {LexiconConfig} from '../../shared/model/lexicon-config.model';
-import {ConfigurationInputSystemsViewModel} from './input-system-view.model';
-import {OptionSelects} from './option-selects.model';
+import { ModalService } from '../../../../bellows/core/modal/modal.service';
+import { NoticeService } from '../../../../bellows/core/notice/notice.service';
+import { LexiconConfig } from '../../shared/model/lexicon-config.model';
+import { ConfigurationInputSystemsViewModel } from './input-system-view.model';
+import { OptionSelects } from './option-selects.model';
 
-export class InputSystemsConfigurationController implements angular.IController {
-  iscInputSystemViewModels: { [inputSystemId: string]: ConfigurationInputSystemsViewModel };
+export class InputSystemsConfigurationController
+  implements angular.IController
+{
+  iscInputSystemViewModels: {
+    [inputSystemId: string]: ConfigurationInputSystemsViewModel;
+  };
   iscInputSystemsList: ConfigurationInputSystemsViewModel[];
   readonly iscConfigPristine: LexiconConfig;
   iscAddInputSystem: boolean;
-  iscOnUpdate: (params: { $event: {
-    inputSystemViewModels?: { [inputSystemId: string]: ConfigurationInputSystemsViewModel },
-    inputSystemsList?: ConfigurationInputSystemsViewModel[],
-    addInputSystem?: boolean
-  } }) => void;
+  iscOnUpdate: (params: {
+    $event: {
+      inputSystemViewModels?: {
+        [inputSystemId: string]: ConfigurationInputSystemsViewModel;
+      };
+      inputSystemsList?: ConfigurationInputSystemsViewModel[];
+      addInputSystem?: boolean;
+    };
+  }) => void;
 
   selectedInputSystemId: string = '';
   suggestedLanguageCodes = {};
@@ -26,7 +34,11 @@ export class InputSystemsConfigurationController implements angular.IController 
   private isScriptRegionVariantSelected: boolean = true;
 
   static $inject: string[] = ['$scope', '$uibModal', 'silNoticeService'];
-  constructor(private $scope: angular.IScope, private $modal: ModalService, private notice: NoticeService) { }
+  constructor(
+    private $scope: angular.IScope,
+    private $modal: ModalService,
+    private notice: NoticeService
+  ) {}
 
   $onInit(): void {
     this.$scope.$watchCollection(
@@ -36,8 +48,15 @@ export class InputSystemsConfigurationController implements angular.IController 
         }
         return this.iscInputSystemViewModels[this.selectedInputSystemId];
       },
-      (newValue: ConfigurationInputSystemsViewModel, oldValue: ConfigurationInputSystemsViewModel) => {
-        if (newValue == null || oldValue == null || angular.equals(oldValue, newValue)) {
+      (
+        newValue: ConfigurationInputSystemsViewModel,
+        oldValue: ConfigurationInputSystemsViewModel
+      ) => {
+        if (
+          newValue == null ||
+          oldValue == null ||
+          angular.equals(oldValue, newValue)
+        ) {
           return;
         }
 
@@ -52,49 +71,69 @@ export class InputSystemsConfigurationController implements angular.IController 
           return;
         }
 
-        this.iscOnUpdate({ $event: { inputSystemViewModels: this.iscInputSystemViewModels } });
+        this.iscOnUpdate({
+          $event: { inputSystemViewModels: this.iscInputSystemViewModels },
+        });
       }
     );
   }
 
   $onChanges(changes: any): void {
-    const listChange = changes.iscInputSystemsList as angular.IChangesObject<ConfigurationInputSystemsViewModel[]>;
-    if (listChange != null && listChange.previousValue !== listChange.currentValue &&
+    const listChange = changes.iscInputSystemsList as angular.IChangesObject<
+      ConfigurationInputSystemsViewModel[]
+    >;
+    if (
+      listChange != null &&
+      listChange.previousValue !== listChange.currentValue &&
       listChange.currentValue != null
     ) {
       this.selectInputSystem(this.iscInputSystemsList[0].uuid);
     }
 
-    const addInputSystemChange = changes.iscAddInputSystem as angular.IChangesObject<boolean>;
+    const addInputSystemChange =
+      changes.iscAddInputSystem as angular.IChangesObject<boolean>;
     if (addInputSystemChange != null && addInputSystemChange.currentValue) {
       this.openNewLanguageModal(this.suggestedLanguageCodes);
-      this.iscOnUpdate({ $event: {
-        addInputSystem: false
-      } });
+      this.iscOnUpdate({
+        $event: {
+          addInputSystem: false,
+        },
+      });
     }
   }
 
   isInputSystemInUse(): boolean {
-    if (this.iscInputSystemViewModels == null || !(this.selectedInputSystemId in this.iscInputSystemViewModels)) {
+    if (
+      this.iscInputSystemViewModels == null ||
+      !(this.selectedInputSystemId in this.iscInputSystemViewModels)
+    ) {
       return true;
     }
 
-    return (this.iscInputSystemViewModels[this.selectedInputSystemId].inputSystem.tag in
-      this.iscConfigPristine.inputSystems);
+    return (
+      this.iscInputSystemViewModels[this.selectedInputSystemId].inputSystem
+        .tag in this.iscConfigPristine.inputSystems
+    );
   }
 
   newExists(special: string): boolean {
-    if (this.iscInputSystemViewModels == null || !(this.selectedInputSystemId in this.iscInputSystemViewModels)) {
+    if (
+      this.iscInputSystemViewModels == null ||
+      !(this.selectedInputSystemId in this.iscInputSystemViewModels)
+    ) {
       return false;
     }
 
     const viewModel = new ConfigurationInputSystemsViewModel(this.selects);
-    viewModel.language = this.iscInputSystemViewModels[this.selectedInputSystemId].language;
+    viewModel.language =
+      this.iscInputSystemViewModels[this.selectedInputSystemId].language;
     viewModel.special = special;
     viewModel.buildTag();
     for (const uuid in this.iscInputSystemViewModels) {
-      if (this.iscInputSystemViewModels.hasOwnProperty(uuid) &&
-        this.iscInputSystemViewModels[uuid].inputSystem.tag === viewModel.inputSystem.tag
+      if (
+        this.iscInputSystemViewModels.hasOwnProperty(uuid) &&
+        this.iscInputSystemViewModels[uuid].inputSystem.tag ===
+          viewModel.inputSystem.tag
       ) {
         return true;
       }
@@ -107,18 +146,25 @@ export class InputSystemsConfigurationController implements angular.IController 
     const viewModel = new ConfigurationInputSystemsViewModel(this.selects, {
       tag: code,
       languageName,
-      abbreviation: code
+      abbreviation: code,
     });
     viewModel.special = special;
     viewModel.buildTag();
 
     // Verify newly created tag doesn't already exist before adding it to the list
     for (const uuid in this.iscInputSystemViewModels) {
-      if (this.iscInputSystemViewModels.hasOwnProperty(uuid) && special !== this.selects.special.optionsOrder[3] &&
-        this.iscInputSystemViewModels[uuid].inputSystem.tag === viewModel.inputSystem.tag
+      if (
+        this.iscInputSystemViewModels.hasOwnProperty(uuid) &&
+        special !== this.selects.special.optionsOrder[3] &&
+        this.iscInputSystemViewModels[uuid].inputSystem.tag ===
+          viewModel.inputSystem.tag
       ) {
-        this.notice.push(this.notice.ERROR, 'Input system for ' + viewModel.inputSystem.languageName +
-          ' already exists');
+        this.notice.push(
+          this.notice.ERROR,
+          'Input system for ' +
+            viewModel.inputSystem.languageName +
+            ' already exists'
+        );
         return;
       }
     }
@@ -128,15 +174,17 @@ export class InputSystemsConfigurationController implements angular.IController 
     this.selectedInputSystemId = viewModel.uuid;
     if (special === 'scriptRegionVariant') {
       this.isScriptRegionVariantSelected = true;
-      this.iscOnUpdate({ $event: {
-          inputSystemsList: this.iscInputSystemsList
-        } });
+      this.iscOnUpdate({
+        $event: {
+          inputSystemsList: this.iscInputSystemsList,
+        },
+      });
     } else {
       this.iscOnUpdate({
         $event: {
           inputSystemViewModels: this.iscInputSystemViewModels,
-          inputSystemsList: this.iscInputSystemsList
-        }
+          inputSystemsList: this.iscInputSystemsList,
+        },
       });
     }
   }
@@ -154,10 +202,12 @@ export class InputSystemsConfigurationController implements angular.IController 
     }
 
     delete this.iscInputSystemViewModels[selectedInputSystemId];
-    this.iscOnUpdate({ $event: {
+    this.iscOnUpdate({
+      $event: {
         inputSystemViewModels: this.iscInputSystemViewModels,
-        inputSystemsList: this.iscInputSystemsList
-      } });
+        inputSystemsList: this.iscInputSystemsList,
+      },
+    });
 
     // select the first items
     this.selectInputSystem(this.iscInputSystemsList[0].uuid);
@@ -173,18 +223,24 @@ export class InputSystemsConfigurationController implements angular.IController 
 
   // noinspection JSMethodCanBeStatic
   isUnlistedLanguage(code: string): boolean {
-    return (code === 'qaa');
+    return code === 'qaa';
   }
 
   openNewLanguageModal(suggestedLanguageCodes: any): void {
     const modalInstance = this.$modal.open({
-      templateUrl: '/angular-app/languageforge/lexicon/shared/select-new-language.modal.html',
+      templateUrl:
+        '/angular-app/languageforge/lexicon/shared/select-new-language.modal.html',
       windowTopClass: 'modal-select-language',
-      controller: ['$scope', '$uibModalInstance',
-        (scope: any, $modalInstance: angular.ui.bootstrap.IModalInstanceService) => {
+      controller: [
+        '$scope',
+        '$uibModalInstance',
+        (
+          scope: any,
+          $modalInstance: angular.ui.bootstrap.IModalInstanceService
+        ) => {
           scope.selected = {
             code: '',
-            language: {}
+            language: {},
           };
           scope.add = () => {
             $modalInstance.close(scope.selected);
@@ -193,17 +249,21 @@ export class InputSystemsConfigurationController implements angular.IController 
           scope.close = $modalInstance.dismiss;
 
           scope.suggestedLanguageCodes = suggestedLanguageCodes;
-        }
-      ]
+        },
+      ],
     });
 
-    modalInstance.result.then((selected: any) => {
-      this.addInputSystem(selected.code, selected.language.name,
-        this.selects.special.optionsOrder[0]);
-    }, () => { });
-
+    modalInstance.result.then(
+      (selected: any) => {
+        this.addInputSystem(
+          selected.code,
+          selected.language.name,
+          this.selects.special.optionsOrder[0]
+        );
+      },
+      () => {}
+    );
   }
-
 }
 
 export const InputSystemsConfigurationComponent: angular.IComponentOptions = {
@@ -212,8 +272,9 @@ export const InputSystemsConfigurationComponent: angular.IComponentOptions = {
     iscInputSystemsList: '<',
     iscConfigPristine: '<',
     iscAddInputSystem: '<',
-    iscOnUpdate: '&'
+    iscOnUpdate: '&',
   },
   controller: InputSystemsConfigurationController,
-  templateUrl: '/angular-app/languageforge/lexicon/settings/configuration/configuration-input-systems.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/settings/configuration/configuration-input-systems.component.html',
 };

@@ -12,11 +12,11 @@ export class SiteAdminUsersController implements angular.IController {
     none: { name: 'None' },
     user: { name: 'User' },
     project_creator: { name: 'Project Creator' },
-    site_manager: { name: 'Site Manager' }
+    site_manager: { name: 'Site Manager' },
   };
   systemRoles = {
     user: { name: 'User' },
-    system_admin: { name: 'Site Administrator' }
+    system_admin: { name: 'Site Administrator' },
   };
   selected: User[] = [];
   users: User[] = [];
@@ -27,7 +27,7 @@ export class SiteAdminUsersController implements angular.IController {
     inputfocus: false,
     record: new User(),
     showPasswordForm: false,
-    state: 'add' // can be either "add" or "update"
+    state: 'add', // can be either "add" or "update"
   };
   userId: string;
   record: UserWithPassword;
@@ -40,31 +40,41 @@ export class SiteAdminUsersController implements angular.IController {
    * 'emailExists'           : email already exists and belongs to another account
    * 'usernameAndEmailExists': both username and email already exist and belong to another account
    * 'ok'                    : username and email address are unique
-  */
+   */
   uniqueUserState: string = 'empty';
 
-  static $inject = ['$scope', 'userService',
-    'sessionService', 'silNoticeService'];
-  constructor(private $scope: angular.IScope, private userService: UserService,
-              private sessionService: SessionService, private notice: NoticeService) { }
+  static $inject = [
+    '$scope',
+    'userService',
+    'sessionService',
+    'silNoticeService',
+  ];
+  constructor(
+    private $scope: angular.IScope,
+    private userService: UserService,
+    private sessionService: SessionService,
+    private notice: NoticeService
+  ) {}
 
   $onInit() {
-    this.sessionService.getSession().then(session => {
+    this.sessionService.getSession().then((session) => {
       this.userId = session.userId();
     });
 
-    this.$scope.$watch(() => this.vars.record.id, (newId: string) => {
-      if (newId) {
-        this.userService.read(newId, result => {
-          this.record = result.data;
-          this.uniqueUserState = 'empty';
-        });
-      } else {
-        this.record = new User();
-        this.record.role = 'user';
+    this.$scope.$watch(
+      () => this.vars.record.id,
+      (newId: string) => {
+        if (newId) {
+          this.userService.read(newId, (result) => {
+            this.record = result.data;
+            this.uniqueUserState = 'empty';
+          });
+        } else {
+          this.record = new User();
+          this.record.role = 'user';
+        }
       }
-    });
-
+    );
   }
 
   focusInput(): void {
@@ -90,9 +100,10 @@ export class SiteAdminUsersController implements angular.IController {
   }
 
   queryUsers(invalidateCache: boolean): void {
-    const forceReload = (invalidateCache || (!this.users) || (this.users.length === 0));
+    const forceReload =
+      invalidateCache || !this.users || this.users.length === 0;
     if (forceReload) {
-      this.userService.list(result => {
+      this.userService.list((result) => {
         if (result.ok) {
           this.users = result.data.entries;
         } else {
@@ -140,8 +151,11 @@ export class SiteAdminUsersController implements angular.IController {
   checkUniqueUser(): void {
     if (this.record.email) {
       this.uniqueUserState = 'loading';
-      this.userService.checkUniqueIdentity(this.record.id, this.record.username,
-        this.record.email, result => {
+      this.userService.checkUniqueIdentity(
+        this.record.id,
+        this.record.username,
+        this.record.email,
+        (result) => {
           if (result.ok) {
             this.uniqueUserState = result.data;
           }
@@ -155,30 +169,35 @@ export class SiteAdminUsersController implements angular.IController {
       // add a new user
       record.id = '';
 
-      this.userService.create(record, result => {
+      this.userService.create(record, (result) => {
         if (result.ok) {
           if (result.data) {
-            this.notice.push(this.notice.SUCCESS, 'The user ' + record.email +
-              ' was successfully added');
+            this.notice.push(
+              this.notice.SUCCESS,
+              'The user ' + record.email + ' was successfully added'
+            );
           } else {
-            this.notice.push(this.notice.ERROR, 'API Error: the username/email already exists!' +
-              '  (this should not happen)');
+            this.notice.push(
+              this.notice.ERROR,
+              'API Error: the username/email already exists!' +
+                '  (this should not happen)'
+            );
           }
         }
-
       });
 
       this.record = new User();
       this.record.role = 'user';
       this.focusInput();
-
     } else {
       // update an existing user
-      this.userService.update(record, result => {
+      this.userService.update(record, (result) => {
         if (result.ok) {
           if (result.data) {
-            this.notice.push(this.notice.SUCCESS, 'The user ' + record.username +
-              ' was successfully updated');
+            this.notice.push(
+              this.notice.SUCCESS,
+              'The user ' + record.username + ' was successfully updated'
+            );
           }
         }
       });
@@ -207,14 +226,20 @@ export class SiteAdminUsersController implements angular.IController {
       return;
     }
 
-    this.userService.remove(userIds, result => {
+    this.userService.remove(userIds, (result) => {
       if (result.ok) {
         if (result.data === 1) {
           this.notice.push(this.notice.SUCCESS, '1 user was deleted');
         } else if (result.data > 1) {
-          this.notice.push(this.notice.SUCCESS, result.data + ' users were deleted');
+          this.notice.push(
+            this.notice.SUCCESS,
+            result.data + ' users were deleted'
+          );
         } else {
-          this.notice.push(this.notice.ERROR, 'Error deleting one or more users');
+          this.notice.push(
+            this.notice.ERROR,
+            'Error deleting one or more users'
+          );
         }
       }
 
@@ -228,12 +253,18 @@ export class SiteAdminUsersController implements angular.IController {
   }
 
   banUser(record: UserWithPassword): void {
-    this.userService.ban(record.id, result => {
+    this.userService.ban(record.id, (result) => {
       if (result.ok) {
         if (result.data !== false) {
-          this.notice.push(this.notice.SUCCESS, 'The user ' + record.username + ' was banned');
+          this.notice.push(
+            this.notice.SUCCESS,
+            'The user ' + record.username + ' was banned'
+          );
         } else {
-          this.notice.push(this.notice.ERROR, 'Error banning ' + record.username);
+          this.notice.push(
+            this.notice.ERROR,
+            'Error banning ' + record.username
+          );
         }
       }
 
@@ -247,9 +278,12 @@ export class SiteAdminUsersController implements angular.IController {
   }
 
   changePassword(record: UserWithPassword): void {
-    this.userService.changePassword(record.id, record.password, result => {
+    this.userService.changePassword(record.id, record.password, (result) => {
       if (result.ok) {
-        this.notice.push(this.notice.SUCCESS, 'Password for ' + record.name + ' updated successfully');
+        this.notice.push(
+          this.notice.SUCCESS,
+          'Password for ' + record.name + ' updated successfully'
+        );
       }
     });
   }
@@ -265,10 +299,10 @@ export class SiteAdminUsersController implements angular.IController {
   togglePasswordForm(): void {
     this.vars.showPasswordForm = !this.vars.showPasswordForm;
   }
-
 }
 
 export const SiteAdminUsersComponent: angular.IComponentOptions = {
   controller: SiteAdminUsersController,
-  templateUrl: '/angular-app/bellows/apps/siteadmin/site-admin-users.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/siteadmin/site-admin-users.component.html',
 };

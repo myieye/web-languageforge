@@ -1,8 +1,10 @@
-import {browser, by, element} from 'protractor';
+import { browser, by, element } from 'protractor';
 
 export class BellowsResetPasswordPage {
   static get(resetPasswordKey: string) {
-    return browser.get(browser.baseUrl + '/auth/reset_password/' + resetPasswordKey);
+    return browser.get(
+      browser.baseUrl + '/auth/reset_password/' + resetPasswordKey
+    );
   }
 
   form = element(by.id('reset-password-form'));

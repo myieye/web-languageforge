@@ -5,6 +5,5 @@ import { CoreModule } from '../../../core/core.module';
 import { OAuthSignupAppComponent } from './oauth-signup-app.component';
 
 export const OAuthSignupAppModule = angular
-    .module('oauth-signup', ['ui.bootstrap', CoreModule, SiteWideNoticeModule])
-    .component('oauthSignupApp', OAuthSignupAppComponent)
-    .name;
+  .module('oauth-signup', ['ui.bootstrap', CoreModule, SiteWideNoticeModule])
+  .component('oauthSignupApp', OAuthSignupAppComponent).name;

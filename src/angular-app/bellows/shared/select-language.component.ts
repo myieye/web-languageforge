@@ -1,7 +1,10 @@
 import * as angular from 'angular';
 
-import {InputSystemsModule, InputSystemsService} from '../core/input-systems/input-systems.service';
-import {InputSystemLanguage} from './model/input-system-language.model';
+import {
+  InputSystemsModule,
+  InputSystemsService,
+} from '../core/input-systems/input-systems.service';
+import { InputSystemLanguage } from './model/input-system-language.model';
 
 export class SelectLanguageController implements angular.IController {
   puiCode: string;
@@ -17,10 +20,11 @@ export class SelectLanguageController implements angular.IController {
   searchText: string = '';
   showSuggestions: boolean = false;
 
-  private allLanguages: InputSystemLanguage[] = this.inputSystems.allLanguages();
+  private allLanguages: InputSystemLanguage[] =
+    this.inputSystems.allLanguages();
 
   static $inject: string[] = ['inputSystems'];
-  constructor(private readonly inputSystems: InputSystemsService) { }
+  constructor(private readonly inputSystems: InputSystemsService) {}
 
   $onInit(): void {
     this.languages = this.buildLanguageList();
@@ -44,7 +48,7 @@ export class SelectLanguageController implements angular.IController {
 
   selectLanguage(language: InputSystemLanguage): void {
     this.currentCode = language.code.three;
-    this.puiCode = (language.code.two) ? language.code.two : language.code.three;
+    this.puiCode = language.code.two ? language.code.two : language.code.three;
     this.puiLanguage = language;
     this.puiAddDisabled = false;
   }
@@ -73,7 +77,6 @@ export class SelectLanguageController implements angular.IController {
 
     return result;
   }
-
 }
 
 export const SelectLanguageComponent: angular.IComponentOptions = {
@@ -81,13 +84,12 @@ export const SelectLanguageComponent: angular.IComponentOptions = {
     puiCode: '=',
     puiLanguage: '=',
     puiAddDisabled: '=',
-    puiSuggestedLanguageCodes: '<?'
+    puiSuggestedLanguageCodes: '<?',
   },
   controller: SelectLanguageController,
-  templateUrl: '/angular-app/bellows/shared/select-language.component.html'
+  templateUrl: '/angular-app/bellows/shared/select-language.component.html',
 };
 
 export const SelectLanguageModule = angular
   .module('palasoUILanguageModule', [InputSystemsModule])
-  .component('puiSelectLanguage', SelectLanguageComponent)
-  .name;
+  .component('puiSelectLanguage', SelectLanguageComponent).name;

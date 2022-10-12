@@ -11,11 +11,18 @@ export function BytesFilter(): BytesFilterFunction {
     }
     const units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'];
     const value = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, Math.floor(value))).toFixed(precision) + ' ' + units[value];
+    return (
+      (bytes / Math.pow(1024, Math.floor(value))).toFixed(precision) +
+      ' ' +
+      units[value]
+    );
   };
 }
 
-export type RelativeTimeFilterFunction = (timestamp?: string, timeFormat?: string) => string;
+export type RelativeTimeFilterFunction = (
+  timestamp?: string,
+  timeFormat?: string
+) => string;
 
 export function RelativeTimeFilter(): RelativeTimeFilterFunction {
   return (timestamp?: string, timeFormat?: string): string => {
@@ -29,7 +36,9 @@ export function RelativeTimeFilter(): RelativeTimeFilterFunction {
 }
 
 export type EncodeURIFilterFunction = (input: string) => string;
-export function EncodeURIFilter($window: angular.IWindowService): EncodeURIFilterFunction {
+export function EncodeURIFilter(
+  $window: angular.IWindowService
+): EncodeURIFilterFunction {
   return (input: string): string => {
     if (input) {
       return $window.encodeURIComponent(input);

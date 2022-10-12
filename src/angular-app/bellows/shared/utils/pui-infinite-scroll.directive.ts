@@ -12,6 +12,6 @@ export function PuiInfiniteScroll(): angular.IDirective {
           $scope.$apply($attrs.puiWhenScrolled);
         }
       });
-    }
+    },
   };
 }

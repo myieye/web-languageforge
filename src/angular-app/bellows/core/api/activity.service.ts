@@ -22,12 +22,27 @@ export class ActivityService {
     return this.api.call('activity_list_dto', [filterParams], callback);
   }
 
-  listActivityForCurrentProject(filterParams: FilterParams, callback?: JsonRpcCallback) {
-    return this.api.call('activity_list_dto_for_current_project', [filterParams], callback);
+  listActivityForCurrentProject(
+    filterParams: FilterParams,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'activity_list_dto_for_current_project',
+      [filterParams],
+      callback
+    );
   }
 
-  listActivityForLexicalEntry(entryId: string, filterParams: FilterParams, callback?: JsonRpcCallback) {
-    return this.api.call('activity_list_dto_for_lexical_entry', [entryId, filterParams], callback);
+  listActivityForLexicalEntry(
+    entryId: string,
+    filterParams: FilterParams,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'activity_list_dto_for_lexical_entry',
+      [entryId, filterParams],
+      callback
+    );
   }
 
   setUnreadCount(count: number) {

@@ -9,16 +9,16 @@ export class OAuthSignupAppController implements angular.IController {
   oauthFullName: string;
   oauthEmail: string;
   oauthAvatar: string;
-  oauthId: string;  // Not currently used
+  oauthId: string; // Not currently used
   loginPath: string;
   websiteName: string;
   dropdown = {
     avatarColors: {},
-    avatarShapes: {}
+    avatarShapes: {},
   };
   avatarChoice = {
     avatar_color: '',
-    avatar_shape: ''
+    avatar_shape: '',
   };
   submissionInProgress = false;
   emailExists = false;
@@ -28,13 +28,22 @@ export class OAuthSignupAppController implements angular.IController {
   record = new User();
   hostname: string;
 
-  static $inject = ['$scope', '$location', '$window',
+  static $inject = [
+    '$scope',
+    '$location',
+    '$window',
     'siteWideNoticeService',
-    'userService', 'sessionService'];
-  constructor(private $scope: any, private $location: angular.ILocationService,
-              private $window: angular.IWindowService,
-              private siteWideNoticeService: SiteWideNoticeService,
-              private userService: UserService, private sessionService: SessionService) {}
+    'userService',
+    'sessionService',
+  ];
+  constructor(
+    private $scope: any,
+    private $location: angular.ILocationService,
+    private $window: angular.IWindowService,
+    private siteWideNoticeService: SiteWideNoticeService,
+    private userService: UserService,
+    private sessionService: SessionService
+  ) {}
 
   $onInit() {
     this.record.id = '';
@@ -44,7 +53,7 @@ export class OAuthSignupAppController implements angular.IController {
     }
     if (this.oauthFullName !== undefined && this.oauthFullName.length > 0) {
       this.record.name = this.oauthFullName;
-      this.calculateUsername(this.record.name).then(username => {
+      this.calculateUsername(this.record.name).then((username) => {
         this.record.username = username;
         this.validateForm();
       });
@@ -53,7 +62,7 @@ export class OAuthSignupAppController implements angular.IController {
       this.record.avatar_ref = this.oauthAvatar;
     }
 
-    this.sessionService.getSession().then(session => {
+    this.sessionService.getSession().then((session) => {
       // signup app should only show when no user is present (not logged in)
       if (angular.isDefined(session.userId())) {
         this.$window.location.href = '/app/projects';
@@ -79,7 +88,7 @@ export class OAuthSignupAppController implements angular.IController {
       { value: 'DarkGoldenrod3', label: 'Dark Golden' },
       { value: 'chartreuse', label: 'Chartreuse' },
       { value: 'LightBlue', label: 'Light Blue' },
-      { value: 'LightYellow', label: 'Light Yellow' }
+      { value: 'LightYellow', label: 'Light Yellow' },
     ];
 
     this.dropdown.avatarShapes = [
@@ -98,49 +107,69 @@ export class OAuthSignupAppController implements angular.IController {
       { value: 'rabbit', label: 'Rabbit' },
       { value: 'rhino', label: 'Rhino' },
       { value: 'sheep', label: 'Sheep' },
-      { value: 'tortoise', label: 'Tortoise' }
+      { value: 'tortoise', label: 'Tortoise' },
     ];
 
-    this.$scope.$watch(() => this.avatarChoice.avatar_color, () => {
-      this.record.avatar_ref = this.getAvatarRef(this.avatarChoice.avatar_color, this.avatarChoice.avatar_shape);
-    });
+    this.$scope.$watch(
+      () => this.avatarChoice.avatar_color,
+      () => {
+        this.record.avatar_ref = this.getAvatarRef(
+          this.avatarChoice.avatar_color,
+          this.avatarChoice.avatar_shape
+        );
+      }
+    );
 
-    this.$scope.$watch(() => this.avatarChoice.avatar_shape, () => {
-      this.record.avatar_ref = this.getAvatarRef(this.avatarChoice.avatar_color, this.avatarChoice.avatar_shape);
-    });
+    this.$scope.$watch(
+      () => this.avatarChoice.avatar_shape,
+      () => {
+        this.record.avatar_ref = this.getAvatarRef(
+          this.avatarChoice.avatar_color,
+          this.avatarChoice.avatar_shape
+        );
+      }
+    );
 
     this.hostname = this.$window.location.hostname;
     this.$scope.website_name = this.websiteName;
   }
 
   calculateUsername(usernameBase: string) {
-    return this.userService.calculateUsername(usernameBase).then(result => {
-      if (result.ok) {
-        return result.data;
-      } else {
-        throw result.statusText;
-      }
-    }).catch(reason => {
-      // Ignore errors in this one
-    });
+    return this.userService
+      .calculateUsername(usernameBase)
+      .then((result) => {
+        if (result.ok) {
+          return result.data;
+        } else {
+          throw result.statusText;
+        }
+      })
+      .catch((reason) => {
+        // Ignore errors in this one
+      });
   }
 
   validateForm(): void {
-    this.usernameValid = this.$scope.oauthSignupForm.username && !this.$scope.oauthSignupForm.$error.username;
+    this.usernameValid =
+      this.$scope.oauthSignupForm.username &&
+      !this.$scope.oauthSignupForm.$error.username;
 
-    this.userService.checkUniqueIdentity(this.record.id, this.record.username, this.record.email,
-      result => {
+    this.userService.checkUniqueIdentity(
+      this.record.id,
+      this.record.username,
+      this.record.email,
+      (result) => {
         if (result.ok) {
           switch (result.data) {
-            case 'usernameExists' :
+            case 'usernameExists':
               this.usernameExists = true;
               this.takenUsername = this.record.username.toLowerCase();
               break;
-            case 'emailExists' :
+            case 'emailExists':
               // Shouldn't happen since OAuth login would have matched email
               this.usernameExists = false;
               break;
-            case 'usernameAndEmailExists' :
+            case 'usernameAndEmailExists':
               // Shouldn't happen since OAuth login would have matched email
               this.usernameExists = true;
               this.takenUsername = this.record.username.toLowerCase();
@@ -149,11 +178,12 @@ export class OAuthSignupAppController implements angular.IController {
               this.usernameExists = false;
           }
         }
-      });
+      }
+    );
   }
 
   avatarHasColorAndShape(color?: string, shape?: string) {
-    return (color && shape);
+    return color && shape;
   }
 
   getAvatarUrl(avatarRef: string, size?: string): string {
@@ -189,7 +219,7 @@ export class OAuthSignupAppController implements angular.IController {
 
   private getAvatarRef(color?: string, shape?: string): string {
     if (!color || !shape) {
-      return (this.oauthAvatar) ? this.oauthAvatar : 'anonymoose.png';
+      return this.oauthAvatar ? this.oauthAvatar : 'anonymoose.png';
     }
 
     return color + '-' + shape + '-128x128.png';
@@ -197,7 +227,7 @@ export class OAuthSignupAppController implements angular.IController {
 
   private registerUser(successCallback: (url: string) => void) {
     this.submissionInProgress = true;
-    this.userService.registerOAuthUser(this.record, result => {
+    this.userService.registerOAuthUser(this.record, (result) => {
       if (result.ok) {
         switch (result.data) {
           case 'usernameNotAvailable':
@@ -223,8 +253,9 @@ export const OAuthSignupAppComponent: angular.IComponentOptions = {
     oauthAvatar: '@',
     oauthId: '@',
     loginPath: '@',
-    websiteName: '@'
+    websiteName: '@',
   },
   controller: OAuthSignupAppController,
-  templateUrl: '/angular-app/bellows/apps/public/oauth-signup/oauth-signup-app.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/public/oauth-signup/oauth-signup-app.component.html',
 };

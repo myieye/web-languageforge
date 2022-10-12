@@ -11,19 +11,25 @@ export class ChangePasswordAppController implements angular.IController {
   password: string;
   confirm_password: string;
 
-  static $inject = ['userService', 'sessionService',
-                    'silNoticeService', 'breadcrumbService',
-                    'siteWideNoticeService',
-                    'applicationHeaderService'];
-  constructor(private userService: UserService, private sessionService: SessionService,
-              private notice: NoticeService, private breadcrumbService: BreadcrumbService,
-              private siteWideNoticeService: SiteWideNoticeService,
-              private applicationHeaderService: ApplicationHeaderService) {}
+  static $inject = [
+    'userService',
+    'sessionService',
+    'silNoticeService',
+    'breadcrumbService',
+    'siteWideNoticeService',
+    'applicationHeaderService',
+  ];
+  constructor(
+    private userService: UserService,
+    private sessionService: SessionService,
+    private notice: NoticeService,
+    private breadcrumbService: BreadcrumbService,
+    private siteWideNoticeService: SiteWideNoticeService,
+    private applicationHeaderService: ApplicationHeaderService
+  ) {}
 
   $onInit() {
-    this.breadcrumbService.set('top', [
-      { label: 'Change Your Password' }
-    ]);
+    this.breadcrumbService.set('top', [{ label: 'Change Your Password' }]);
     this.applicationHeaderService.setPageName('Change Your Password');
     this.siteWideNoticeService.displayNotices();
   }
@@ -34,15 +40,19 @@ export class ChangePasswordAppController implements angular.IController {
         const user = session.userId();
         const password = this.password;
         this.userService.changePassword(user, password).then(() => {
-          this.notice.push(this.notice.SUCCESS, 'Password updated successfully');
+          this.notice.push(
+            this.notice.SUCCESS,
+            'Password updated successfully'
+          );
           this.password = this.confirm_password = '';
         });
       });
     }
-  };
+  }
 }
 
 export const ChangePasswordAppComponent: angular.IComponentOptions = {
   controller: ChangePasswordAppController,
-  templateUrl: '/angular-app/bellows/apps/changepassword/change-password-app.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/changepassword/change-password-app.component.html',
 };

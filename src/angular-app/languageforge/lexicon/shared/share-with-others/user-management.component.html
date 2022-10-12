@@ -1,41 +1,87 @@
-<div id="who-has-access" style="max-width: 30em;">
-  <div class="row" style="position: relative;">
+<div id="who-has-access" style="max-width: 30em">
+  <div class="row" style="position: relative">
     <div class="col-6">
-      <b style="position: absolute; bottom: 0;">Who has access</b>
+      <b style="position: absolute; bottom: 0">Who has access</b>
     </div>
     <div class="col-6">
-      <div class="float-right" style="position: relative;">
-        <input class="form-control" type="text" data-ng-model="$ctrl.userFilter" placeholder="Filter Members">
-        <a class="clear-search-button" data-ng-show="$ctrl.userFilter != ''" title="Clear Filter" data-ng-click="$ctrl.userFilter = ''"><i class="fa fa-times" style="color:gray"></i></a>
+      <div class="float-right" style="position: relative">
+        <input
+          class="form-control"
+          type="text"
+          data-ng-model="$ctrl.userFilter"
+          placeholder="Filter Members"
+        />
+        <a
+          class="clear-search-button"
+          data-ng-show="$ctrl.userFilter != ''"
+          title="Clear Filter"
+          data-ng-click="$ctrl.userFilter = ''"
+          ><i class="fa fa-times" style="color: gray"></i
+        ></a>
       </div>
     </div>
   </div>
 
-  <listview search="$ctrl.loadMemberData()" items="$ctrl.allMembers" items-filter="$ctrl.userFilter" visible-items="$ctrl.visibleMembers" select="">
+  <listview
+    search="$ctrl.loadMemberData()"
+    items="$ctrl.allMembers"
+    items-filter="$ctrl.userFilter"
+    visible-items="$ctrl.visibleMembers"
+    select=""
+  >
     <ul class="list-group">
-      <li class="list-group-item user-summary-item" data-ng-repeat="user in $ctrl.visibleMembers">
+      <li
+        class="list-group-item user-summary-item"
+        data-ng-repeat="user in $ctrl.visibleMembers"
+      >
         <div>
-          <img ng-src="{{$ctrl.getAvatarUrl(user.avatar_ref)}}" class="rounded-circle" id="smallAvatarURL" />
+          <img
+            ng-src="{{ $ctrl.getAvatarUrl(user.avatar_ref) }}"
+            class="rounded-circle"
+            id="smallAvatarURL"
+          />
         </div>
-        <div style="flex-grow: 1;" ng-class="{'text-muted': user.isInvitee}">
-          <span ng-if="user.name">{{user.name}}<span ng-if="$ctrl.userIsCurrentUser(user)"> (you)</span><br></span>
-          <span ng-if="!user.isInvitee && user.email" class='username-email'>{{user.email}}</span>
-          <span ng-if="user.isInvitee" class="invited-user username-email">{{user.email}} <br class="d-md-none">[invited]</span>
-          <span ng-if="$ctrl.userIsCurrentUser(user) && !user.name"> (you)</span>
+        <div style="flex-grow: 1" ng-class="{ 'text-muted': user.isInvitee }">
+          <span ng-if="user.name"
+            >{{ user.name
+            }}<span ng-if="$ctrl.userIsCurrentUser(user)"> (you)</span><br
+          /></span>
+          <span ng-if="!user.isInvitee && user.email" class="username-email">{{
+            user.email
+          }}</span>
+          <span ng-if="user.isInvitee" class="invited-user username-email"
+            >{{ user.email }} <br class="d-md-none" />[invited]</span
+          >
+          <span ng-if="$ctrl.userIsCurrentUser(user) && !user.name">
+            (you)</span
+          >
         </div>
         <div class="sm-no-margin">
-          <div ng-if="$ctrl.userIsOwner(user)" class="role-indicator text-muted">owner</div>
-          <role-dropdown ng-if="!$ctrl.userIsOwner(user)"
-                                target="user"
-                                on-role-changed="$ctrl.onUserRoleChanged($event)"
-                                on-delete-target="$ctrl.onDeleteTarget($event)"
-                                allow-delete="true"
-                                selected-role="user.role"
-                                roles="$ctrl.memberRoles"></role-dropdown>
+          <div
+            ng-if="$ctrl.userIsOwner(user)"
+            class="role-indicator text-muted"
+          >
+            owner
+          </div>
+          <role-dropdown
+            ng-if="!$ctrl.userIsOwner(user)"
+            target="user"
+            on-role-changed="$ctrl.onUserRoleChanged($event)"
+            on-delete-target="$ctrl.onDeleteTarget($event)"
+            allow-delete="true"
+            selected-role="user.role"
+            roles="$ctrl.memberRoles"
+          ></role-dropdown>
         </div>
-        <i class="fa fa-times delete-member d-none d-md-block" ng-click="$ctrl.removeUser(user);"
-            ng-if="!$ctrl.userIsOwner(user) && !$ctrl.userIsCurrentUser(user)"></i>
-        <div class="delete-member d-none d-md-block" ng-if="$ctrl.userIsOwner(user) || $ctrl.userIsCurrentUser(user)"></div>
+        <i
+          class="fa fa-times delete-member d-none d-md-block"
+          ng-click="$ctrl.removeUser(user);"
+          ng-if="!$ctrl.userIsOwner(user) && !$ctrl.userIsCurrentUser(user)"
+        ></i>
+        <div
+          class="delete-member d-none d-md-block"
+          ng-if="$ctrl.userIsOwner(user) || $ctrl.userIsCurrentUser(user)"
+        ></div>
       </li>
       <div class="scroll-gradient" id="scroll-gradient-lower"></div>
     </ul>

@@ -25,28 +25,42 @@ export class UserManagementMembersController implements angular.IController {
   excludedUsers: User[] = [];
   addModes = {
     addExisting: { en: 'Add Existing User', icon: 'fa fa-user' },
-    invite: { en: 'Send Email Invite', icon: 'fa fa-envelope' }
+    invite: { en: 'Send Email Invite', icon: 'fa fa-envelope' },
   };
   addMode = 'addExisting';
   disableAddButton = true;
   typeahead = {
-    userName: ''
+    userName: '',
   };
   warningText = '';
 
   private user: User;
 
-  static $inject = ['$window', 'userService', 'projectService', 'sessionService', 'silNoticeService'];
-  constructor(private $window: angular.IWindowService, private userService: UserService,
-              private projectService: ProjectService, private sessionService: SessionService,
-              private notice: NoticeService) { }
+  static $inject = [
+    '$window',
+    'userService',
+    'projectService',
+    'sessionService',
+    'silNoticeService',
+  ];
+  constructor(
+    private $window: angular.IWindowService,
+    private userService: UserService,
+    private projectService: ProjectService,
+    private sessionService: SessionService,
+    private notice: NoticeService
+  ) {}
 
   $onChanges(changes: angular.IOnChangesObject): void {
     const rolesChangeObj = changes.roles as angular.IChangesObject<any>;
     if (rolesChangeObj != null && rolesChangeObj.currentValue) {
       const roles = rolesChangeObj.currentValue;
-      this.rolesAsOwner = [{roleKey: 'project_manager', roleName: 'Manager and Project Owner'}];
-      this.rolesWithoutTechSupport = roles.filter((elem: any) => elem.roleKey !== 'tech_support');
+      this.rolesAsOwner = [
+        { roleKey: 'project_manager', roleName: 'Manager and Project Owner' },
+      ];
+      this.rolesWithoutTechSupport = roles.filter(
+        (elem: any) => elem.roleKey !== 'tech_support'
+      );
     }
   }
 
@@ -80,9 +94,13 @@ export class UserManagementMembersController implements angular.IController {
   }
 
   isRoleSelectDisabled(user: User): boolean {
-    if (user.id === this.project.ownerRef.id ||
+    if (
+      user.id === this.project.ownerRef.id ||
       (user.role === 'tech_support' && user.id !== this.currentUser.id) ||
-      !this.rights.changeRole) { return true; }
+      !this.rights.changeRole
+    ) {
+      return true;
+    }
 
     return false;
   }
@@ -91,7 +109,6 @@ export class UserManagementMembersController implements angular.IController {
     const userIds: string[] = [];
     const l = this.selected.length;
     for (let i = 0; i < l; i++) {
-
       // Guard against project owner being removed
       if (this.selected[i].id !== this.project.ownerRef.id) {
         userIds.push(this.selected[i].id);
@@ -101,25 +118,32 @@ export class UserManagementMembersController implements angular.IController {
     }
 
     if (l === 0) {
-
       // TODO ERROR
       return;
     }
 
     this.projectService.removeUsers(userIds).then(() => {
-      this.sessionService.getSession().then(session => {
+      this.sessionService.getSession().then((session) => {
         if (userIds.indexOf(session.userId()) !== -1) {
           // redirect if you just removed yourself from the project
-          this.notice.push(this.notice.SUCCESS, 'You have been removed from this project');
+          this.notice.push(
+            this.notice.SUCCESS,
+            'You have been removed from this project'
+          );
           this.$window.location.href = '/app/projects';
         } else {
           this.queryUserList();
           this.selected = [];
           if (userIds.length === 1) {
-            this.notice.push(this.notice.SUCCESS, 'The user was removed from this project');
+            this.notice.push(
+              this.notice.SUCCESS,
+              'The user was removed from this project'
+            );
           } else {
-            this.notice.push(this.notice.SUCCESS, userIds.length +
-              ' users were removed from this project');
+            this.notice.push(
+              this.notice.SUCCESS,
+              userIds.length + ' users were removed from this project'
+            );
           }
         }
       });
@@ -128,12 +152,14 @@ export class UserManagementMembersController implements angular.IController {
 
   // noinspection JSUnusedGlobalSymbols
   onRoleChange(user: User): void {
-    this.projectService.updateUserRole(user.id, user.role, result => {
+    this.projectService.updateUserRole(user.id, user.role, (result) => {
       if (result.ok) {
         const role = this.roles.find((obj: any) => {
           return obj.roleKey === user.role;
         });
-        const message = `${user.username || user.email}'s role was changed to ${role.roleName}.`;
+        const message = `${user.username || user.email}'s role was changed to ${
+          role.roleName
+        }.`;
         this.notice.push(this.notice.SUCCESS, message);
       }
     });
@@ -154,11 +180,11 @@ export class UserManagementMembersController implements angular.IController {
       this.updateAddMode('addExisting');
       this.disableAddButton = false;
     }
-  }
+  };
 
   // noinspection JSUnusedGlobalSymbols
   queryUser = (userName: string): void => {
-    this.userService.typeaheadExclusive(userName, this.project.id, result => {
+    this.userService.typeaheadExclusive(userName, this.project.id, (result) => {
       // TODO Check userName == controller view value (cf bootstrap typeahead) else abandon.
       if (result.ok) {
         this.users = result.data.entries;
@@ -171,7 +197,7 @@ export class UserManagementMembersController implements angular.IController {
         this.updateAddMode();
       }
     });
-  }
+  };
 
   addModeText(addMode: string): string {
     return this.addModes[addMode].en;
@@ -201,9 +227,11 @@ export class UserManagementMembersController implements angular.IController {
     }
 
     for (let i = 0, l = this.excludedUsers.length; i < l; i++) {
-      if (userName === this.excludedUsers[i].username ||
+      if (
+        userName === this.excludedUsers[i].username ||
         userName === this.excludedUsers[i].name ||
-        userName === this.excludedUsers[i].email) {
+        userName === this.excludedUsers[i].email
+      ) {
         return this.excludedUsers[i];
       }
     }
@@ -222,9 +250,12 @@ export class UserManagementMembersController implements angular.IController {
       const excludedUser = this.isExcludedUser(this.typeahead.userName);
       this.addMode = 'addExisting';
       this.disableAddButton = true;
-      this.warningText = excludedUser.name +
-        ' (username \'' + excludedUser.username +
-        '\', email ' + excludedUser.email +
+      this.warningText =
+        excludedUser.name +
+        " (username '" +
+        excludedUser.username +
+        "', email " +
+        excludedUser.email +
         ') is already a member.';
     } else if (this.typeahead.userName.indexOf('@') !== -1) {
       this.addMode = 'invite';
@@ -243,51 +274,75 @@ export class UserManagementMembersController implements angular.IController {
       model.id = this.user.id;
 
       // Check existing users to see if we're adding someone that already exists in the project
-      this.projectService.listUsers(listResult => {
+      this.projectService.listUsers((listResult) => {
         if (listResult.ok) {
           for (let i = 0, l = listResult.data.users.length; i < l; i++) {
-
             // This approach works, but is unnecessarily slow.
             // We should have an "is user in project?" API,
             // rather than returning all users then searching through them in O(N) time.
             // TODO: Make an "is user in project?" query API. 2014-06 RM
             const thisUser = listResult.data.users[i];
             if (thisUser.id === model.id) {
-              this.notice.push(this.notice.WARN, '\'' + this.user.name + '\' is already a member of '
-                + this.project.projectName + '.');
+              this.notice.push(
+                this.notice.WARN,
+                "'" +
+                  this.user.name +
+                  "' is already a member of " +
+                  this.project.projectName +
+                  '.'
+              );
               this.disableAddButton = true;
               return;
             }
           }
 
-          this.projectService.updateUserRole(this.user.id, 'contributor', updateResult => {
-            if (updateResult.ok) {
-              this.notice.push(this.notice.SUCCESS, '\'' + this.user.name + '\' was added to ' +
-                this.project.projectName + ' successfully');
-              this.queryUserList();
+          this.projectService.updateUserRole(
+            this.user.id,
+            'contributor',
+            (updateResult) => {
+              if (updateResult.ok) {
+                this.notice.push(
+                  this.notice.SUCCESS,
+                  "'" +
+                    this.user.name +
+                    "' was added to " +
+                    this.project.projectName +
+                    ' successfully'
+                );
+                this.queryUserList();
+              }
             }
-          });
+          );
         }
       });
     } else if (this.addMode === 'invite') {
       this.queryUserList();
 
-      this.userService.sendInvite(this.typeahead.userName, 'contributor', result => {
-        if (result.ok && result.data) {
-          this.notice.push(this.notice.SUCCESS, '\'' + this.typeahead.userName +
-            '\' was invited to join the project ' + this.project.projectName);
-          this.queryUserList();
+      this.userService.sendInvite(
+        this.typeahead.userName,
+        'contributor',
+        (result) => {
+          if (result.ok && result.data) {
+            this.notice.push(
+              this.notice.SUCCESS,
+              "'" +
+                this.typeahead.userName +
+                "' was invited to join the project " +
+                this.project.projectName
+            );
+            this.queryUserList();
+          }
         }
-      });
+      );
     }
   }
 
   // noinspection JSMethodCanBeStatic
   imageSource(avatarRef: string): string {
-    return avatarRef ? '/Site/views/shared/image/avatar/' + avatarRef :
-      '/Site/views/shared/image/avatar/anonymous02.png';
+    return avatarRef
+      ? '/Site/views/shared/image/avatar/' + avatarRef
+      : '/Site/views/shared/image/avatar/anonymous02.png';
   }
-
 }
 
 export const UserManagementMembersComponent: angular.IComponentOptions = {
@@ -297,8 +352,9 @@ export const UserManagementMembersComponent: angular.IComponentOptions = {
     project: '<',
     currentUser: '<',
     rights: '<',
-    roles: '<'
+    roles: '<',
   },
   controller: UserManagementMembersController,
-  templateUrl: '/angular-app/bellows/apps/usermanagement/members.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/usermanagement/members.component.html',
 };

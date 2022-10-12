@@ -5,7 +5,7 @@ import { ProjectRoles, ProjectRole } from '../../shared/model/project.model';
 // TODO: import LanguageDepotProjectRoles static class and use that, instead of this promise-based approach
 
 export class RolesService {
-  roles: IPromise<[number,string][]>;
+  roles: IPromise<[number, string][]>;
 
   // Role names for the two "well-known" roles that should always exist
   contributor: IPromise<string>;
@@ -25,36 +25,40 @@ export class RolesService {
   static lfManagerRole = ProjectRoles.MANAGER;
   static lfTechSupportRole = ProjectRoles.TECH_SUPPORT;
 
-  ldRoleToLfRole(ldRole: string) : IPromise<ProjectRole> {
+  ldRoleToLfRole(ldRole: string): IPromise<ProjectRole> {
     ldRole = ldRole || '';
-    return this.$q.all([this.contributor, this.manager, this.techSupport]).then(([contributor, manager, techSupport]) => {
-      switch (ldRole) {
-        case contributor:
-          return RolesService.lfContributorRole;
-        case manager:
-          return RolesService.lfManagerRole;
-        case techSupport:
-          return RolesService.lfTechSupportRole;
-        default:
-          return { name: ldRole, key: (ldRole).toLowerCase() };
-      }
-    });
+    return this.$q
+      .all([this.contributor, this.manager, this.techSupport])
+      .then(([contributor, manager, techSupport]) => {
+        switch (ldRole) {
+          case contributor:
+            return RolesService.lfContributorRole;
+          case manager:
+            return RolesService.lfManagerRole;
+          case techSupport:
+            return RolesService.lfTechSupportRole;
+          default:
+            return { name: ldRole, key: ldRole.toLowerCase() };
+        }
+      });
   }
 
   lfRoleToLdRole(lfRole: string) {
     lfRole = lfRole || '';
-    return this.$q.all([this.contributor, this.manager, this.techSupport]).then(([contributor, manager, techSupport]) => {
-      switch (lfRole) {
-        case RolesService.lfContributorRole.key:
-          return contributor;
-        case RolesService.lfManagerRole.key:
-          return manager;
-        case RolesService.lfTechSupportRole.key:
-          return techSupport;
-        default:
-          return lfRole;
-      }
-    });
+    return this.$q
+      .all([this.contributor, this.manager, this.techSupport])
+      .then(([contributor, manager, techSupport]) => {
+        switch (lfRole) {
+          case RolesService.lfContributorRole.key:
+            return contributor;
+          case RolesService.lfManagerRole.key:
+            return manager;
+          case RolesService.lfTechSupportRole.key:
+            return techSupport;
+          default:
+            return lfRole;
+        }
+      });
   }
 
   static $inject: string[] = ['apiService', '$q'];
@@ -65,7 +69,7 @@ export class RolesService {
     this.contributor = contributorD.promise;
     this.manager = managerD.promise;
     this.techSupport = techSupportD.promise;
-    this.roles = this.getAllRoles().then(result => {
+    this.roles = this.getAllRoles().then((result) => {
       if (result.ok) {
         var contributorFound = false;
         var managerFound = false;
@@ -114,7 +118,10 @@ export class RolesService {
         contributorD.reject('No roles found!');
         managerD.reject('No roles found!');
         techSupportD.reject('No roles found!');
-        console.log('Roles service encountered error getting roles from LD API server', result);
+        console.log(
+          'Roles service encountered error getting roles from LD API server',
+          result
+        );
         return [];
       }
     });

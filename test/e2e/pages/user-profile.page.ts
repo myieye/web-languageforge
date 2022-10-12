@@ -14,11 +14,13 @@ export class UserProfilePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.pageName = page.locator('.page-name >> text=Admin\'s User Profile');
-    this.activitiesList = page.locator('[data-ng-repeat="item in filteredActivities"]');
+    this.pageName = page.locator(".page-name >> text=Admin's User Profile");
+    this.activitiesList = page.locator(
+      '[data-ng-repeat="item in filteredActivities"]'
+    );
     this.tabs = {
       aboutMe: page.locator('#AboutMeTab'),
-      myAccount: page.locator('#myAccountTab')
+      myAccount: page.locator('#myAccountTab'),
     };
   }
 

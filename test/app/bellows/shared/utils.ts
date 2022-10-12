@@ -1,8 +1,8 @@
 // tslint:disable-next-line:no-reference
 ///<reference path="utils.d.ts" />
-import {browser, by, By, element, ExpectedConditions} from 'protractor';
-import {ElementArrayFinder, ElementFinder} from 'protractor/built/element';
-import {logging, WebElementPromise} from 'selenium-webdriver';
+import { browser, by, By, element, ExpectedConditions } from 'protractor';
+import { ElementArrayFinder, ElementFinder } from 'protractor/built/element';
+import { logging, WebElementPromise } from 'selenium-webdriver';
 
 export class Utils {
   static readonly conditionTimeout: number = 12000;
@@ -17,41 +17,54 @@ export class Utils {
     });
   }
 
-  static findDropdownByValue(dropdownElement: ElementFinder, value: string|RegExp) {
+  static findDropdownByValue(
+    dropdownElement: ElementFinder,
+    value: string | RegExp
+  ) {
     // Simpler (MUCH simpler) approach based on our custom elemMatches locator (defined below)
     return dropdownElement.element(By.cssContainingText('option', value));
   }
 
-  static clickDropdownByValue(dropdownElement: ElementFinder, value: string|RegExp) {
+  static clickDropdownByValue(
+    dropdownElement: ElementFinder,
+    value: string | RegExp
+  ) {
     // Select an element of the dropdown based on its value (its text)
     return Utils.findDropdownByValue(dropdownElement, value).click();
   }
 
-  findRowByFunc(elementArray: ElementArrayFinder, searchFunc: (rowText: string) => boolean): Promise<ElementFinder> {
+  findRowByFunc(
+    elementArray: ElementArrayFinder,
+    searchFunc: (rowText: string) => boolean
+  ): Promise<ElementFinder> {
     // Repeater can be either a string or an already-created by.repeater() object
     let foundRow: ElementFinder;
     return new Promise<ElementFinder>((resolve, reject) => {
-      elementArray.map((row: ElementFinder) => {
-        row.getText().then((rowText: string) => {
-          if (searchFunc(rowText)) {
-            foundRow = row;
+      elementArray
+        .map((row: ElementFinder) => {
+          row.getText().then((rowText: string) => {
+            if (searchFunc(rowText)) {
+              foundRow = row;
+            }
+          });
+        })
+        .then(() => {
+          if (foundRow) {
+            resolve(foundRow);
+          } else {
+            reject('Row not found');
           }
         });
-      }).then(() => {
-        if (foundRow) {
-          resolve(foundRow);
-        } else {
-          reject('Row not found');
-        }
-      });
     });
   }
 
-  findRowByText(elementArray: ElementArrayFinder, searchString: string): Promise<ElementFinder> {
+  findRowByText(
+    elementArray: ElementArrayFinder,
+    searchString: string
+  ): Promise<ElementFinder> {
     return this.findRowByFunc(elementArray, (rowText: string) => {
       return rowText.includes(searchString);
-    }
-  );
+    });
   }
 
   /*
@@ -62,12 +75,18 @@ export class Utils {
    * @param textString - string of text to set the value to
    */
   static sendText(elem: ElementFinder, textString: string) {
-    return browser.executeScript('arguments[0].value = arguments[1];', elem.getWebElement(), textString);
+    return browser.executeScript(
+      'arguments[0].value = arguments[1];',
+      elem.getWebElement(),
+      textString
+    );
   }
 
   //noinspection JSUnusedGlobalSymbols
   waitForAlert(timeout: number) {
-    if (!timeout) { timeout = 12000; }
+    if (!timeout) {
+      timeout = 12000;
+    }
 
     return browser.wait(() => {
       let alertPresent = true;
@@ -85,35 +104,55 @@ export class Utils {
 
   notice: any = {
     list: this.noticeList,
-    firstCloseButton: this.noticeList.first().element(by.partialButtonText('×')),
+    firstCloseButton: this.noticeList
+      .first()
+      .element(by.partialButtonText('×')),
     waitToInclude: async (includedText: any) => {
-      await browser.wait(() =>
-        this.noticeList.count().then((count: any) =>
-          count >= 1),
-        Utils.conditionTimeout);
-      return browser.wait(() =>
-        this.noticeList.first().getText().then((text: any) => text.includes(includedText)),
-        Utils.conditionTimeout);
-    }
+      await browser.wait(
+        () => this.noticeList.count().then((count: any) => count >= 1),
+        Utils.conditionTimeout
+      );
+      return browser.wait(
+        () =>
+          this.noticeList
+            .first()
+            .getText()
+            .then((text: any) => text.includes(includedText)),
+        Utils.conditionTimeout
+      );
+    },
   };
 
   static async checkModalTextMatches(expectedText: string) {
     const modalBody = element(by.css('.modal-body'));
 
-    await browser.wait(ExpectedConditions.visibilityOf(modalBody), Utils.conditionTimeout);
+    await browser.wait(
+      ExpectedConditions.visibilityOf(modalBody),
+      Utils.conditionTimeout
+    );
     return expect(modalBody.getText()).toMatch(expectedText);
   }
 
   static async clickModalButton(buttonText: string) {
-    const button = element(by.css('.modal-footer')).element(by.partialButtonText(buttonText));
+    const button = element(by.css('.modal-footer')).element(
+      by.partialButtonText(buttonText)
+    );
 
-    await browser.wait(ExpectedConditions.visibilityOf(button), Utils.conditionTimeout);
-    await browser.wait(ExpectedConditions.elementToBeClickable(button), Utils.conditionTimeout);
+    await browser.wait(
+      ExpectedConditions.visibilityOf(button),
+      Utils.conditionTimeout
+    );
+    await browser.wait(
+      ExpectedConditions.elementToBeClickable(button),
+      Utils.conditionTimeout
+    );
     return button.click();
   }
 
-  static clickBreadcrumb(breadcrumbTextOrRegex: string|RegExp) {
-    return element(by.cssContainingText('.breadcrumb > li', breadcrumbTextOrRegex)).click();
+  static clickBreadcrumb(breadcrumbTextOrRegex: string | RegExp) {
+    return element(
+      by.cssContainingText('.breadcrumb > li', breadcrumbTextOrRegex)
+    ).click();
   }
 
   static parent(child: ElementFinder) {
@@ -127,29 +166,36 @@ export class Utils {
 
   // Errors we choose to ignore because they are typically not encountered by users, but only
   // in testing
-  static isMessageToIgnore(message: logging.Entry ) {
+  static isMessageToIgnore(message: logging.Entry) {
     if (message.level.name === 'WARNING') return true;
 
     const text = message.message;
 
-    return /angular.*\.js .* TypeError: undefined is not a function/.test(text) ||
+    return (
+      /angular.*\.js .* TypeError: undefined is not a function/.test(text) ||
       /\[\$compile:tpload] .* HTTP status: -1/.test(text) ||
       text.includes('password or credit card input in a non-secure context.') ||
-      text.includes('ERR_INTERNET_DISCONNECTED');
+      text.includes('ERR_INTERNET_DISCONNECTED')
+    );
   }
 
   static scrollTop() {
     return browser.executeScript('window.scroll(0,0)');
   }
 
-  static isAllCheckboxes(elementArray: ElementArrayFinder, state: boolean = true) {
+  static isAllCheckboxes(
+    elementArray: ElementArrayFinder,
+    state: boolean = true
+  ) {
     const all: boolean[] = [];
-    return elementArray.each(async (checkboxElement: ElementFinder) => {
-      const isEnabled = await checkboxElement.isEnabled();
-      if (isEnabled) {
-        all.push(await checkboxElement.isSelected());
-      }
-    }).then(() => all.every((elem: boolean) => elem === state));
+    return elementArray
+      .each(async (checkboxElement: ElementFinder) => {
+        const isEnabled = await checkboxElement.isEnabled();
+        if (isEnabled) {
+          all.push(await checkboxElement.isSelected());
+        }
+      })
+      .then(() => all.every((elem: boolean) => elem === state));
   }
 
   /**
@@ -158,25 +204,27 @@ export class Utils {
    * @param {WebElementPromise} sourceNode
    * @param {WebElementPromise} destinationNode
    */
-  static simulateDragDrop = (sourceNode: WebElementPromise, destinationNode: WebElementPromise) => {
+  static simulateDragDrop = (
+    sourceNode: WebElementPromise,
+    destinationNode: WebElementPromise
+  ) => {
     const EVENT_TYPES = {
       DRAG_END: 'dragend',
       DRAG_START: 'dragstart',
-      DROP: 'drop'
+      DROP: 'drop',
     };
 
     function createCustomEvent(type: string): any {
       const customEvent: any = new CustomEvent('CustomEvent');
       customEvent.initCustomEvent(type, true, true, null);
       customEvent.dataTransfer = {
-        data: {
-        },
+        data: {},
         setData(dataType: string, val: any) {
           this.data[dataType] = val;
         },
         getData(dataType: string) {
           return this.data[dataType];
-        }
+        },
       };
       return customEvent;
     }
@@ -200,18 +248,19 @@ export class Utils {
     const dragEndEvent = createCustomEvent(EVENT_TYPES.DRAG_END);
     dragEndEvent.dataTransfer = event.dataTransfer;
     dispatchEvent(sourceNode, EVENT_TYPES.DRAG_END, dragEndEvent);
-  }
+  };
 
   static waitForNewAngularPage(pageToLoad: string): any {
     // Switching between SPAs often creates a "document unloaded while waiting for result" error
     // After extensive research, a forced sleep is the best solution availible as of June 2019
-    return browser.driver.wait( () => {
-      return browser.driver.getCurrentUrl().then( url => {
-        return url.indexOf(pageToLoad) > -1;
+    return browser.driver
+      .wait(() => {
+        return browser.driver.getCurrentUrl().then((url) => {
+          return url.indexOf(pageToLoad) > -1;
+        });
+      }, Utils.conditionTimeout)
+      .then(() => {
+        return browser.sleep(2000);
       });
-    }, Utils.conditionTimeout).then( () => {
-      return browser.sleep(2000);
-    });
   }
-
 }

@@ -7,7 +7,10 @@ import { SendReceiveErrorCodes } from '../../../bellows/shared/model/send-receiv
 import { SendReceiveState } from '../../../bellows/shared/model/send-receive-state.model';
 import { LexiconProjectSettings } from '../shared/model/lexicon-project-settings.model';
 import { SendReceiveStatus } from '../shared/model/send-receive-status.model';
-import { JsonRpcResult, LexiconSendReceiveApiService } from './lexicon-send-receive-api.service';
+import {
+  JsonRpcResult,
+  LexiconSendReceiveApiService,
+} from './lexicon-send-receive-api.service';
 
 type SRTimerCallback = () => void;
 
@@ -31,13 +34,24 @@ export class LexiconSendReceiveService {
   projectSettings: LexiconProjectSettings;
   status: SendReceiveStatus;
 
-  static $inject: string[] = ['$interval', '$filter', '$q',
-    'sessionService', 'silNoticeService', 'lexSendReceiveApi',
-    'lexEditorDataService'
+  static $inject: string[] = [
+    '$interval',
+    '$filter',
+    '$q',
+    'sessionService',
+    'silNoticeService',
+    'lexSendReceiveApi',
+    'lexEditorDataService',
   ];
-  constructor(private $interval: angular.IIntervalService, private $filter: angular.IFilterService,
-              private $q: angular.IQService, private sessionService: SessionService, private notice: NoticeService,
-              private sendReceiveApi: LexiconSendReceiveApiService, private editorData: any) {
+  constructor(
+    private $interval: angular.IIntervalService,
+    private $filter: angular.IFilterService,
+    private $q: angular.IQService,
+    private sessionService: SessionService,
+    private notice: NoticeService,
+    private sendReceiveApi: LexiconSendReceiveApiService,
+    private editorData: any
+  ) {
     this.sessionService.getSession().then(this.updateSessionData);
   }
 
@@ -53,20 +67,33 @@ export class LexiconSendReceiveService {
   // SRState is CLONING or SYNCING
   // logic should match PHP SendReceiveCommands::isInProgress
   isInProgress(): boolean {
-    return this.status != null && this.status.SRState != null &&
-      (this.status.SRState === SendReceiveState.CloneRequested || this.status.SRState === SendReceiveState.Cloning ||
-        this.status.SRState === SendReceiveState.Syncing);
+    return (
+      this.status != null &&
+      this.status.SRState != null &&
+      (this.status.SRState === SendReceiveState.CloneRequested ||
+        this.status.SRState === SendReceiveState.Cloning ||
+        this.status.SRState === SendReceiveState.Syncing)
+    );
   }
 
   // S/R isInProgress(), SRState is unknown, or SRState is PENDING
   isStarted(): boolean {
-    return this.isInProgress() || (this.status != null && this.status.SRState != null &&
-      (this.status.SRState === SendReceiveState.Unknown || this.status.SRState === SendReceiveState.Pending));
+    return (
+      this.isInProgress() ||
+      (this.status != null &&
+        this.status.SRState != null &&
+        (this.status.SRState === SendReceiveState.Unknown ||
+          this.status.SRState === SendReceiveState.Pending))
+    );
   }
 
   isSendReceiveProject(): angular.IPromise<boolean> {
-    return this.sessionService.getSession()
-      .then(session => session.projectSettings<LexiconProjectSettings>().hasSendReceive);
+    return this.sessionService
+      .getSession()
+      .then(
+        (session) =>
+          session.projectSettings<LexiconProjectSettings>().hasSendReceive
+      );
   }
 
   setSyncProjectStatusSuccessCallback(callback: SRTimerCallback): void {
@@ -94,7 +121,7 @@ export class LexiconSendReceiveService {
         this.startPollUpdateTimer(pollUpdateIntervalMs);
       }
     });
-  }
+  };
 
   setSyncStarted(): void {
     this.notice.cancelProgressBar();
@@ -114,9 +141,11 @@ export class LexiconSendReceiveService {
   showProjectStatusNotice(status: SendReceiveStatus): void {
     switch (status.SRState) {
       case SendReceiveState.Pending:
-        this.pendingMessageId = this.notice.push(this.notice.INFO,
+        this.pendingMessageId = this.notice.push(
+          this.notice.INFO,
           'Please wait while other projects are being synchronized. ' +
-          'You may continue to edit this project until it starts to synchronize.');
+            'You may continue to edit this project until it starts to synchronize.'
+        );
         break;
       case SendReceiveState.Syncing:
         this.notice.removeById(this.pendingMessageId);
@@ -126,30 +155,48 @@ export class LexiconSendReceiveService {
         let errorMessage = '';
         switch (status.ErrorCode) {
           case SendReceiveErrorCodes.EmptyProject:
-            errorMessage = 'The project \'' + this.status.ProjectCode + '\' has no data in ' +
+            errorMessage =
+              "The project '" +
+              this.status.ProjectCode +
+              "' has no data in " +
               'LanguageDepot.org. Please do a Send / Receive in FLEx first, then try again.';
             break;
           case SendReceiveErrorCodes.NoFlexProject:
-            errorMessage = '\'' + this.status.ProjectCode + '\' is not a FLEx project. Can ' +
+            errorMessage =
+              "'" +
+              this.status.ProjectCode +
+              "' is not a FLEx project. Can " +
               'only synchronize with FLEx projects.';
             break;
           case SendReceiveErrorCodes.ProjectTooOld:
-            errorMessage = 'The project \'' + this.status.ProjectCode + '\' is from an ' +
+            errorMessage =
+              "The project '" +
+              this.status.ProjectCode +
+              "' is from an " +
               'unsupported version of FLEx. The oldest supported FLEx version is 8.2';
             break;
           case SendReceiveErrorCodes.ProjectTooNew:
-            errorMessage = 'The project \'' + this.status.ProjectCode + '\' is from a version ' +
-              'of FLEx that is too new. We don\'t yet support that version.';
+            errorMessage =
+              "The project '" +
+              this.status.ProjectCode +
+              "' is from a version " +
+              "of FLEx that is too new. We don't yet support that version.";
             break;
           case SendReceiveErrorCodes.Unauthorized:
-            errorMessage = 'You\'re not authorized to access project \'' +
-              this.status.ProjectCode + '\' on LanguageDepot.org. Contact the project manager, ' +
+            errorMessage =
+              "You're not authorized to access project '" +
+              this.status.ProjectCode +
+              "' on LanguageDepot.org. Contact the project manager, " +
               'then try again.';
             break;
           default:
-            this.notice.push(this.notice.ERROR, 'Something went wrong with project \'' +
-              this.status.ProjectCode + '\'. Contact an administrator.',
-              this.status.ErrorMessage);
+            this.notice.push(
+              this.notice.ERROR,
+              "Something went wrong with project '" +
+                this.status.ProjectCode +
+                "'. Contact an administrator.",
+              this.status.ErrorMessage
+            );
             break;
         }
         if (errorMessage !== '') {
@@ -157,13 +204,21 @@ export class LexiconSendReceiveService {
         }
         break;
       case SendReceiveState.Hold:
-        this.notice.push(this.notice.ERROR, 'Well this is embarrassing. Something went ' +
-          'wrong and your project \'' + this.status.ProjectCode + '\'is now on hold. ' +
-          'Contact an administrator.');
+        this.notice.push(
+          this.notice.ERROR,
+          'Well this is embarrassing. Something went ' +
+            "wrong and your project '" +
+            this.status.ProjectCode +
+            "'is now on hold. " +
+            'Contact an administrator.'
+        );
         break;
       case SendReceiveState.Idle:
         if (this.previousSRState === SendReceiveState.Syncing) {
-          this.notice.push(this.notice.SUCCESS, 'The project was successfully synchronized.');
+          this.notice.push(
+            this.notice.SUCCESS,
+            'The project was successfully synchronized.'
+          );
         }
         break;
     }
@@ -197,11 +252,12 @@ export class LexiconSendReceiveService {
       this.showProjectStatusNotice(this.status);
 
       if (this.status.SRState === SendReceiveState.Idle) {
-          this.sessionService.getSession(true).then(this.updateSessionData);
-          if (this.syncProjectStatusSuccessCallback) this.syncProjectStatusSuccessCallback();
+        this.sessionService.getSession(true).then(this.updateSessionData);
+        if (this.syncProjectStatusSuccessCallback)
+          this.syncProjectStatusSuccessCallback();
       }
     });
-  }
+  };
 
   startSyncStatusTimer(): void {
     this.cancelPollUpdateTimer();
@@ -210,7 +266,10 @@ export class LexiconSendReceiveService {
       return;
     }
 
-    this.syncStatusTimer = this.$interval(this.getSyncProjectStatus, this.SYNC_STATUS_INTERVAL);
+    this.syncStatusTimer = this.$interval(
+      this.getSyncProjectStatus,
+      this.SYNC_STATUS_INTERVAL
+    );
   }
 
   cancelSyncStatusTimer(): void {
@@ -254,7 +313,7 @@ export class LexiconSendReceiveService {
       default:
         return '';
     }
-  }
+  };
 
   lastSyncNotice = (): string => {
     if (this.status == null || this.projectSettings == null) {
@@ -269,12 +328,19 @@ export class LexiconSendReceiveService {
       case SendReceiveState.Unsynced:
       case SendReceiveState.Hold:
       case SendReceiveState.Error:
-        if (this.projectSettings != null && this.projectSettings.lastSyncedDate != null) {
+        if (
+          this.projectSettings != null &&
+          this.projectSettings.lastSyncedDate != null
+        ) {
           if (Date.parse(this.projectSettings.lastSyncedDate) <= 0) {
             return 'Never been synced';
           } else {
-            const relativeTime = this.$filter<RelativeTimeFilterFunction>('relativetime');
-            return 'Last sync was ' + relativeTime(this.projectSettings.lastSyncedDate);
+            const relativeTime =
+              this.$filter<RelativeTimeFilterFunction>('relativetime');
+            return (
+              'Last sync was ' +
+              relativeTime(this.projectSettings.lastSyncedDate)
+            );
           }
         } else {
           return '';
@@ -287,46 +353,61 @@ export class LexiconSendReceiveService {
       default:
         return '';
     }
-  }
+  };
 
   setPollUpdateSuccessCallback(callback: SRTimerCallback): void {
     this.pollUpdateSuccessCallback = callback;
   }
 
   getPollUpdate = (): angular.IPromise<void> => {
-    return this.$q.all({
-      editorData: this.editorData.refreshEditorData(),
-      isSR: this.isSendReceiveProject()
-    }).then((data: any) => {
-      if (data.isSR) {
-        const editorData = data.editorData;
-        if (editorData == null || editorData.data == null || editorData.data.sendReceive == null || editorData.data.sendReceive.status == null) {
-          this.clearState();
-          return;
-        }
+    return this.$q
+      .all({
+        editorData: this.editorData.refreshEditorData(),
+        isSR: this.isSendReceiveProject(),
+      })
+      .then((data: any) => {
+        if (data.isSR) {
+          const editorData = data.editorData;
+          if (
+            editorData == null ||
+            editorData.data == null ||
+            editorData.data.sendReceive == null ||
+            editorData.data.sendReceive.status == null
+          ) {
+            this.clearState();
+            return;
+          }
 
-        this.previousSRState = this.status.SRState;
-        this.status = editorData.data.sendReceive.status;
-        if (this.isInProgress()) {
-          if (this.pollUpdateSuccessCallback) this.pollUpdateSuccessCallback();
-          this.setSyncStarted();
-        } else if (this.previousSRState === SendReceiveState.Unsynced && this.status.SRState === SendReceiveState.Idle) {
-          this.status.SRState = this.previousSRState;
+          this.previousSRState = this.status.SRState;
+          this.status = editorData.data.sendReceive.status;
+          if (this.isInProgress()) {
+            if (this.pollUpdateSuccessCallback)
+              this.pollUpdateSuccessCallback();
+            this.setSyncStarted();
+          } else if (
+            this.previousSRState === SendReceiveState.Unsynced &&
+            this.status.SRState === SendReceiveState.Idle
+          ) {
+            this.status.SRState = this.previousSRState;
+          } else {
+            if (this.pollUpdateSuccessCallback)
+              this.pollUpdateSuccessCallback();
+          }
         } else {
           if (this.pollUpdateSuccessCallback) this.pollUpdateSuccessCallback();
         }
-      } else {
-        if (this.pollUpdateSuccessCallback) this.pollUpdateSuccessCallback();
-      }
-    });
-  }
+      });
+  };
 
   startPollUpdateTimer(newUpdateInterval?: number): void {
     this.cancelSyncStatusTimer();
     this.cancelCloneStatusTimer();
     this.setPollUpdateInterval(newUpdateInterval || this.pollUpdateInterval);
     if (this.pollUpdateTimer == null) {
-      this.pollUpdateTimer = this.$interval(this.getPollUpdate, this.pollUpdateInterval);
+      this.pollUpdateTimer = this.$interval(
+        this.getPollUpdate,
+        this.pollUpdateInterval
+      );
     }
   }
 
@@ -338,7 +419,8 @@ export class LexiconSendReceiveService {
   }
 
   setPollUpdateInterval(newUpdateInterval: number): void {
-    let interval = newUpdateInterval > 0 ? newUpdateInterval : this.POLL_UPDATE_INTERVAL;
+    let interval =
+      newUpdateInterval > 0 ? newUpdateInterval : this.POLL_UPDATE_INTERVAL;
     if (interval < 5000) interval = 5000;
 
     if (this.pollUpdateTimer) {
@@ -379,8 +461,12 @@ export class LexiconSendReceiveService {
 
         if (this.status.SRState === SendReceiveState.Idle) {
           this.cancelCloneStatusTimer();
-          if (this.cloneProjectStatusSuccessCallback) this.cloneProjectStatusSuccessCallback();
-        } else if (this.status.SRState === SendReceiveState.Hold || this.status.SRState === SendReceiveState.Error) {
+          if (this.cloneProjectStatusSuccessCallback)
+            this.cloneProjectStatusSuccessCallback();
+        } else if (
+          this.status.SRState === SendReceiveState.Hold ||
+          this.status.SRState === SendReceiveState.Error
+        ) {
           this.cancelCloneStatusTimer();
           if (this.cloneProjectStatusFailedCallback) {
             this.cloneProjectStatusFailedCallback(this.status);
@@ -388,7 +474,7 @@ export class LexiconSendReceiveService {
         }
       }
     });
-  }
+  };
 
   startCloneStatusTimer(): void {
     this.cancelPollUpdateTimer();
@@ -398,7 +484,10 @@ export class LexiconSendReceiveService {
     this.status.SRState = SendReceiveState.CloneRequested;
     if (this.cloneStatusTimer != null) return;
 
-    this.cloneStatusTimer = this.$interval(this.getCloneProjectStatus, this.CLONE_STATUS_INTERVAL);
+    this.cloneStatusTimer = this.$interval(
+      this.getCloneProjectStatus,
+      this.CLONE_STATUS_INTERVAL
+    );
   }
 
   cancelCloneStatusTimer = (): void => {
@@ -406,12 +495,12 @@ export class LexiconSendReceiveService {
       this.$interval.cancel(this.cloneStatusTimer);
       this.cloneStatusTimer = undefined;
     }
-  }
+  };
 
   // For now, we generate the same S/R string based on the SRState
   cloneNotice = (): string => {
     return this.syncStateNotice();
-  }
+  };
 
   cancelAllStatusTimers(): void {
     this.cancelSyncStatusTimer();
@@ -422,12 +511,13 @@ export class LexiconSendReceiveService {
   private updateSessionData = (session: Session): void => {
     this.projectSettings = session.projectSettings<LexiconProjectSettings>();
 
-    if (this.projectSettings != null && this.projectSettings.sendReceive != null &&
+    if (
+      this.projectSettings != null &&
+      this.projectSettings.sendReceive != null &&
       this.projectSettings.sendReceive.status != null
     ) {
       this.status = this.projectSettings.sendReceive.status;
       this.previousSRState = this.status.SRState;
     }
-  }
-
+  };
 }

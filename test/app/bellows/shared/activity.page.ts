@@ -1,5 +1,5 @@
-import {browser, by, element} from 'protractor';
-import {ElementFinder} from 'protractor/built/element';
+import { browser, by, element } from 'protractor';
+import { ElementFinder } from 'protractor/built/element';
 
 // This object handles the activity page and provides methods to access items in the activity list
 export class SfActivityPage {
@@ -43,7 +43,7 @@ export class SfActivityPage {
   // Prints the entire activity list
   //noinspection JSUnusedGlobalSymbols
   printActivitiesNames() {
-    return (this.activitiesList).each((names: ElementFinder) => {
+    return this.activitiesList.each((names: ElementFinder) => {
       names.getText().then(console.log);
     });
   }
@@ -52,7 +52,9 @@ export class SfActivityPage {
     return {
       activity: div,
       user: div.element(by.className('activity-username')).getText(),
-      activities: div.all(by.className('activity-content')).map((elem: ElementFinder) => elem.getText())
+      activities: div
+        .all(by.className('activity-content'))
+        .map((elem: ElementFinder) => elem.getText()),
     };
   }
 }

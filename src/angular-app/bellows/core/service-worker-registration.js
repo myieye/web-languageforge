@@ -1,3 +1,3 @@
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/dist/service-worker.js', { scope: '/' })
+  navigator.serviceWorker.register('/dist/service-worker.js', { scope: '/' });
 }

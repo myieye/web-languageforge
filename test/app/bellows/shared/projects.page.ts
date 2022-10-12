@@ -1,6 +1,12 @@
-import {browser, by, element, ExpectedConditions, protractor} from 'protractor';
-import {UserManagementPage} from './user-management.page';
-import {Utils} from './utils';
+import {
+  browser,
+  by,
+  element,
+  ExpectedConditions,
+  protractor,
+} from 'protractor';
+import { UserManagementPage } from './user-management.page';
+import { Utils } from './utils';
 
 export class ProjectsPage {
   private readonly utils = new Utils();
@@ -17,27 +23,34 @@ export class ProjectsPage {
   // Project will be on page 1, and you can find it.
   itemsPerPageCtrl = element(by.model('itemsPerPage'));
   projectsList = element.all(by.repeater('project in visibleProjects'));
-  projectNames = element.all(by.repeater('project in visibleProjects').column('project.projectName'));
-  projectTypes = element.all(by.repeater('project in visibleProjects')
-      .column('$ctrl.projectTypeNames[project.appName]'));
+  projectNames = element.all(
+    by.repeater('project in visibleProjects').column('project.projectName')
+  );
+  projectTypes = element.all(
+    by
+      .repeater('project in visibleProjects')
+      .column('$ctrl.projectTypeNames[project.appName]')
+  );
 
   findProject(projectName: string) {
     let foundRow: any;
     const result = protractor.promise.defer();
     const searchName = new RegExp(projectName);
-    this.projectsList.map((row: any) => {
-      row.getText().then((text: string) => {
-        if (searchName.test(text)) {
-          foundRow = row;
+    this.projectsList
+      .map((row: any) => {
+        row.getText().then((text: string) => {
+          if (searchName.test(text)) {
+            foundRow = row;
+          }
+        });
+      })
+      .then(() => {
+        if (foundRow) {
+          result.fulfill(foundRow);
+        } else {
+          result.reject('Project ' + projectName + ' not found.');
         }
       });
-    }).then(() => {
-      if (foundRow) {
-        result.fulfill(foundRow);
-      } else {
-        result.reject('Project ' + projectName + ' not found.');
-      }
-    });
 
     return result.promise;
   }
@@ -52,8 +65,9 @@ export class ProjectsPage {
   }
 
   settingsBtn = element(by.id('settingsBtn'));
-  userManagementLink = (browser.baseUrl.includes('languageforge')) ?
-    element(by.id('userManagementLink')) : element(by.id('dropdown-project-settings'));
+  userManagementLink = browser.baseUrl.includes('languageforge')
+    ? element(by.id('userManagementLink'))
+    : element(by.id('dropdown-project-settings'));
 
   addUserToProject(projectName: any, usersName: string, roleText: string) {
     return this.findProject(projectName).then(async (projectRow: any) => {
@@ -66,33 +80,45 @@ export class ProjectsPage {
         UserManagementPage.get(projectId);
       });
 
-      await browser.wait(ExpectedConditions.visibilityOf(this.userManagementPage.addMembersBtn), Utils.conditionTimeout);
+      await browser.wait(
+        ExpectedConditions.visibilityOf(this.userManagementPage.addMembersBtn),
+        Utils.conditionTimeout
+      );
       await this.userManagementPage.addMembersBtn.click();
-      await browser.wait(ExpectedConditions.visibilityOf(this.userManagementPage.userNameInput), Utils.conditionTimeout);
+      await browser.wait(
+        ExpectedConditions.visibilityOf(this.userManagementPage.userNameInput),
+        Utils.conditionTimeout
+      );
       await this.userManagementPage.userNameInput.sendKeys(usersName);
 
-      await this.utils.findRowByText(this.userManagementPage.typeaheadItems, usersName).then((item: any) => {
-        item.click();
-      });
+      await this.utils
+        .findRowByText(this.userManagementPage.typeaheadItems, usersName)
+        .then((item: any) => {
+          item.click();
+        });
 
       // This should be unique no matter what
-      await this.userManagementPage.newMembersDiv.element(by.id('addUserButton')).click();
+      await this.userManagementPage.newMembersDiv
+        .element(by.id('addUserButton'))
+        .click();
 
       // Now set the user to member or manager, as needed
       let foundUserRow: any;
-      await this.userManagementPage.projectMemberRows.map((row: any) => {
-        const nameColumn = row.element(by.binding('user.username'));
-        nameColumn.getText().then((text: string) => {
-          if (text === usersName) {
-            foundUserRow = row;
+      await this.userManagementPage.projectMemberRows
+        .map((row: any) => {
+          const nameColumn = row.element(by.binding('user.username'));
+          nameColumn.getText().then((text: string) => {
+            if (text === usersName) {
+              foundUserRow = row;
+            }
+          });
+        })
+        .then(() => {
+          if (foundUserRow) {
+            const select = foundUserRow.element(by.css('select'));
+            Utils.clickDropdownByValue(select, roleText);
           }
         });
-      }).then(() => {
-        if (foundUserRow) {
-          const select = foundUserRow.element(by.css('select'));
-          Utils.clickDropdownByValue(select, roleText);
-        }
-      });
 
       return this.get(); // After all is finished, reload projects page
     });
@@ -117,16 +143,23 @@ export class ProjectsPage {
         const projectId = results[1];
         return UserManagementPage.get(projectId);
       });
-      await browser.wait(ExpectedConditions.visibilityOf(this.userManagementPage.addMembersBtn), Utils.conditionTimeout);
+      await browser.wait(
+        ExpectedConditions.visibilityOf(this.userManagementPage.addMembersBtn),
+        Utils.conditionTimeout
+      );
 
       let userFilter: any;
       let projectMemberRows: any;
       userFilter = element(by.model('$ctrl.userFilter'));
       await userFilter.sendKeys(userName);
-      projectMemberRows = element.all(by.repeater('user in $ctrl.list.visibleUsers'));
+      projectMemberRows = element.all(
+        by.repeater('user in $ctrl.list.visibleUsers')
+      );
 
       const foundUserRow = await projectMemberRows.first();
-      const rowCheckbox = foundUserRow.element(by.css('input[type="checkbox"]'));
+      const rowCheckbox = foundUserRow.element(
+        by.css('input[type="checkbox"]')
+      );
       await this.utils.setCheckbox(rowCheckbox, true);
       const removeMembersBtn = element(by.id('remove-members-button'));
       await removeMembersBtn.click();

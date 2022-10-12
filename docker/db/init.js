@@ -7,5 +7,5 @@ db.users.insert({
   active: true,
   email: 'admin@example.com',
   name: 'Admin',
-  role: 'system_admin'
+  role: 'system_admin',
 });

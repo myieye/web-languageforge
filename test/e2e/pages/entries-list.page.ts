@@ -16,7 +16,7 @@ export class EntriesListPage {
 
   constructor(page: Page, projectId: string) {
     this.page = page;
-    this.projectId = projectId
+    this.projectId = projectId;
 
     this.totalNumberOfEntries = this.page.locator('#totalNumberOfEntries');
 
@@ -34,8 +34,10 @@ export class EntriesListPage {
   }
 
   async expectTotalNumberOfEntries(nEntries: number) {
-      // format: "3 / 3"
-      await expect(this.totalNumberOfEntries).toHaveText(`${nEntries.toString()} / ${nEntries.toString()}`);
+    // format: "3 / 3"
+    await expect(this.totalNumberOfEntries).toHaveText(
+      `${nEntries.toString()} / ${nEntries.toString()}`
+    );
   }
 
   async findEntry(lexeme: string): Promise<string> {

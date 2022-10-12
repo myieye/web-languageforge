@@ -1,4 +1,4 @@
-import {Locator} from 'protractor';
+import { Locator } from 'protractor';
 declare namespace protractor {
   interface By {
     elemMatches(selector: string, regexString: string): Locator;

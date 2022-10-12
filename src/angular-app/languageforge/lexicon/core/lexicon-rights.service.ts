@@ -1,11 +1,13 @@
 import * as angular from 'angular';
 
 import {
-  Domains, Operations,
-  RightsFunction, Session,
-  SessionService
+  Domains,
+  Operations,
+  RightsFunction,
+  Session,
+  SessionService,
 } from '../../../bellows/core/session.service';
-import {LexiconSendReceiveService} from './lexicon-send-receive.service';
+import { LexiconSendReceiveService } from './lexicon-send-receive.service';
 
 export type ConditionFunction = (userId?: string) => boolean;
 
@@ -23,20 +25,86 @@ export class Rights {
   readonly canEditComment: ConditionFunction;
   readonly canUpdateCommentStatus: ConditionFunction;
 
-  constructor(private domain: Domains, private operation: Operations,
-              private sendReceive: LexiconSendReceiveService, public session?: Session) {
-    this.canRemoveUsers = this.isPermitted(true, false, domain.USERS, operation.DELETE);
-    this.canCreateUsers = this.isPermitted(true, false, domain.USERS, operation.CREATE);
-    this.canEditUsers = this.isPermitted(false, false, domain.USERS, operation.EDIT);
-    this.canArchiveProject = this.isPermitted(true, true, domain.PROJECTS, operation.ARCHIVE);
-    this.canDeleteProject = this.isPermitted(true, true, domain.PROJECTS, operation.DELETE);
-    this.canEditProject = this.isPermitted(false, false, domain.PROJECTS, operation.EDIT);
-    this.canEditEntry = this.isPermitted(false, false, domain.ENTRIES, operation.EDIT);
-    this.canDeleteEntry = this.isPermitted(false, false, domain.ENTRIES, operation.DELETE);
-    this.canComment = this.isPermitted(false, false, domain.COMMENTS, operation.CREATE);
-    this.canDeleteComment = this.isPermitted(false, false, domain.COMMENTS, operation.DELETE_OWN, operation.DELETE);
-    this.canEditComment = this.isPermitted(false, false, domain.COMMENTS, operation.EDIT_OWN, false);
-    this.canUpdateCommentStatus = this.isPermitted(false, false, domain.COMMENTS, operation.EDIT);
+  constructor(
+    private domain: Domains,
+    private operation: Operations,
+    private sendReceive: LexiconSendReceiveService,
+    public session?: Session
+  ) {
+    this.canRemoveUsers = this.isPermitted(
+      true,
+      false,
+      domain.USERS,
+      operation.DELETE
+    );
+    this.canCreateUsers = this.isPermitted(
+      true,
+      false,
+      domain.USERS,
+      operation.CREATE
+    );
+    this.canEditUsers = this.isPermitted(
+      false,
+      false,
+      domain.USERS,
+      operation.EDIT
+    );
+    this.canArchiveProject = this.isPermitted(
+      true,
+      true,
+      domain.PROJECTS,
+      operation.ARCHIVE
+    );
+    this.canDeleteProject = this.isPermitted(
+      true,
+      true,
+      domain.PROJECTS,
+      operation.DELETE
+    );
+    this.canEditProject = this.isPermitted(
+      false,
+      false,
+      domain.PROJECTS,
+      operation.EDIT
+    );
+    this.canEditEntry = this.isPermitted(
+      false,
+      false,
+      domain.ENTRIES,
+      operation.EDIT
+    );
+    this.canDeleteEntry = this.isPermitted(
+      false,
+      false,
+      domain.ENTRIES,
+      operation.DELETE
+    );
+    this.canComment = this.isPermitted(
+      false,
+      false,
+      domain.COMMENTS,
+      operation.CREATE
+    );
+    this.canDeleteComment = this.isPermitted(
+      false,
+      false,
+      domain.COMMENTS,
+      operation.DELETE_OWN,
+      operation.DELETE
+    );
+    this.canEditComment = this.isPermitted(
+      false,
+      false,
+      domain.COMMENTS,
+      operation.EDIT_OWN,
+      false
+    );
+    this.canUpdateCommentStatus = this.isPermitted(
+      false,
+      false,
+      domain.COMMENTS,
+      operation.EDIT
+    );
   }
 
   /**
@@ -55,15 +123,25 @@ export class Rights {
    * @return {Function<boolean>} - A function that will indicate whether the user is
    * allowed to perform the given operation.
    */
-  private isPermitted(allowArchived: boolean, projectOwnerAllowed: boolean, domain: RightsFunction,
-                      operation: RightsFunction, otherUserOperation?: RightsFunction | boolean): ConditionFunction {
+  private isPermitted(
+    allowArchived: boolean,
+    projectOwnerAllowed: boolean,
+    domain: RightsFunction,
+    operation: RightsFunction,
+    otherUserOperation?: RightsFunction | boolean
+  ): ConditionFunction {
     return (userId?: string) => {
       if (this.sendReceive.isInProgress()) return false;
       else if (!this.session.project()) return false;
-      else if (!allowArchived && this.session.project().isArchived) return false;
+      else if (!allowArchived && this.session.project().isArchived)
+        return false;
       else {
         let hasRight = this.session.hasProjectRight(domain, operation);
-        if (otherUserOperation != null && userId != null && this.session.userId() !== userId) {
+        if (
+          otherUserOperation != null &&
+          userId != null &&
+          this.session.userId() !== userId
+        ) {
           if (typeof otherUserOperation === 'boolean') {
             hasRight = otherUserOperation;
           } else {
@@ -80,7 +158,6 @@ export class Rights {
       }
     };
   }
-
 }
 
 export class LexiconRightsService {
@@ -88,15 +165,21 @@ export class LexiconRightsService {
   private rights: Rights;
 
   static $inject: string[] = ['sessionService', 'lexSendReceive'];
-  constructor(private sessionService: SessionService, private sendReceive: LexiconSendReceiveService) {
-    this.rights = new Rights(sessionService.domain, sessionService.operation, sendReceive);
+  constructor(
+    private sessionService: SessionService,
+    private sendReceive: LexiconSendReceiveService
+  ) {
+    this.rights = new Rights(
+      sessionService.domain,
+      sessionService.operation,
+      sendReceive
+    );
   }
 
   getRights(forceRefresh?: boolean): angular.IPromise<Rights> {
-    return this.sessionService.getSession(forceRefresh).then(session => {
+    return this.sessionService.getSession(forceRefresh).then((session) => {
       this.rights.session = session;
       return this.rights;
     });
   }
-
 }

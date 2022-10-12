@@ -10,14 +10,16 @@ export interface LinkService {
 }
 
 export function LinkService() {
-
   /** shared section */
 
   this.href = function href(url: string, text: string): string {
     return '<a href="' + url + '">' + text + '</a>';
   };
 
-  this.project = function project(projectId?: string, projectType: string = 'lexicon'): string {
+  this.project = function project(
+    projectId?: string,
+    projectType: string = 'lexicon'
+  ): string {
     if (angular.isDefined(projectId)) {
       return '/app/' + projectType + '/' + projectId + '#!/';
     } else {
@@ -43,5 +45,4 @@ export function LinkService() {
       return '#!/editor/entry/' + entryId;
     }
   };
-
 }

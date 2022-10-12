@@ -1,8 +1,14 @@
 import * as angular from 'angular';
 import { ProjectService } from '../../../../bellows/core/api/project.service';
 import { UserService } from '../../../../bellows/core/api/user.service';
-import { Session, SessionService } from '../../../../bellows/core/session.service';
-import { Project, ProjectRole } from '../../../../bellows/shared/model/project.model';
+import {
+  Session,
+  SessionService,
+} from '../../../../bellows/core/session.service';
+import {
+  Project,
+  ProjectRole,
+} from '../../../../bellows/shared/model/project.model';
 import { LexRoles } from '../model/lexicon-project.model';
 import { RoleDetail } from './role-dropdown.component';
 
@@ -21,15 +27,16 @@ export class InviteMemberFormController implements angular.IController {
   onUrlCopied: () => void;
 
   static $inject = ['projectService', 'sessionService', 'userService'];
-  constructor(private readonly projectService: ProjectService,
-              private readonly sessionService: SessionService,
-              private readonly userService: UserService) {
-
+  constructor(
+    private readonly projectService: ProjectService,
+    private readonly sessionService: SessionService,
+    private readonly userService: UserService
+  ) {
     this.emailInviteRoles = [
       LexRoles.MANAGER,
       LexRoles.CONTRIBUTOR,
       LexRoles.OBSERVER_WITH_COMMENT,
-      LexRoles.OBSERVER
+      LexRoles.OBSERVER,
     ];
 
     this.reusableInviteLinkRoles = [
@@ -37,7 +44,7 @@ export class InviteMemberFormController implements angular.IController {
       LexRoles.CONTRIBUTOR,
       LexRoles.OBSERVER_WITH_COMMENT,
       LexRoles.OBSERVER,
-      LexRoles.NONE
+      LexRoles.NONE,
     ];
 
     this.sessionService.getSession().then((session: Session) => {
@@ -50,7 +57,9 @@ export class InviteMemberFormController implements angular.IController {
       if (this.currentUserIsManager) {
         this.emailInviteRole = LexRoles.CONTRIBUTOR;
       } else {
-        this.emailInviteRole = this.emailInviteRoles.find(role => role.key === this.session.data.userProjectRole);
+        this.emailInviteRole = this.emailInviteRoles.find(
+          (role) => role.key === this.session.data.userProjectRole
+        );
       }
 
       if (this.project.inviteToken.token) {
@@ -66,15 +75,19 @@ export class InviteMemberFormController implements angular.IController {
   }
 
   sendEmailInvite() {
-    this.userService.sendInvite(this.inviteEmail, this.emailInviteRole.key).then(() => {
-      this.inviteEmail = '';
-      this.onEmailSent();
-    });
+    this.userService
+      .sendInvite(this.inviteEmail, this.emailInviteRole.key)
+      .then(() => {
+        this.inviteEmail = '';
+        this.onEmailSent();
+      });
   }
 
-  onRoleChanged($event: {roleDetail: RoleDetail, target: any}) {
-    if ($event.target === 'email_invite') this.emailInviteRole = $event.roleDetail.role;
-    if ($event.target === 'reusable_invite_link') this.handleInviteLinkChange($event.roleDetail.role);
+  onRoleChanged($event: { roleDetail: RoleDetail; target: any }) {
+    if ($event.target === 'email_invite')
+      this.emailInviteRole = $event.roleDetail.role;
+    if ($event.target === 'reusable_invite_link')
+      this.handleInviteLinkChange($event.roleDetail.role);
   }
 
   handleInviteLinkChange(newRole: ProjectRole) {
@@ -86,10 +99,12 @@ export class InviteMemberFormController implements angular.IController {
     } else {
       // if the invite link was just disabled, create a new one. Otherwise, update it.
       if (!this.inviteLink) {
-        this.projectService.createInviteLink(newRole.key).then((result: any) => {
-          this.project.inviteToken.defaultRole = newRole.key;
-          this.inviteLink = result.data;
-        });
+        this.projectService
+          .createInviteLink(newRole.key)
+          .then((result: any) => {
+            this.project.inviteToken.defaultRole = newRole.key;
+            this.inviteLink = result.data;
+          });
       } else {
         this.projectService.updateInviteTokenRole(newRole.key).then(() => {
           this.project.inviteToken.defaultRole = newRole.key;
@@ -99,9 +114,11 @@ export class InviteMemberFormController implements angular.IController {
   }
 
   getInviteRole() {
-    return this.reusableInviteLinkRoles.find(role => role.key === this.project.inviteToken.defaultRole);
+    return this.reusableInviteLinkRoles.find(
+      (role) => role.key === this.project.inviteToken.defaultRole
+    );
   }
-  
+
   async copy() {
     await navigator.clipboard.writeText(this.inviteLink);
 
@@ -115,5 +132,6 @@ export const InviteMemberFormComponent: angular.IComponentOptions = {
     onUrlCopied: '&',
   },
   controller: InviteMemberFormController,
-  templateUrl: '/angular-app/languageforge/lexicon/shared/share-with-others/invite-member-form.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/shared/share-with-others/invite-member-form.component.html',
 };

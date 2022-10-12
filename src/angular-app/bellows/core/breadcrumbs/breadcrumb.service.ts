@@ -44,5 +44,4 @@ export class BreadcrumbService {
       this.crumbStore[id] = [];
     }
   }
-
 }

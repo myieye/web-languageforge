@@ -10,7 +10,9 @@ export class PickListEditorController implements angular.IController {
   items: Item[];
   defaultKey: string;
 
-  get showDefault(): boolean { return this.defaultKey != null; }
+  get showDefault(): boolean {
+    return this.defaultKey != null;
+  }
   newValue: string;
 
   private isDeletable: { [key: string]: boolean } = {};
@@ -54,16 +56,15 @@ export class PickListEditorController implements angular.IController {
   static keyFromValue(value: string): string {
     return value.replace(/ /gi, '_');
   }
-
 }
 
 export const PickListEditorComponent: angular.IComponentOptions = {
   bindings: {
     items: '=',
-    defaultKey: '=?'
+    defaultKey: '=?',
   },
   controller: PickListEditorController,
-  templateUrl: '/angular-app/bellows/shared/pick-list-editor.component.html'
+  templateUrl: '/angular-app/bellows/shared/pick-list-editor.component.html',
 };
 
 export function OnEnter(): angular.IDirective {
@@ -79,7 +80,7 @@ export function OnEnter(): angular.IDirective {
           evt.preventDefault();
         }
       });
-    }
+    },
   };
 }
 
@@ -93,7 +94,7 @@ export function NoDirtyCheck(): angular.IDirective {
       elm.focus(() => {
         ctrl.$pristine = false;
       });
-    }
+    },
   };
 }
 
@@ -101,5 +102,4 @@ export const PickListEditorModule = angular
   .module('palaso.ui.picklistEditor', ['ngDragToReorder'])
   .component('picklistEditor', PickListEditorComponent)
   .directive('onEnter', OnEnter)
-  .directive('noDirtyCheck', NoDirtyCheck)
-  .name;
+  .directive('noDirtyCheck', NoDirtyCheck).name;

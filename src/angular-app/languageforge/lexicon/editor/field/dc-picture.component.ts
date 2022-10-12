@@ -1,16 +1,22 @@
 import * as angular from 'angular';
 
-import {BytesFilterFunction} from '../../../../bellows/core/filters';
-import {ModalService} from '../../../../bellows/core/modal/modal.service';
-import {NoticeService} from '../../../../bellows/core/notice/notice.service';
-import {SessionService} from '../../../../bellows/core/session.service';
-import {UploadFile, UploadResponse} from '../../../../bellows/shared/model/upload.model';
-import {LexiconConfigService} from '../../core/lexicon-config.service';
-import {LexiconProjectService} from '../../core/lexicon-project.service';
-import {LexiconUtilityService} from '../../core/lexicon-utility.service';
-import {LexPicture} from '../../shared/model/lex-picture.model';
-import {LexConfigInputSystems, LexConfigPictures} from '../../shared/model/lexicon-config.model';
-import {FieldControl} from './field-control.model';
+import { BytesFilterFunction } from '../../../../bellows/core/filters';
+import { ModalService } from '../../../../bellows/core/modal/modal.service';
+import { NoticeService } from '../../../../bellows/core/notice/notice.service';
+import { SessionService } from '../../../../bellows/core/session.service';
+import {
+  UploadFile,
+  UploadResponse,
+} from '../../../../bellows/shared/model/upload.model';
+import { LexiconConfigService } from '../../core/lexicon-config.service';
+import { LexiconProjectService } from '../../core/lexicon-project.service';
+import { LexiconUtilityService } from '../../core/lexicon-utility.service';
+import { LexPicture } from '../../shared/model/lex-picture.model';
+import {
+  LexConfigInputSystems,
+  LexConfigPictures,
+} from '../../shared/model/lexicon-config.model';
+import { FieldControl } from './field-control.model';
 
 class FileUpload {
   file: File = null;
@@ -31,15 +37,24 @@ export class FieldPictureController implements angular.IController {
 
   fieldContainsData = LexiconConfigService.fieldContainsData;
 
-  static $inject = ['$filter', '$state',
-    'Upload', 'modalService',
-    'silNoticeService', 'sessionService',
-    'lexProjectService'
+  static $inject = [
+    '$filter',
+    '$state',
+    'Upload',
+    'modalService',
+    'silNoticeService',
+    'sessionService',
+    'lexProjectService',
   ];
-  constructor(private $filter: angular.IFilterService, private $state: angular.ui.IStateService,
-              private Upload: any, private modalService: ModalService,
-              private notice: NoticeService, private sessionService: SessionService,
-              private lexProjectService: LexiconProjectService) { }
+  constructor(
+    private $filter: angular.IFilterService,
+    private $state: angular.ui.IStateService,
+    private Upload: any,
+    private modalService: ModalService,
+    private notice: NoticeService,
+    private sessionService: SessionService,
+    private lexProjectService: LexiconProjectService
+  ) {}
 
   $onInit(): void {
     this.inputSystems = this.control.config.inputSystems;
@@ -54,35 +69,62 @@ export class FieldPictureController implements angular.IController {
     if (FieldPictureController.isExternalReference(picture.fileName)) {
       return '/Site/views/shared/image/placeholder.png';
     }
-    return '/assets/lexicon/' + this.control.project.slug + '/pictures/' + picture.fileName;
+    return (
+      '/assets/lexicon/' +
+      this.control.project.slug +
+      '/pictures/' +
+      picture.fileName
+    );
   }
 
   // noinspection JSMethodCanBeStatic
   getPictureDescription(picture: LexPicture): string {
-    if (!FieldPictureController.isExternalReference(picture.fileName)) return picture.fileName;
+    if (!FieldPictureController.isExternalReference(picture.fileName))
+      return picture.fileName;
 
-    return 'This picture references an external file (' +
+    return (
+      'This picture references an external file (' +
       picture.fileName +
       ') and therefore cannot be synchronized. ' +
       'To see the picture, link it to an internally referenced file. ' +
-      'Replace the file here or in FieldWorks, move or copy the file to the Linked Files folder.';
+      'Replace the file here or in FieldWorks, move or copy the file to the Linked Files folder.'
+    );
   }
 
   deletePicture(index: number): void {
     const fileName: string = this.pictures[index].fileName;
     if (fileName) {
-      const deleteMsg: string = 'Are you sure you want to delete the picture <b>\'' +
-        FieldPictureController.originalFileName(fileName) + '\'</b>';
-      this.modalService.showModalSimple('Delete Picture', deleteMsg, 'Cancel', 'Delete Picture').then(() => {
-        this.pictures.splice(index, 1);
-        this.lexProjectService.removeMediaFile('sense-image', fileName, result => {
-          if (result.ok) {
-            if (!result.data.result) {
-              this.notice.push(this.notice.ERROR, result.data.errorMessage);
-            }
-          }
-        });
-      }, () => { });
+      const deleteMsg: string =
+        "Are you sure you want to delete the picture <b>'" +
+        FieldPictureController.originalFileName(fileName) +
+        "'</b>";
+      this.modalService
+        .showModalSimple(
+          'Delete Picture',
+          deleteMsg,
+          'Cancel',
+          'Delete Picture'
+        )
+        .then(
+          () => {
+            this.pictures.splice(index, 1);
+            this.lexProjectService.removeMediaFile(
+              'sense-image',
+              fileName,
+              (result) => {
+                if (result.ok) {
+                  if (!result.data.result) {
+                    this.notice.push(
+                      this.notice.ERROR,
+                      result.data.errorMessage
+                    );
+                  }
+                }
+              }
+            );
+          },
+          () => {}
+        );
     } else {
       this.pictures.splice(index, 1);
     }
@@ -93,13 +135,20 @@ export class FieldPictureController implements angular.IController {
       return;
     }
 
-    this.sessionService.getSession().then(session => {
+    this.sessionService.getSession().then((session) => {
       if (file.size > session.fileSizeMax()) {
         this.upload.progress = 0;
         this.upload.file = null;
-        this.notice.push(this.notice.ERROR, '<b>' + file.name + '</b> (' +
-          this.$filter<BytesFilterFunction>('bytes')(file.size) + ') is too large. It must be smaller than ' +
-          this.$filter<BytesFilterFunction>('bytes')(session.fileSizeMax()) + '.');
+        this.notice.push(
+          this.notice.ERROR,
+          '<b>' +
+            file.name +
+            '</b> (' +
+            this.$filter<BytesFilterFunction>('bytes')(file.size) +
+            ') is too large. It must be smaller than ' +
+            this.$filter<BytesFilterFunction>('bytes')(session.fileSizeMax()) +
+            '.'
+        );
         return;
       }
 
@@ -107,19 +156,29 @@ export class FieldPictureController implements angular.IController {
       this.upload.progress = 0;
       this.Upload.upload({
         url: '/upload/lf-lexicon/sense-image',
-        data: {file}
-      }).then((response: UploadResponse) => {
+        data: { file },
+      }).then(
+        (response: UploadResponse) => {
           const isUploadSuccess = response.data.result;
           if (isUploadSuccess) {
             this.upload.progress = 100.0;
             this.addPicture(response.data.data.fileName);
-            if(response.data.data.fileSize > 1000000){ //1 MB file size limit 2022-10
-              this.notice.push(this.notice.WARN, 'WARNING: Because the image file - ' + response.data.data.fileName + ' - is larger than 1 MB, it will not be synced with FLEx.');
+            if (response.data.data.fileSize > 1000000) {
+              //1 MB file size limit 2022-10
+              this.notice.push(
+                this.notice.WARN,
+                'WARNING: Because the image file - ' +
+                  response.data.data.fileName +
+                  ' - is larger than 1 MB, it will not be synced with FLEx.'
+              );
             }
             this.upload.showAddPicture = false;
           } else {
             this.upload.progress = 0;
-            this.notice.push(this.notice.ERROR, response.data.data.errorMessage);
+            this.notice.push(
+              this.notice.ERROR,
+              response.data.data.errorMessage
+            );
           }
 
           this.upload.file = null;
@@ -143,8 +202,9 @@ export class FieldPictureController implements angular.IController {
         },
 
         (evt: ProgressEvent) => {
-          this.upload.progress = Math.floor(100.0 * evt.loaded / evt.total);
-        });
+          this.upload.progress = Math.floor((100.0 * evt.loaded) / evt.total);
+        }
+      );
     });
   }
 
@@ -153,13 +213,16 @@ export class FieldPictureController implements angular.IController {
     const captionConfig = angular.copy(this.config);
     captionConfig.type = 'multitext';
     newPicture.fileName = fileName;
-    newPicture.caption = this.control.makeValidModelRecursive(captionConfig, {});
+    newPicture.caption = this.control.makeValidModelRecursive(
+      captionConfig,
+      {}
+    );
     this.pictures.push(newPicture);
   }
 
   private static isExternalReference(fileName: string): boolean {
-    const isWindowsLink = (fileName.indexOf(':\\') >= 0);
-    const isLinuxLink = (fileName.indexOf('//') >= 0);
+    const isWindowsLink = fileName.indexOf(':\\') >= 0;
+    const isLinuxLink = fileName.indexOf('//') >= 0;
     return isWindowsLink || isLinuxLink;
   }
 
@@ -167,7 +230,6 @@ export class FieldPictureController implements angular.IController {
   private static originalFileName(fileName: string): string {
     return fileName.substr(fileName.indexOf('_') + 1);
   }
-
 }
 
 export const FieldPictureComponent: angular.IComponentOptions = {
@@ -176,8 +238,9 @@ export const FieldPictureComponent: angular.IComponentOptions = {
     config: '<',
     control: '<',
     fieldName: '<',
-    parentContextGuid: '<'
+    parentContextGuid: '<',
   },
   controller: FieldPictureController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-picture.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-picture.component.html',
 };

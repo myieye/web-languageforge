@@ -31,7 +31,7 @@ test.describe('E2E Page Traversal', () => {
     projectsPage = new ProjectsPage(adminTab);
     siteAdminPage = new SiteAdminPage(adminTab);
     userProfilePage = new UserProfilePage(adminTab);
-  })
+  });
 
   test('Explore signup page', async () => {
     await signupPage.goto();
@@ -79,7 +79,9 @@ test.describe('E2E Page Traversal', () => {
     await siteAdminPage.goto();
 
     await siteAdminPage.tabs.archivedProjects.click();
-    await expect(siteAdminPage.archivedProjectsTab.republishButton).toBeDisabled();
+    await expect(
+      siteAdminPage.archivedProjectsTab.republishButton
+    ).toBeDisabled();
     await expect(siteAdminPage.archivedProjectsTab.deleteButton).toBeDisabled();
     await siteAdminPage.archivedProjectsTab.projectsList.count();
   });
@@ -91,5 +93,4 @@ test.describe('E2E Page Traversal', () => {
     await userProfilePage.tabs.aboutMe.click();
     await userProfilePage.tabs.myAccount.click();
   });
-
 });

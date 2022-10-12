@@ -5,11 +5,11 @@ export class UtilityService {
   constructor(private $q: angular.IQService) {}
 
   static uuid(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
       // noinspection TsLint
-      const r = Math.random() * 16 | 0;
+      const r = (Math.random() * 16) | 0;
       // noinspection TsLint
-      const v = (char === 'x') ? r : (r & 0x3 | 0x8);
+      const v = char === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }
@@ -17,7 +17,9 @@ export class UtilityService {
   // FixMe: move to lexicon-utility.service.ts - IJH 2017-11
   static getAvatarUrl(avatarRef: string): string {
     if (avatarRef) {
-      return (avatarRef.startsWith('http')) ? avatarRef : '/Site/views/shared/image/avatar/' + avatarRef;
+      return avatarRef.startsWith('http')
+        ? avatarRef
+        : '/Site/views/shared/image/avatar/' + avatarRef;
     } else {
       return '';
     }

@@ -1,9 +1,9 @@
-import {LexAuthorInfo} from './lex-author-info.model';
-import {LexField} from './lex-field.model';
-import {LexMultiText} from './lex-multi-text.model';
-import {LexMultiValue} from './lex-multi-value.model';
-import {LexSense} from './lex-sense.model';
-import {LexValue} from './lex-value.model';
+import { LexAuthorInfo } from './lex-author-info.model';
+import { LexField } from './lex-field.model';
+import { LexMultiText } from './lex-multi-text.model';
+import { LexMultiValue } from './lex-multi-value.model';
+import { LexSense } from './lex-sense.model';
+import { LexValue } from './lex-value.model';
 
 export class LexEntry {
   isDeleted?: boolean;

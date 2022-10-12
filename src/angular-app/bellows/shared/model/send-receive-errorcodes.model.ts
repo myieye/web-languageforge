@@ -6,9 +6,9 @@ export enum SendReceiveErrorCodes {
   NoFlexProject = 11,
 
   UnhandledException = 20,
-  Unauthorized       = 30,
+  Unauthorized = 30,
 
   UnspecifiedBranchError = 50,
   ProjectTooOld = 51, // Project < 7000068
-  ProjectTooNew = 52
+  ProjectTooNew = 52,
 }

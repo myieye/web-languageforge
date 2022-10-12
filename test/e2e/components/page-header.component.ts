@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page } from '@playwright/test';
 
 type MyProjects = {
   button: Locator;
@@ -16,10 +16,12 @@ export class PageHeader {
     this.page = page;
     this.myProjects = {
       button: page.locator('#myProjectDropdownButton'),
-      links: page.locator('#myProjectDropdownMenu >> .dropdown-item')
+      links: page.locator('#myProjectDropdownMenu >> .dropdown-item'),
     };
     this.loginButton = page.locator('text=Login').nth(0);
     this.languageDropdownButton = page.locator('#languageDropdownButton');
-    this.languageDropdownItem = page.locator('#languageDropdownMenu >> .dropdown-item');
+    this.languageDropdownItem = page.locator(
+      '#languageDropdownMenu >> .dropdown-item'
+    );
   }
 }

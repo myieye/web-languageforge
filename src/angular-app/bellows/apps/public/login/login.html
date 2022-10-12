@@ -1,10 +1,10 @@
 <div class="text-center">
-    {% for infoMessage in app.session.getFlashBag.get('infoMessage') %}
-        <div uib-alert class="alert-info">{{ infoMessage }}</div>
-    {% endfor %}
-    {% for errorMessage in app.session.getFlashBag.get('errorMessage') %}
-        <div uib-alert class="alert-danger">{{ errorMessage }}</div>
-    {% endfor %}
+  {% for infoMessage in app.session.getFlashBag.get('infoMessage') %}
+  <div uib-alert class="alert-info">{{ infoMessage }}</div>
+  {% endfor %} {% for errorMessage in
+  app.session.getFlashBag.get('errorMessage') %}
+  <div uib-alert class="alert-danger">{{ errorMessage }}</div>
+  {% endfor %}
 </div>
 
 {% verbatim %}

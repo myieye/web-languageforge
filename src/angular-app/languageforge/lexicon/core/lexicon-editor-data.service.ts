@@ -3,7 +3,10 @@ import { LexiconEntryApiService } from './lexicon-entry-api.service';
 
 export class LexiconEditorDataService {
   static $inject: string[] = ['editorDataService', 'lexEntryApiService'];
-  constructor(private editorDataService: EditorDataService, private api: LexiconEntryApiService) {
+  constructor(
+    private editorDataService: EditorDataService,
+    private api: LexiconEntryApiService
+  ) {
     this.editorDataService.registerEntryApi(api);
   }
 

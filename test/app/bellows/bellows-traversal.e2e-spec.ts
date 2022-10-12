@@ -1,14 +1,14 @@
 import 'jasmine';
 
-import {SfActivityPage} from './shared/activity.page';
-import {BellowsChangePasswordPage} from './shared/change-password.page';
-import {BellowsForgotPasswordPage} from './shared/forgot-password.page';
-import {BellowsLoginPage} from './shared/login.page';
-import {ProjectsPage} from './shared/projects.page';
-import {BellowsResetPasswordPage} from './shared/reset-password.page';
-import {SignupPage} from './shared/signup.page';
-import {SiteAdminPage} from './shared/site-admin.page';
-import {SfUserProfilePage} from './shared/user-profile.page';
+import { SfActivityPage } from './shared/activity.page';
+import { BellowsChangePasswordPage } from './shared/change-password.page';
+import { BellowsForgotPasswordPage } from './shared/forgot-password.page';
+import { BellowsLoginPage } from './shared/login.page';
+import { ProjectsPage } from './shared/projects.page';
+import { BellowsResetPasswordPage } from './shared/reset-password.page';
+import { SignupPage } from './shared/signup.page';
+import { SiteAdminPage } from './shared/site-admin.page';
+import { SfUserProfilePage } from './shared/user-profile.page';
 
 describe('Bellows E2E Page Traversal', () => {
   const constants = require('../testConstants.json');
@@ -22,7 +22,7 @@ describe('Bellows E2E Page Traversal', () => {
   const siteAdminPage = new SiteAdminPage();
   const userProfilePage = new SfUserProfilePage();
 
-  it('Explore signup page' , async () => {
+  it('Explore signup page', async () => {
     await BellowsLoginPage.logout();
     await SignupPage.get();
     await signupPage.emailInput.clear();

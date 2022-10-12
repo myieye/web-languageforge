@@ -12,21 +12,34 @@ class Rights {
   showControlBar: boolean;
 }
 
-export class SiteAdminArchivedProjectsController implements angular.IController {
+export class SiteAdminArchivedProjectsController
+  implements angular.IController
+{
   finishedLoading = false;
   projectTypeNames = this.projectService.data.projectTypeNames;
   archivedProjects: Project[] = [];
   selected: Project[] = [];
   rights = new Rights();
 
-  static $inject = ['projectService', 'sessionService',
-    'silNoticeService', 'modalService'];
-  constructor(private projectService: ProjectService, private sessionService: SessionService,
-              private notice: NoticeService, private modalService: ModalService) {}
-  
+  static $inject = [
+    'projectService',
+    'sessionService',
+    'silNoticeService',
+    'modalService',
+  ];
+  constructor(
+    private projectService: ProjectService,
+    private sessionService: SessionService,
+    private notice: NoticeService,
+    private modalService: ModalService
+  ) {}
+
   $onInit() {
     this.sessionService.getSession().then((session) => {
-      const hasRight = session.hasSiteRight(this.sessionService.domain.PROJECTS, this.sessionService.operation.DELETE);
+      const hasRight = session.hasSiteRight(
+        this.sessionService.domain.PROJECTS,
+        this.sessionService.operation.DELETE
+      );
       this.rights.remove = hasRight;
       this.rights.publish = hasRight;
       this.rights.showControlBar = hasRight;
@@ -60,9 +73,15 @@ export class SiteAdminArchivedProjectsController implements angular.IController 
         this.selected = []; // Reset the selection
         this.queryArchivedProjects();
         if (projectIds.length === 1) {
-          this.notice.push(this.notice.SUCCESS, 'The project was re-published successfully');
+          this.notice.push(
+            this.notice.SUCCESS,
+            'The project was re-published successfully'
+          );
         } else {
-          this.notice.push(this.notice.SUCCESS, 'The projects were re-published successfully');
+          this.notice.push(
+            this.notice.SUCCESS,
+            'The projects were re-published successfully'
+          );
         }
       }
     });
@@ -74,7 +93,7 @@ export class SiteAdminArchivedProjectsController implements angular.IController 
       closeButtonText: 'Cancel',
       actionButtonText: 'Delete',
       headerText: 'Permanently Delete Project?',
-      bodyText: message
+      bodyText: message,
     };
     this.modalService.showModal({}, modalOptions).then(() => {
       let projectIds: string[] = [];
@@ -87,9 +106,15 @@ export class SiteAdminArchivedProjectsController implements angular.IController 
           this.selected = []; // Reset the selection
           this.queryArchivedProjects();
           if (projectIds.length === 1) {
-            this.notice.push(this.notice.SUCCESS, 'The project was permanently deleted');
+            this.notice.push(
+              this.notice.SUCCESS,
+              'The project was permanently deleted'
+            );
           } else {
-            this.notice.push(this.notice.SUCCESS, 'The projects were permanently deleted');
+            this.notice.push(
+              this.notice.SUCCESS,
+              'The projects were permanently deleted'
+            );
           }
         }
       });
@@ -100,7 +125,9 @@ export class SiteAdminArchivedProjectsController implements angular.IController 
     this.projectService.archivedList((result) => {
       if (result.ok) {
         for (let i = 0; i < result.data.entries.length; i++) {
-          result.data.entries[i].dateModified = new Date(result.data.entries[i].dateModified);
+          result.data.entries[i].dateModified = new Date(
+            result.data.entries[i].dateModified
+          );
         }
 
         this.archivedProjects = result.data.entries;
@@ -108,10 +135,10 @@ export class SiteAdminArchivedProjectsController implements angular.IController 
       }
     });
   }
-
 }
 
 export const SiteAdminArchivedProjectsComponent: angular.IComponentOptions = {
   controller: SiteAdminArchivedProjectsController,
-  templateUrl: '/angular-app/bellows/apps/siteadmin/site-admin-archived-projects.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/siteadmin/site-admin-archived-projects.component.html',
 };

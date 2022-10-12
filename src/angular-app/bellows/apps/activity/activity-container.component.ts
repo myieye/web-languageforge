@@ -1,25 +1,25 @@
 import * as angular from 'angular';
 
-import {ActivityService, FilterParams} from '../../core/api/activity.service';
-import {JsonRpcResult} from '../../core/api/json-rpc.service';
-import {LinkService} from '../../core/link.service';
-import {SessionService} from '../../core/session.service';
-import {UtilityService} from '../../core/utility.service';
-import {Project} from '../../shared/model/project.model';
-import {User} from '../../shared/model/user.model';
+import { ActivityService, FilterParams } from '../../core/api/activity.service';
+import { JsonRpcResult } from '../../core/api/json-rpc.service';
+import { LinkService } from '../../core/link.service';
+import { SessionService } from '../../core/session.service';
+import { UtilityService } from '../../core/utility.service';
+import { Project } from '../../shared/model/project.model';
+import { User } from '../../shared/model/user.model';
 
 class Activity {
   summary: string = '';
   action: string;
   content: {
-    project: string,
-    entry: string,
-    user: string,
-    answer: string,
-    lexComment: string,
-    lexCommentContext: string,
-    fieldLabel: FieldLabel,
-    changes: ActivityChanges[]
+    project: string;
+    entry: string;
+    user: string;
+    answer: string;
+    lexComment: string;
+    lexCommentContext: string;
+    fieldLabel: FieldLabel;
+    changes: ActivityChanges[];
   };
   changes: ActivityChanges;
   date: Date;
@@ -106,10 +106,14 @@ class Activity {
   private static formatLabel(fieldLabel: FieldLabel) {
     let label = fieldLabel.label;
     if (fieldLabel.example) {
-      label = 'Example ' + fieldLabel.example + (label !== 'examples' ? ' ' + label : '');
+      label =
+        'Example ' +
+        fieldLabel.example +
+        (label !== 'examples' ? ' ' + label : '');
     }
     if (fieldLabel.sense) {
-      label = 'Meaning ' + fieldLabel.sense + (label !== 'senses' ? ' ' + label : '');
+      label =
+        'Meaning ' + fieldLabel.sense + (label !== 'senses' ? ' ' + label : '');
     }
     return label;
   }
@@ -122,7 +126,6 @@ class Activity {
     }
     return value;
   }
-
 }
 
 interface FieldLabel {
@@ -143,7 +146,11 @@ class ActivityGroup {
   userGroups: ActivityUserGroup[] = [];
   showActivities: boolean = false;
 
-  constructor(public name: string, public date: Date, public dateFormat: string = 'h:mma d/MM/yy') {
+  constructor(
+    public name: string,
+    public date: Date,
+    public dateFormat: string = 'h:mma d/MM/yy'
+  ) {
     date.setHours(0, 0, 0, 0);
     this.date = new Date(date);
   }
@@ -177,7 +184,7 @@ class ActivityUserGroup {
         if (!summaryTypes.hasOwnProperty(activity.action)) {
           summaryTypes[activity.action] = {
             total: 0,
-            type: activity.typeRef
+            type: activity.typeRef,
           };
           totalActivityTypes++;
         }
@@ -191,7 +198,11 @@ class ActivityUserGroup {
         entryActivityItems += entryActivities[entryRef];
         entryActivityCount++;
       }
-      summary += 'updated ' + entryActivityItems + ' field' + (entryActivityItems !== 1 ? 's' : '');
+      summary +=
+        'updated ' +
+        entryActivityItems +
+        ' field' +
+        (entryActivityItems !== 1 ? 's' : '');
       if (entryId == null) {
         if (entryActivityCount === 1) {
           summary += ' in ' + entryActivityCount + ' entry';
@@ -209,10 +220,10 @@ class ActivityUserGroup {
     for (const activityAction in summaryTypes) {
       if (summaryTypes.hasOwnProperty(activityAction)) {
         const total = summaryTypes[activityAction].total;
-        const type =  summaryTypes[activityAction].type;
-        const summaryActivity = (total === 1 ? type.summary : type.summaryPlural);
+        const type = summaryTypes[activityAction].type;
+        const summaryActivity = total === 1 ? type.summary : type.summaryPlural;
         summary += summaryActivity.replace('{x}', total);
-        if (count === (totalActivityTypes - 1)) {
+        if (count === totalActivityTypes - 1) {
           summary += ' and ';
         } else if (count < totalActivityTypes) {
           summary += ', ';
@@ -225,12 +236,14 @@ class ActivityUserGroup {
 }
 
 export class ActivityType {
-  constructor(public action: string,
-              public type: string,
-              public label: string,
-              public icon: string,
-              public summary: string,
-              public summaryPlural: string = '') {
+  constructor(
+    public action: string,
+    public type: string,
+    public label: string,
+    public icon: string,
+    public summary: string,
+    public summaryPlural: string = ''
+  ) {
     if (this.summaryPlural === '') {
       this.summaryPlural = this.summary + 's';
     }
@@ -267,28 +280,45 @@ export class ActivityContainerController implements angular.IController {
   filterEndDate: any;
   filterType: ActivityType;
 
-  static $inject = ['$sce', '$scope',
-    'activityService', 'linkService',
-    'sessionService'];
-  constructor(private $sce: angular.ISCEService, private $scope: angular.IScope,
-              private activityService: ActivityService, private linkService: LinkService,
-              private sessionService: SessionService) {
+  static $inject = [
+    '$sce',
+    '$scope',
+    'activityService',
+    'linkService',
+    'sessionService',
+  ];
+  constructor(
+    private $sce: angular.ISCEService,
+    private $scope: angular.IScope,
+    private activityService: ActivityService,
+    private linkService: LinkService,
+    private sessionService: SessionService
+  ) {
     // Watch to see if a refresh is required
-    $scope.$watch(() => activityService.refreshRequired, (refreshRequired: boolean) => {
-      if (refreshRequired === true) {
-        this.loadActivityFeed(true);
-        activityService.markRefreshRequired(false);
+    $scope.$watch(
+      () => activityService.refreshRequired,
+      (refreshRequired: boolean) => {
+        if (refreshRequired === true) {
+          this.loadActivityFeed(true);
+          activityService.markRefreshRequired(false);
+        }
       }
-    });
+    );
     // Set activity groups up
     const today = new Date();
     let newDate = today;
-    this.activityGroups.push(new ActivityGroup('Today', today, 'h:mma \'Today\''));
+    this.activityGroups.push(
+      new ActivityGroup('Today', today, "h:mma 'Today'")
+    );
     newDate.setDate(today.getDate() - 1);
-    this.activityGroups.push(new ActivityGroup('Yesterday', newDate, 'h:mma \'Yesterday\''));
+    this.activityGroups.push(
+      new ActivityGroup('Yesterday', newDate, "h:mma 'Yesterday'")
+    );
     newDate = new Date();
     newDate.setDate(today.getDate() - 6);
-    this.activityGroups.push(new ActivityGroup('Last week', newDate, 'h:mma EEEE'));
+    this.activityGroups.push(
+      new ActivityGroup('Last week', newDate, 'h:mma EEEE')
+    );
     newDate = new Date();
     newDate.setDate(today.getDate() - 13);
     this.activityGroups.push(new ActivityGroup('Two weeks ago', newDate));
@@ -299,133 +329,193 @@ export class ActivityContainerController implements angular.IController {
     newDate.setFullYear(today.getFullYear() - 10); // 10 years back should be enough to capture everything
     this.activityGroups.push(new ActivityGroup('Older', newDate));
     // Setup activity types
-    this.activityTypes.push(new ActivityType(
-      'message',
-      'global',
-      'Global Message',
-      'exclamation-triangle',
-      'added {x} global message'));
-    this.activityTypes.push(new ActivityType(
-      'add_text',
-      'project',
-      'New Text',
-      'file-text',
-      'added {x} new text'));
-    this.activityTypes.push(new ActivityType(
-      'add_user_to_project',
-      'project',
-      'User added to project',
-      'user-plus',
-      'was added to {x} project'));
-    this.activityTypes.push(new ActivityType(
-      'add_question',
-      'project',
-      'New question',
-      'question-circle',
-      'added {x} new question'));
-    this.activityTypes.push(new ActivityType(
-      'add_lex_comment',
-      'project',
-      'New comment',
-      'comments',
-      'added {x} new comment'));
-    this.activityTypes.push(new ActivityType(
-      'add_entry',
-      'project',
-      'New Entry',
-      'file',
-      'added {x} new entry',
-      'added {x} new entries'));
-    this.activityTypes.push(new ActivityType(
-      'update_entry',
-      'project',
-      'Entry Updated',
-      'save',
-      'updated {x} entry',
-      'updated {x} entries'));
-    this.activityTypes.push(new ActivityType(
-      'delete_entry',
-      'project',
-      'Entry Deleted',
-      'trash',
-      'deleted {x} entry',
-      'deleted {x} entries'));
-    this.activityTypes.push(new ActivityType(
-      'add_lex_reply',
-      'project',
-      'Reply to comment',
-      'reply',
-      'replied to {x} comment'));
-    this.activityTypes.push(new ActivityType(
-      'update_lex_reply',
-      'project',
-      'Update Reply',
-      'reply',
-      'updated {x} reply'));
-    this.activityTypes.push(new ActivityType(
-      'delete_lex_reply',
-      'project',
-      'Delete Reply',
-      'trash',
-      'deleted {x} reply',
-      'deleted {x} replies'));
-    this.activityTypes.push(new ActivityType(
-      'update_lex_comment_status',
-      'project',
-      'Comment status changed',
-      'pencil-square',
-      'changed {x} comment status',
-      'changed {x} comment statuses'));
-    this.activityTypes.push(new ActivityType(
-      'add_comment',
-      'project',
-      'New Comment',
-      'reply',
-      'added {x} comment'));
-    this.activityTypes.push(new ActivityType(
-      'update_comment',
-      'project',
-      'Update Comment',
-      'comments-o',
-      'updated {x} comment'));
-    this.activityTypes.push(new ActivityType(
-      'update_lex_comment',
-      'project',
-      'Update Comment',
-      'comments-o',
-      'updated {x} comment'));
-    this.activityTypes.push(new ActivityType(
-      'delete_lex_comment',
-      'project',
-      'Delete Comment',
-      'trash',
-      'deleted {x} comment'));
-    this.activityTypes.push(new ActivityType(
-      'add_answer',
-      'project',
-      'New Answer',
-      'comments',
-      'added {x} answer'));
-    this.activityTypes.push(new ActivityType(
-      'update_answer',
-      'project',
-      'Update Answer',
-      'comments-o',
-      'updated {x} answer'));
-    this.activityTypes.push(new ActivityType(
-      'lexCommentIncreaseScore',
-      'project',
-      'Liked',
-      'thumbs-up',
-      'liked {x} comment'));
-    this.activityTypes.push(new ActivityType(
-      'increase_score',
-      'project',
-      '+1\'d',
-      'thumbs-up',
-      '+`\'d {x} comment'));
+    this.activityTypes.push(
+      new ActivityType(
+        'message',
+        'global',
+        'Global Message',
+        'exclamation-triangle',
+        'added {x} global message'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'add_text',
+        'project',
+        'New Text',
+        'file-text',
+        'added {x} new text'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'add_user_to_project',
+        'project',
+        'User added to project',
+        'user-plus',
+        'was added to {x} project'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'add_question',
+        'project',
+        'New question',
+        'question-circle',
+        'added {x} new question'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'add_lex_comment',
+        'project',
+        'New comment',
+        'comments',
+        'added {x} new comment'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'add_entry',
+        'project',
+        'New Entry',
+        'file',
+        'added {x} new entry',
+        'added {x} new entries'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'update_entry',
+        'project',
+        'Entry Updated',
+        'save',
+        'updated {x} entry',
+        'updated {x} entries'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'delete_entry',
+        'project',
+        'Entry Deleted',
+        'trash',
+        'deleted {x} entry',
+        'deleted {x} entries'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'add_lex_reply',
+        'project',
+        'Reply to comment',
+        'reply',
+        'replied to {x} comment'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'update_lex_reply',
+        'project',
+        'Update Reply',
+        'reply',
+        'updated {x} reply'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'delete_lex_reply',
+        'project',
+        'Delete Reply',
+        'trash',
+        'deleted {x} reply',
+        'deleted {x} replies'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'update_lex_comment_status',
+        'project',
+        'Comment status changed',
+        'pencil-square',
+        'changed {x} comment status',
+        'changed {x} comment statuses'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'add_comment',
+        'project',
+        'New Comment',
+        'reply',
+        'added {x} comment'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'update_comment',
+        'project',
+        'Update Comment',
+        'comments-o',
+        'updated {x} comment'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'update_lex_comment',
+        'project',
+        'Update Comment',
+        'comments-o',
+        'updated {x} comment'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'delete_lex_comment',
+        'project',
+        'Delete Comment',
+        'trash',
+        'deleted {x} comment'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'add_answer',
+        'project',
+        'New Answer',
+        'comments',
+        'added {x} answer'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'update_answer',
+        'project',
+        'Update Answer',
+        'comments-o',
+        'updated {x} answer'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'lexCommentIncreaseScore',
+        'project',
+        'Liked',
+        'thumbs-up',
+        'liked {x} comment'
+      )
+    );
+    this.activityTypes.push(
+      new ActivityType(
+        'increase_score',
+        'project',
+        "+1'd",
+        'thumbs-up',
+        "+`'d {x} comment"
+      )
+    );
     // TODO: Move all definitions into the API so we get everything we need returned
-    this.activityService.validActivityTypes().then(result => {
+    this.activityService.validActivityTypes().then((result) => {
       if (result.ok) {
         // Loop through valid activity types and remove what isn't needed
         for (const index in this.activityTypes) {
@@ -456,37 +546,50 @@ export class ActivityContainerController implements angular.IController {
     this.loadingFeed = false;
     this.loadActivityFeed();
 
-    this.$scope.$watch(() => this.filteredActivities, () => {
-      let userGroupIndex;
-      let userGroup = new ActivityUserGroup(new Activity());
-      let previousDate = new Date();
-      for (const activityGroup of this.activityGroups) {
-        userGroupIndex = 0;
-        activityGroup.userGroups = [];
-        for (const activity of this.filteredActivities) {
-          if (activity.date > activityGroup.date && activity.date < previousDate) {
-            if (userGroup.user != null && userGroup.user.id !== activity.userRef.id) {
-              userGroupIndex++;
-            }
-            if (activityGroup.userGroups[userGroupIndex] == null) {
-              userGroup = new ActivityUserGroup(activity);
-              activityGroup.userGroups[userGroupIndex] = userGroup;
-            }
-            activityGroup.userGroups[userGroupIndex].activities.push(activity);
-            if (this.isUnread(activity.id)) {
-              userGroup.unread++;
-            }
-            // Open up user group if it was already open
-            for (const openActivity of this.openUserGroups) {
-              if (openActivity.id === activity.id) {
-                activityGroup.userGroups[userGroupIndex].showActivities = true;
+    this.$scope.$watch(
+      () => this.filteredActivities,
+      () => {
+        let userGroupIndex;
+        let userGroup = new ActivityUserGroup(new Activity());
+        let previousDate = new Date();
+        for (const activityGroup of this.activityGroups) {
+          userGroupIndex = 0;
+          activityGroup.userGroups = [];
+          for (const activity of this.filteredActivities) {
+            if (
+              activity.date > activityGroup.date &&
+              activity.date < previousDate
+            ) {
+              if (
+                userGroup.user != null &&
+                userGroup.user.id !== activity.userRef.id
+              ) {
+                userGroupIndex++;
+              }
+              if (activityGroup.userGroups[userGroupIndex] == null) {
+                userGroup = new ActivityUserGroup(activity);
+                activityGroup.userGroups[userGroupIndex] = userGroup;
+              }
+              activityGroup.userGroups[userGroupIndex].activities.push(
+                activity
+              );
+              if (this.isUnread(activity.id)) {
+                userGroup.unread++;
+              }
+              // Open up user group if it was already open
+              for (const openActivity of this.openUserGroups) {
+                if (openActivity.id === activity.id) {
+                  activityGroup.userGroups[userGroupIndex].showActivities =
+                    true;
+                }
               }
             }
           }
+          previousDate = activityGroup.date;
         }
-        previousDate = activityGroup.date;
-      }
-    }, true);
+      },
+      true
+    );
   }
 
   $onChanges(changes: any): void {
@@ -507,7 +610,10 @@ export class ActivityContainerController implements angular.IController {
     this.filterDateMin = new Date();
     this.filterDateMin.setMonth(this.filterDateMin.getMonth() - 1);
     this.filterDateMax = new Date();
-    if (this.filterParams.startDate === null && this.filterParams.endDate === null) {
+    if (
+      this.filterParams.startDate === null &&
+      this.filterParams.endDate === null
+    ) {
       this.filterDate = 'From Beginning';
     } else {
       if (this.filterParams.startDate !== null) {
@@ -532,13 +638,17 @@ export class ActivityContainerController implements angular.IController {
         this.activities = [];
         this.filterParams.skip = 0;
         this.loadingFeed = true;
-        this.activityService.listActivityForLexicalEntry(this.entryId, this.filterParams, result => {
-          this.processActivityListFeed(result);
-        });
+        this.activityService.listActivityForLexicalEntry(
+          this.entryId,
+          this.filterParams,
+          (result) => {
+            this.processActivityListFeed(result);
+          }
+        );
       }
     } else {
       this.loadingFeed = true;
-      this.activityService.listActivity(this.filterParams, result => {
+      this.activityService.listActivity(this.filterParams, (result) => {
         this.processActivityListFeed(result);
       });
     }
@@ -581,7 +691,7 @@ export class ActivityContainerController implements angular.IController {
   }
 
   isUnread(id: string): boolean {
-    return (this.unread.findIndex(value => value === id) > -1);
+    return this.unread.findIndex((value) => value === id) > -1;
   }
 
   decodeActivityList(items: Activity[]): void {
@@ -595,12 +705,17 @@ export class ActivityContainerController implements angular.IController {
       }
 
       if ('projectRef' in item) {
-        item.projectHref =
-          this.linkService.project(item.projectRef.id, item.projectRef.type);
+        item.projectHref = this.linkService.project(
+          item.projectRef.id,
+          item.projectRef.type
+        );
       }
 
       if ('entryRef' in item) {
-        item.entryHref = this.linkService.entry(item.entryRef, item.projectRef.id);
+        item.entryHref = this.linkService.entry(
+          item.entryRef,
+          item.projectRef.id
+        );
       }
 
       if ('content' in item) {
@@ -614,7 +729,10 @@ export class ActivityContainerController implements angular.IController {
       }
 
       for (const activityType of this.activityTypes) {
-        if (activityType.action === item.action && activityType.type === item.type) {
+        if (
+          activityType.action === item.action &&
+          activityType.type === item.type
+        ) {
           item.typeRef = activityType;
           item.icon = activityType.icon;
         }
@@ -650,7 +768,10 @@ export class ActivityContainerController implements angular.IController {
     if (!this.filterType) return;
     const filteredActivities = [];
     for (const activity of this.filteredActivities) {
-      if (activity.action === this.filterType.action && activity.type === this.filterType.type) {
+      if (
+        activity.action === this.filterType.action &&
+        activity.type === this.filterType.type
+      ) {
         filteredActivities.push(activity);
       }
     }
@@ -673,11 +794,11 @@ export class ActivityContainerController implements angular.IController {
   }
 
   buildUsersList(): void {
-    this.sessionService.getSession().then(session => {
+    this.sessionService.getSession().then((session) => {
       this.filterUsers = [];
       this.filterUsers.push({
         id: session.userId(),
-        username: 'Me (' + session.username() + ')'
+        username: 'Me (' + session.username() + ')',
       });
       for (const activity of this.activities) {
         let userExists = false;
@@ -690,7 +811,7 @@ export class ActivityContainerController implements angular.IController {
         if (!userExists && activity.userRef.username) {
           this.filterUsers.push({
             id: activity.userRef.id,
-            username: activity.userRef.username
+            username: activity.userRef.username,
           });
         }
       }
@@ -730,8 +851,9 @@ export class ActivityContainerController implements angular.IController {
 
 export const ActivityContainerComponent: angular.IComponentOptions = {
   bindings: {
-    entryId: '@?'
+    entryId: '@?',
   },
   controller: ActivityContainerController,
-  templateUrl: '/angular-app/bellows/apps/activity/activity-container.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/activity/activity-container.component.html',
 };

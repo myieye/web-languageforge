@@ -1,11 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 
-export type UserRoles =
-  'can manage' |
-  'can edit' |
-  'can comment' |
-  'can view'
-  ;
+export type UserRoles = 'can manage' | 'can edit' | 'can comment' | 'can view';
 
 export class ProjectsPage {
   readonly page: Page;
@@ -40,15 +35,23 @@ export class ProjectsPage {
   constructor(page: Page) {
     this.page = page;
     this.pageName = page.locator('.page-name >> text=My Projects');
-    this.projectsList = page.locator('[data-ng-repeat="project in visibleProjects"]');
+    this.projectsList = page.locator(
+      '[data-ng-repeat="project in visibleProjects"]'
+    );
     this.projectNames = this.projectsList.locator('a[href^="/app/lexicon"]');
 
     this.projectNameLinked = 'projectNameLinked';
     this.projectNameUnlinked = '';
 
-    this.createButton = page.locator('button:has-text("Start or Join a New Project")');
-    this.createNonSRProjectButton = page.locator('text=Create a non-send/receive project (not recommended)');
-    this.projectNameInput = page.locator('[placeholder="eg\\:\\ My\\ Dictionary"]');
+    this.createButton = page.locator(
+      'button:has-text("Start or Join a New Project")'
+    );
+    this.createNonSRProjectButton = page.locator(
+      'text=Create a non-send/receive project (not recommended)'
+    );
+    this.projectNameInput = page.locator(
+      '[placeholder="eg\\:\\ My\\ Dictionary"]'
+    );
     this.nextButton = page.locator('text=Next');
     this.skipInitialDataButton = page.locator('text=Skip');
     this.selectLanguageButton = page.locator('a:has-text("Select")');
@@ -59,16 +62,22 @@ export class ProjectsPage {
 
     this.shareProjectButton = page.locator('span:has-text("Share")');
     this.shareProjectEmailInput = page.locator('[placeholder="Email"]');
-    this.shareProjectUserRoleDropdown = page.locator('role-dropdown[target="\'email_invite\'"]');
-    this.shareProjectSendInvitationButton = page.locator('button[ng-click="$ctrl.sendEmailInvite()"]');
+    this.shareProjectUserRoleDropdown = page.locator(
+      'role-dropdown[target="\'email_invite\'"]'
+    );
+    this.shareProjectSendInvitationButton = page.locator(
+      'button[ng-click="$ctrl.sendEmailInvite()"]'
+    );
 
-    this.projectsPerPageDropdown = page.locator('select[data-ng-model="$ctrl.itemsPerPage"]');
+    this.projectsPerPageDropdown = page.locator(
+      'select[data-ng-model="$ctrl.itemsPerPage"]'
+    );
     this.addAsTechSupportBtnText = 'text=Tech Support';
   }
 
   async goto() {
     // if url not ProjectsPage.url
-    if (! this.page.url().endsWith(ProjectsPage.url)) {
+    if (!this.page.url().endsWith(ProjectsPage.url)) {
       await this.page.goto(ProjectsPage.url);
       //await this.page.waitForLoadState('domcontentloaded');
     }
@@ -91,16 +100,25 @@ export class ProjectsPage {
     await this.searchLanguageButton.click();
     await this.page.locator('text=Swabian').click();
     await this.addLanguageButton.click();
-    await this.finalCreateButton.click()
+    await this.finalCreateButton.click();
   }
 
-  async addUserToProject(projectName: string, userEmail: string, userRole: UserRoles) {
+  async addUserToProject(
+    projectName: string,
+    userEmail: string,
+    userRole: UserRoles
+  ) {
     await this.goto();
     await this.clickOnProject(projectName);
     await this.shareProjectButton.click();
     await this.shareProjectEmailInput.fill(userEmail);
     await this.shareProjectUserRoleDropdown.click();
-    await this.page.locator('div.modal-dropdown[style*="display: block"] >> a.dropdown-item >> text=' + userRole).click();
+    await this.page
+      .locator(
+        'div.modal-dropdown[style*="display: block"] >> a.dropdown-item >> text=' +
+          userRole
+      )
+      .click();
     await this.shareProjectSendInvitationButton.click();
   }
 
@@ -115,7 +133,10 @@ export class ProjectsPage {
     const nAllProjects = await this.projectNames.count();
     let nSpecificProjects = 0;
     for (let i = 0; i < nAllProjects; i++) {
-      const projectName = await this.projectNames.nth(i).locator('span').innerText();
+      const projectName = await this.projectNames
+        .nth(i)
+        .locator('span')
+        .innerText();
       if (projectName.includes(projects)) {
         nSpecificProjects++;
       }
@@ -125,7 +146,9 @@ export class ProjectsPage {
 
   async findProject(projectName: string): Promise<string> {
     await this.goto();
-    const foundElements = this.page.locator('span:has-text("' + projectName + '")');
+    const foundElements = this.page.locator(
+      'span:has-text("' + projectName + '")'
+    );
     const nFoundElements = await foundElements.count();
     for (let i = 0; i < nFoundElements; i++) {
       if (await foundElements.nth(i).isVisible()) {
@@ -137,8 +160,10 @@ export class ProjectsPage {
 
   async findProjectRow(projectName: string): Promise<Locator> {
     await this.goto();
-    const rowLocator = this.page.locator(`css=[data-ng-class="{active: $ctrl.isSelected(project)}"]:has(span:has-text("${projectName}"))`);
-    if (await rowLocator.count() == 1) {
+    const rowLocator = this.page.locator(
+      `css=[data-ng-class="{active: $ctrl.isSelected(project)}"]:has(span:has-text("${projectName}"))`
+    );
+    if ((await rowLocator.count()) == 1) {
       return rowLocator;
     }
     return undefined;
@@ -162,7 +187,9 @@ export class ProjectsPage {
     return rowLocator.locator('text=Tech Support').isVisible();
   }
 
-  async projectAddTechSupportButtonLocator(projectName: string): Promise<Locator> {
+  async projectAddTechSupportButtonLocator(
+    projectName: string
+  ): Promise<Locator> {
     const rowLocator: Locator = await this.findProjectRow(projectName);
     expect(rowLocator).not.toBeUndefined();
     return rowLocator.locator('text=Tech Support');

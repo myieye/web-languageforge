@@ -1,9 +1,9 @@
-import {by, browser, ExpectedConditions} from 'protractor';
-import {ElementFinder} from 'protractor/built/element';
+import { by, browser, ExpectedConditions } from 'protractor';
+import { ElementFinder } from 'protractor/built/element';
 
-import {BellowsLoginPage} from './shared/login.page';
-import {ProjectsPage} from './shared/projects.page';
-import {UserManagementPage} from './shared/user-management.page';
+import { BellowsLoginPage } from './shared/login.page';
+import { ProjectsPage } from './shared/projects.page';
+import { UserManagementPage } from './shared/user-management.page';
 import { Utils } from './shared/utils';
 
 describe('Bellows E2E User Management App', () => {
@@ -16,66 +16,118 @@ describe('Bellows E2E User Management App', () => {
     // Remove admin from Other Project for Testing
     await loginPage.loginAsManager();
     await projectsPage.get();
-    await projectsPage.removeUserFromProject(constants.otherProjectName, constants.adminUsername);
+    await projectsPage.removeUserFromProject(
+      constants.otherProjectName,
+      constants.adminUsername
+    );
 
     await loginPage.loginAsAdmin();
     await projectsPage.get();
 
     // Click "+ Tech Support" button
-    await projectsPage.findProject(constants.otherProjectName).then((projectRow: ElementFinder) => {
-      return projectRow.element(by.id('techSupportButton')).click();
-    });
-
-    return UserManagementPage.getByProjectName(constants.otherProjectName).then(async () => {
-      await browser.wait(ExpectedConditions.visibilityOf(userManagementPage.projectMemberRows.first()), Utils.conditionTimeout);
-      return userManagementPage.getUserRow(constants.adminUsername).then(async (row: ElementFinder) => {
-        const selector = row.element(by.css('select'));
-        expect<any>(await selector.isEnabled()).toBe(true);
-        return selector.element(by.css('option[selected=selected]')).getText().then( text => {
-          expect<any>(text).toBe('Tech Support');
-        });
+    await projectsPage
+      .findProject(constants.otherProjectName)
+      .then((projectRow: ElementFinder) => {
+        return projectRow.element(by.id('techSupportButton')).click();
       });
-    });
+
+    return UserManagementPage.getByProjectName(constants.otherProjectName).then(
+      async () => {
+        await browser.wait(
+          ExpectedConditions.visibilityOf(
+            userManagementPage.projectMemberRows.first()
+          ),
+          Utils.conditionTimeout
+        );
+        return userManagementPage
+          .getUserRow(constants.adminUsername)
+          .then(async (row: ElementFinder) => {
+            const selector = row.element(by.css('select'));
+            expect<any>(await selector.isEnabled()).toBe(true);
+            return selector
+              .element(by.css('option[selected=selected]'))
+              .getText()
+              .then((text) => {
+                expect<any>(text).toBe('Tech Support');
+              });
+          });
+      }
+    );
   });
 
-  it('Other user cannot assign Tech Support user\'s role', async () => {
+  it("Other user cannot assign Tech Support user's role", async () => {
     await loginPage.loginAsManager();
-    return UserManagementPage.getByProjectName(constants.otherProjectName).then(async () => {
-      await browser.wait(ExpectedConditions.visibilityOf(userManagementPage.projectMemberRows.first()), Utils.conditionTimeout);
-      return userManagementPage.getUserRow(constants.adminUsername).then(async (row: ElementFinder) => {
-        const selector = row.element(by.css('select'));
-        expect<any>(await selector.isEnabled()).toBe(false);
-        return selector.element(by.css('option[selected=selected]')).getText().then( text => {
-          expect<any>(text).toBe('Tech Support');
-        });
-      });
-    });
-
+    return UserManagementPage.getByProjectName(constants.otherProjectName).then(
+      async () => {
+        await browser.wait(
+          ExpectedConditions.visibilityOf(
+            userManagementPage.projectMemberRows.first()
+          ),
+          Utils.conditionTimeout
+        );
+        return userManagementPage
+          .getUserRow(constants.adminUsername)
+          .then(async (row: ElementFinder) => {
+            const selector = row.element(by.css('select'));
+            expect<any>(await selector.isEnabled()).toBe(false);
+            return selector
+              .element(by.css('option[selected=selected]'))
+              .getText()
+              .then((text) => {
+                expect<any>(text).toBe('Tech Support');
+              });
+          });
+      }
+    );
   });
 
   it('Tech Support user can assign their own role', async () => {
     await loginPage.loginAsAdmin();
-    await UserManagementPage.getByProjectName(constants.otherProjectName).then(async () => {
-      await browser.wait(ExpectedConditions.visibilityOf(userManagementPage.projectMemberRows.first()), Utils.conditionTimeout);
-      return userManagementPage.changeUserRole(constants.adminUsername, 'Manager');
-    });
+    await UserManagementPage.getByProjectName(constants.otherProjectName).then(
+      async () => {
+        await browser.wait(
+          ExpectedConditions.visibilityOf(
+            userManagementPage.projectMemberRows.first()
+          ),
+          Utils.conditionTimeout
+        );
+        return userManagementPage.changeUserRole(
+          constants.adminUsername,
+          'Manager'
+        );
+      }
+    );
     // Now verify
-    return UserManagementPage.getByProjectName(constants.otherProjectName).then(async () => {
-      await browser.wait(ExpectedConditions.visibilityOf(userManagementPage.projectMemberRows.first()), Utils.conditionTimeout);
-      userManagementPage.getUserRow(constants.adminUsername).then(async (row: ElementFinder) => {
-        const selector = row.element(by.css('select'));
-        expect<any>(await selector.isEnabled()).toBe(true);
-        return selector.element(by.css('option[selected=selected]')).getText().then( text => {
-          expect<any>(text).toBe('Manager');
-        });
-      });
-    });
+    return UserManagementPage.getByProjectName(constants.otherProjectName).then(
+      async () => {
+        await browser.wait(
+          ExpectedConditions.visibilityOf(
+            userManagementPage.projectMemberRows.first()
+          ),
+          Utils.conditionTimeout
+        );
+        userManagementPage
+          .getUserRow(constants.adminUsername)
+          .then(async (row: ElementFinder) => {
+            const selector = row.element(by.css('select'));
+            expect<any>(await selector.isEnabled()).toBe(true);
+            return selector
+              .element(by.css('option[selected=selected]'))
+              .getText()
+              .then((text) => {
+                expect<any>(text).toBe('Manager');
+              });
+          });
+      }
+    );
   });
 
   it('User cannot assign member to Tech Support role', async () => {
     await loginPage.loginAsManager();
     await UserManagementPage.getByProjectName(constants.otherProjectName);
-    const row = await userManagementPage.getUserRow(constants.adminUsername) as ElementFinder;
+    const row = (await userManagementPage.getUserRow(
+      constants.adminUsername
+    )) as ElementFinder;
     const text = await row.element(by.css('select')).getText();
     expect<string>(text).toContain('Manager');
     expect<string>(text).toContain('Contributor');

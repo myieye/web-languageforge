@@ -1,8 +1,8 @@
-import {inputSystemsRegions} from '../../../../bellows/core/input-systems/input-systems-regions.generated-data';
-import {inputSystemsScripts} from '../../../../bellows/core/input-systems/input-systems-scripts.generated-data';
-import {UtilityService} from '../../../../bellows/core/utility.service';
-import {InputSystem} from '../../../../bellows/shared/model/input-system.model';
-import {OptionSelects} from './option-selects.model';
+import { inputSystemsRegions } from '../../../../bellows/core/input-systems/input-systems-regions.generated-data';
+import { inputSystemsScripts } from '../../../../bellows/core/input-systems/input-systems-scripts.generated-data';
+import { UtilityService } from '../../../../bellows/core/utility.service';
+import { InputSystem } from '../../../../bellows/shared/model/input-system.model';
+import { OptionSelects } from './option-selects.model';
 
 /**
  * ConfigurationInputSystemsViewModel class (based on BCP 47)
@@ -40,7 +40,10 @@ export class ConfigurationInputSystemsViewModel {
 
   private selects: any;
 
-  constructor(selects: OptionSelects, inputSystem: InputSystem = new InputSystem()) {
+  constructor(
+    selects: OptionSelects,
+    inputSystem: InputSystem = new InputSystem()
+  ) {
     this.uuid = UtilityService.uuid();
     this.special = '';
     this.purpose = '';
@@ -70,8 +73,8 @@ export class ConfigurationInputSystemsViewModel {
           newTag += '-x';
         }
 
-        newTag += (this.purpose) ? '-' + this.purpose : '';
-        newTag += (this.variantString) ? '-' + this.variantString : '';
+        newTag += this.purpose ? '-' + this.purpose : '';
+        newTag += this.variantString ? '-' + this.variantString : '';
         break;
 
       // Voice
@@ -79,14 +82,14 @@ export class ConfigurationInputSystemsViewModel {
         newTag += '-Zxxx';
         newTag += '-x';
         newTag += '-audio';
-        newTag += (this.variantString) ? '-' + this.variantString : '';
+        newTag += this.variantString ? '-' + this.variantString : '';
         break;
 
       // Script / Region / Variant
       case specialOptions[3]:
-        newTag += (this.script) ? '-' + this.script : '';
-        newTag += (this.region) ? '-' + this.region : '';
-        newTag += (this.variantString) ? '-x-' + this.variantString : '';
+        newTag += this.script ? '-' + this.script : '';
+        newTag += this.region ? '-' + this.region : '';
+        newTag += this.variantString ? '-x-' + this.variantString : '';
         if (!this.script && !this.region && !this.variantString) {
           newTag += '-unspecified';
         }
@@ -122,13 +125,12 @@ export class ConfigurationInputSystemsViewModel {
 
     // Parse the rest of the language tag
     for (let i = 1, l = tokens.length; i < l; i++) {
-
       if (!hasPrivateUsage) {
-
         // Script
         // scripts would be better obtained from a service CP 2014-08
-        if ((/^[a-zA-Z]{4}$/.test(tokens[i])) &&
-          (tokens[i] in inputSystemsScripts)
+        if (
+          /^[a-zA-Z]{4}$/.test(tokens[i]) &&
+          tokens[i] in inputSystemsScripts
         ) {
           this.script = tokens[i];
           this.special = specialOptionsOrder[3];
@@ -137,8 +139,9 @@ export class ConfigurationInputSystemsViewModel {
 
         // Region
         // scripts would be better obtained from a service CP 2014-08
-        if ((/^[a-zA-Z]{2}$/.test(tokens[i]) || /^[0-9]{3}$/.test(tokens[i])) &&
-          (tokens[i] in inputSystemsRegions)
+        if (
+          (/^[a-zA-Z]{2}$/.test(tokens[i]) || /^[0-9]{3}$/.test(tokens[i])) &&
+          tokens[i] in inputSystemsRegions
         ) {
           this.region = tokens[i];
           this.special = specialOptionsOrder[3];
@@ -146,7 +149,10 @@ export class ConfigurationInputSystemsViewModel {
         }
 
         // Variant
-        if (/^[a-zA-Z]{5,}$/.test(tokens[i]) || /^[0-9][0-9a-zA-Z]{3,}$/.test(tokens[i])) {
+        if (
+          /^[a-zA-Z]{5,}$/.test(tokens[i]) ||
+          /^[0-9][0-9a-zA-Z]{3,}$/.test(tokens[i])
+        ) {
           // FixMe: variant seems unused; investigate - IJH 2017-08
           this.variant = tokens[i];
           if (tokens[i] === 'fonipa') {
@@ -163,7 +169,6 @@ export class ConfigurationInputSystemsViewModel {
 
         // Parse for the rest of the private usage tags
       } else {
-
         // SIL registered private use tags are audio, etic, and emic
         switch (tokens[i]) {
           case 'audio':
@@ -208,11 +213,11 @@ export class ConfigurationInputSystemsViewModel {
 
     if (this.special === specialOptions[1]) {
       name += ' (IPA';
-      name += (this.variantString) ? '-' + this.variantString : '';
+      name += this.variantString ? '-' + this.variantString : '';
       name += ')';
     } else if (this.special === specialOptions[2]) {
       name += ' (Voice';
-      name += (this.variantString) ? '-' + this.variantString : '';
+      name += this.variantString ? '-' + this.variantString : '';
       name += ')';
     } else if (this.special === specialOptions[3]) {
       name += ' (';

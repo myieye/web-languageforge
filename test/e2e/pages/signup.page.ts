@@ -45,7 +45,9 @@ export class SignupPage {
 
       setInvalidCaptcha: async () => {
         await this.captcha.blueSquareButton.click();
-        if (await this.captcha.expectedItemName.innerText() === 'Blue Square') {
+        if (
+          (await this.captcha.expectedItemName.innerText()) === 'Blue Square'
+        ) {
           await this.captcha.yellowCircleButton.click();
         }
       },
@@ -66,7 +68,7 @@ export class SignupPage {
           case 'Red Triangle':
             await this.captcha.redTriangleButton.click();
         }
-      }
+      },
     };
     this.captchaInvalid = page.locator('#captchaInvalid');
     this.signupButton = page.locator('#submit');
@@ -75,9 +77,10 @@ export class SignupPage {
   async goto(email: string = '') {
     if (email === '') {
       await this.page.goto(SignupPage.url);
-    }
-    else {
-      await this.page.goto(SignupPage.url + '#!/?e=' + encodeURIComponent(email));
+    } else {
+      await this.page.goto(
+        SignupPage.url + '#!/?e=' + encodeURIComponent(email)
+      );
       await this.page.reload();
     }
     await expect(this.emailInput).toBeVisible();
@@ -85,7 +88,7 @@ export class SignupPage {
 
   async setInvalidCaptcha() {
     await this.captcha.blueSquareButton.click();
-    if (await this.captcha.expectedItemName.innerText() === 'Blue Square') {
+    if ((await this.captcha.expectedItemName.innerText()) === 'Blue Square') {
       this.captcha.yellowCircleButton.click();
     }
   }

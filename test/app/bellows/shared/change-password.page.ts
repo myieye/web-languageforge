@@ -1,4 +1,4 @@
-import {browser, by, element, ExpectedConditions} from 'protractor';
+import { browser, by, element, ExpectedConditions } from 'protractor';
 
 export class BellowsChangePasswordPage {
   conditionTimeout: number = 12000;
@@ -6,7 +6,10 @@ export class BellowsChangePasswordPage {
   // TODO: this will likely change when we refactor the display of notifications - cjh 2014-06
   async get() {
     await browser.get(browser.baseUrl + '/app/changepassword');
-    return browser.wait(ExpectedConditions.visibilityOf(this.password), this.conditionTimeout);
+    return browser.wait(
+      ExpectedConditions.visibilityOf(this.password),
+      this.conditionTimeout
+    );
   }
 
   password = element(by.id('change-password-input'));

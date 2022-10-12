@@ -2,10 +2,10 @@ import { SessionService } from '../../../bellows/core/session.service';
 
 export class LexiconLinkService {
   static $inject: string[] = ['sessionService'];
-  constructor(private sessionService: SessionService) { }
+  constructor(private sessionService: SessionService) {}
 
   projectUrl(): string {
-	return '/app/lexicon/' + this.getProjectId() + '/#!/';
+    return '/app/lexicon/' + this.getProjectId() + '/#!/';
   }
 
   projectView(view: string): string {

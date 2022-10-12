@@ -1,8 +1,8 @@
-import { webmFixDuration } from "webm-fix-duration";
-import * as angular from "angular";
+import { webmFixDuration } from 'webm-fix-duration';
+import * as angular from 'angular';
 
 export class AudioRecorderController implements angular.IController {
-  static $inject = ["$interval", "$scope"];
+  static $inject = ['$interval', '$scope'];
 
   mediaRecorder: MediaRecorder;
   chunks: string[] = [];
@@ -23,7 +23,7 @@ export class AudioRecorderController implements angular.IController {
   ) {}
 
   private startRecording() {
-    this.recordingTime = "0:00";
+    this.recordingTime = '0:00';
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then(
       (stream) => {
@@ -36,18 +36,18 @@ export class AudioRecorderController implements angular.IController {
         });
 
         this.mediaRecorder.addEventListener(
-          "dataavailable",
+          'dataavailable',
           async (e: { data: any }) => {
             this.chunks.push(e.data);
             var roughBlob = new Blob(this.chunks, {
-              type: "audio/webm; codecs=opus",
+              type: 'audio/webm; codecs=opus',
             });
             //In some browsers (Chrome, Edge, ...) navigator.mediaDevices.getUserMedia with MediaRecorder creates WEBM files without duration metadata  //2022-09
             //webmFixDuration appends missing duration metadata to a WEBM file blob.
             this.blob = await webmFixDuration(
               roughBlob,
               this.durationInMilliseconds,
-              "audio/webm; codecs=opus"
+              'audio/webm; codecs=opus'
             );
             this.chunks = [];
             this.audioSrc = window.URL.createObjectURL(this.blob);
@@ -56,14 +56,11 @@ export class AudioRecorderController implements angular.IController {
         );
 
         //Stopping the media stream tracks releases the red recording indicator from browser tabs
-        this.mediaRecorder.addEventListener("stop",
-          () => {
-            stream.getTracks().forEach(function(track) {
-              track.stop();
-            });
-          }
-        );
-
+        this.mediaRecorder.addEventListener('stop', () => {
+          stream.getTracks().forEach(function (track) {
+            track.stop();
+          });
+        });
 
         this.recordingStartTime = new Date();
 
@@ -73,8 +70,8 @@ export class AudioRecorderController implements angular.IController {
           );
           this.recordingTime =
             Math.floor(seconds / 60) +
-            ":" +
-            (seconds % 60 < 10 ? "0" : "") +
+            ':' +
+            (seconds % 60 < 10 ? '0' : '') +
             (seconds % 60);
         }, 1000);
 
@@ -82,7 +79,7 @@ export class AudioRecorderController implements angular.IController {
       },
       (err) => {
         this.$scope.$apply(() => {
-          this.errorMessage = "Unable to record audio from your microphone.";
+          this.errorMessage = 'Unable to record audio from your microphone.';
           this.isRecording = false;
           this.hasRecorded = false;
         });
@@ -139,9 +136,9 @@ export class AudioRecorderController implements angular.IController {
 
 export const AudioRecorderComponent: angular.IComponentOptions = {
   bindings: {
-    callback: "<",
+    callback: '<',
   },
   controller: AudioRecorderController,
   templateUrl:
-    "/angular-app/bellows/shared/audio-recorder/audio-recorder.component.html",
+    '/angular-app/bellows/shared/audio-recorder/audio-recorder.component.html',
 };

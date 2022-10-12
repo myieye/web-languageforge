@@ -13,7 +13,7 @@ export interface Project {
   isArchived: boolean;
   userIsProjectOwner: boolean;
   ownerRef: {
-    id: string,
+    id: string;
     username: string;
   };
   slug: string;
@@ -34,13 +34,19 @@ export interface ProjectRole {
 export class ProjectRoles {
   static MANAGER: ProjectRole = { name: 'Manager', key: 'project_manager' };
   static CONTRIBUTOR: ProjectRole = { name: 'Contributor', key: 'contributor' };
-  static TECH_SUPPORT: ProjectRole = { name: 'Tech Support', key: 'tech_support' };
+  static TECH_SUPPORT: ProjectRole = {
+    name: 'Tech Support',
+    key: 'tech_support',
+  };
   static NONE: ProjectRole = { name: 'none', key: 'none' };
 }
 
 export class LanguageDepotProjectRoles {
   static MANAGER: ProjectRole = { name: 'Manager', key: 'Manager' };
   static CONTRIBUTOR: ProjectRole = { name: 'Contributor', key: 'Contributor' };
-  static TECH_SUPPORT: ProjectRole = { name: 'Tech Support', key: 'LanguageDepotProgrammer' };
+  static TECH_SUPPORT: ProjectRole = {
+    name: 'Tech Support',
+    key: 'LanguageDepotProgrammer',
+  };
   static NONE: ProjectRole = { name: 'none', key: 'none' };
 }

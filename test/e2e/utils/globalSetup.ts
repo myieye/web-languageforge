@@ -12,24 +12,32 @@ function createUser(request: APIRequestContext, baseName: string) {
   const fullName = constants[`${baseName}Name`] ?? username;
   const password = constants[`${baseName}Password`] ?? 'x';
   const email = constants[`${baseName}Email`] ?? `${username}@example.com`;
-  return testControl(request, 'create_user', [username, fullName, password, email]);
+  return testControl(request, 'create_user', [
+    username,
+    fullName,
+    password,
+    email,
+  ]);
 }
 
 export default async function globalSetup(config: FullConfig) {
   try {
     for (const project of config.projects) {
-      const baseURL = project.use?.baseURL ?? (
-        config.webServer.port
+      const baseURL =
+        project.use?.baseURL ??
+        (config.webServer.port
           ? `http://localhost:${config.webServer.port}`
-          : config.webServer.url
-      );
-      const browserName = project.use?.browserName ?? project.use?.defaultBrowserType;
-      const projectBrowser = (
-        browserName === 'chromium' ? chromium :
-          browserName === 'firefox' ? firefox :
-            browserName === 'webkit' ? webkit :
-              chromium
-      );
+          : config.webServer.url);
+      const browserName =
+        project.use?.browserName ?? project.use?.defaultBrowserType;
+      const projectBrowser =
+        browserName === 'chromium'
+          ? chromium
+          : browserName === 'firefox'
+          ? firefox
+          : browserName === 'webkit'
+          ? webkit
+          : chromium;
       const browser = await projectBrowser.launch();
       const context = await browser.newContext({ baseURL });
       for (const user of usersToCreate) {
@@ -38,12 +46,15 @@ export default async function globalSetup(config: FullConfig) {
       await context.close();
 
       // Now log in as each user and ensure there's a storage state saved
-      const sessionLifetime = 365 * 24 * 60 * 60 * 1000;  // 1 year, in milliseconds
+      const sessionLifetime = 365 * 24 * 60 * 60 * 1000; // 1 year, in milliseconds
       const now = new Date();
       const sessionCutoff = now.getTime() - sessionLifetime;
       for (const user of usersToCreate) {
         const path = `${browserName}-${user}-storageState.json`;
-        if (fs.existsSync(path) && fs.statSync(path)?.ctimeMs >= sessionCutoff) {
+        if (
+          fs.existsSync(path) &&
+          fs.statSync(path)?.ctimeMs >= sessionCutoff
+        ) {
           // Storage state file is recent, no need to re-create it
           continue;
         }

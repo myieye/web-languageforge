@@ -1,9 +1,13 @@
 import * as angular from 'angular';
-import {LexiconConfig} from '../../shared/model/lexicon-config.model';
+import { LexiconConfig } from '../../shared/model/lexicon-config.model';
 
-export class AdvancedOptionsConfigurationController implements angular.IController {
+export class AdvancedOptionsConfigurationController
+  implements angular.IController
+{
   accPollUpdateTimerSecondsDirty: number;
-  accOnUpdate: (params: { $event: { pollUpdateTimerSecondsDirty: number } }) => void;
+  accOnUpdate: (params: {
+    $event: { pollUpdateTimerSecondsDirty: number };
+  }) => void;
 
   static $inject: string[] = ['$scope'];
   constructor(private $scope: angular.IScope) {
@@ -11,7 +15,11 @@ export class AdvancedOptionsConfigurationController implements angular.IControll
       () => this.accPollUpdateTimerSecondsDirty,
       (newVal: number, oldVal: number) => {
         if (newVal != null && newVal !== oldVal) {
-          this.accOnUpdate({ $event: { pollUpdateTimerSecondsDirty: this.accPollUpdateTimerSecondsDirty } });
+          this.accOnUpdate({
+            $event: {
+              pollUpdateTimerSecondsDirty: this.accPollUpdateTimerSecondsDirty,
+            },
+          });
         }
       },
       true
@@ -19,7 +27,8 @@ export class AdvancedOptionsConfigurationController implements angular.IControll
   }
 
   $onChanges(changes: any) {
-    const configChange = changes.accConfigPristine as angular.IChangesObject<LexiconConfig>;
+    const configChange =
+      changes.accConfigPristine as angular.IChangesObject<LexiconConfig>;
     if (configChange != null && configChange.currentValue != null) {
       const ms = configChange.currentValue.pollUpdateIntervalMs;
       if (ms != null) {
@@ -29,12 +38,14 @@ export class AdvancedOptionsConfigurationController implements angular.IControll
   }
 }
 
-export const AdvancedOptionsConfigurationComponent: angular.IComponentOptions = {
-  bindings: {
-    accPollUpdateTimerSecondsDirty: '<',
-    accConfigPristine: '<',
-    accOnUpdate: '&'
-  },
-  controller: AdvancedOptionsConfigurationController,
-  templateUrl: '/angular-app/languageforge/lexicon/settings/configuration/configuration-advanced-options.component.html'
-};
+export const AdvancedOptionsConfigurationComponent: angular.IComponentOptions =
+  {
+    bindings: {
+      accPollUpdateTimerSecondsDirty: '<',
+      accConfigPristine: '<',
+      accOnUpdate: '&',
+    },
+    controller: AdvancedOptionsConfigurationController,
+    templateUrl:
+      '/angular-app/languageforge/lexicon/settings/configuration/configuration-advanced-options.component.html',
+  };

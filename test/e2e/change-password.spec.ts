@@ -22,7 +22,7 @@ test.describe('E2E Change Password app', () => {
   test('Refuses to allow form submission if the confirm input does not match', async () => {
     await changePasswordPage.passwordInput.fill(newPassword);
     await changePasswordPage.confirmInput.fill('blah12345');
-    await expect (changePasswordPage.submitButton).toBeDisabled();
+    await expect(changePasswordPage.submitButton).toBeDisabled();
   });
 
   test('Allows form submission if the confirm input matches', async () => {
@@ -35,19 +35,29 @@ test.describe('E2E Change Password app', () => {
     let shortPassword = '12345';
     await changePasswordPage.passwordInput.fill(shortPassword);
     await changePasswordPage.confirmInput.fill(shortPassword);
-    await expect (changePasswordPage.submitButton).toBeDisabled();
+    await expect(changePasswordPage.submitButton).toBeDisabled();
   });
 
-  test('Can successfully change user\'s password after form submission', async ({ page, member }) => {
+  test("Can successfully change user's password after form submission", async ({
+    page,
+    member,
+  }) => {
     await changePasswordPage.passwordInput.fill(newPassword);
     await changePasswordPage.confirmInput.fill(newPassword);
-    await expect (changePasswordPage.passwordMatchImage).toBeVisible();
-    await expect (changePasswordPage.submitButton).toBeEnabled();
+    await expect(changePasswordPage.passwordMatchImage).toBeVisible();
+    await expect(changePasswordPage.submitButton).toBeEnabled();
     await changePasswordPage.submitButton.click();
     // when password is changed successfully, a notice appears on the page
-    const messageSuccessfulUpdate = '[data-ng-bind-html="notice.message"] >> text=Password updated successfully';
-    await changePasswordPage.page.waitForSelector(messageSuccessfulUpdate, {strict: false, state: 'attached'});
-    expect (await changePasswordPage.noticeList.locator(messageSuccessfulUpdate).count()
+    const messageSuccessfulUpdate =
+      '[data-ng-bind-html="notice.message"] >> text=Password updated successfully';
+    await changePasswordPage.page.waitForSelector(messageSuccessfulUpdate, {
+      strict: false,
+      state: 'attached',
+    });
+    expect(
+      await changePasswordPage.noticeList
+        .locator(messageSuccessfulUpdate)
+        .count()
     ).toBeGreaterThan(0);
 
     // test login with new password
@@ -60,5 +70,4 @@ test.describe('E2E Change Password app', () => {
     const pageHeader = new PageHeader(page);
     await expect(pageHeader.myProjects.button).toBeVisible(); // TODO: is flaky, fix it
   });
-
 });

@@ -1,4 +1,4 @@
-import {LexMultiText} from './lex-multi-text.model';
+import { LexMultiText } from './lex-multi-text.model';
 
 export class LexPicture {
   fileName: string;

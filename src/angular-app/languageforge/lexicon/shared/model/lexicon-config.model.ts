@@ -1,5 +1,5 @@
-import {InputSystem} from '../../../../bellows/shared/model/input-system.model';
-import {LexOptionList} from './option-list.model';
+import { InputSystem } from '../../../../bellows/shared/model/input-system.model';
+import { LexOptionList } from './option-list.model';
 
 export class LexConfig {
   hideIfEmpty: boolean;
@@ -14,26 +14,31 @@ export class LexConfigMultiText extends LexConfig {
   width: number;
 }
 
-export class LexConfigMultiParagraph extends LexConfig { }
+export class LexConfigMultiParagraph extends LexConfig {}
 
 export class LexConfigOptionList extends LexConfig {
   listCode: string;
 }
 
-export class LexConfigMultiOptionList extends LexConfigOptionList { }
+export class LexConfigMultiOptionList extends LexConfigOptionList {}
 
 export class LexConfigPictures extends LexConfigMultiText {
   captionLabel: string;
   captionHideIfEmpty: boolean;
 }
 
-export type LexConfigField = LexConfigFieldList | LexConfigMultiText | LexConfigMultiParagraph | LexConfigOptionList |
-  LexConfigMultiOptionList | LexConfigPictures;
+export type LexConfigField =
+  | LexConfigFieldList
+  | LexConfigMultiText
+  | LexConfigMultiParagraph
+  | LexConfigOptionList
+  | LexConfigMultiOptionList
+  | LexConfigPictures;
 
 export class LexConfigFieldList extends LexConfig {
   fieldOrder: string[];
   fields: {
-    [fieldName: string]: LexConfigField
+    [fieldName: string]: LexConfigField;
   };
 }
 
@@ -49,7 +54,9 @@ export class LexViewMultiTextFieldConfig extends LexViewFieldConfig {
 
 export class LexRoleViewConfig {
   inputSystems: string[];
-  fields: { [fieldType: string]: LexViewFieldConfig | LexViewMultiTextFieldConfig };
+  fields: {
+    [fieldType: string]: LexViewFieldConfig | LexViewMultiTextFieldConfig;
+  };
   showTasks: { [taskType: string]: boolean };
 }
 
@@ -58,7 +65,7 @@ class LexTask {
   type: string;
 }
 
-export class LexUserViewConfig extends LexRoleViewConfig { }
+export class LexUserViewConfig extends LexRoleViewConfig {}
 
 export interface LexConfigInputSystems {
   [tag: string]: InputSystem;

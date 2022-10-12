@@ -1,9 +1,9 @@
 var failFast = require('protractor-fail-fast');
 var specString = '*';
 var specs = [
-  "/data/test/app/allspecs/**/*.e2e-spec.js",
-  "/data/test/app/bellows/**/" + specString + ".e2e-spec.js",
-  "/data/test/app/languageforge/**/" + specString + ".e2e-spec.js",
+  '/data/test/app/allspecs/**/*.e2e-spec.js',
+  '/data/test/app/bellows/**/' + specString + '.e2e-spec.js',
+  '/data/test/app/languageforge/**/' + specString + '.e2e-spec.js',
 ];
 exports.config = {
   seleniumAddress: 'http://selenium:4444/wd/hub',
@@ -12,8 +12,8 @@ exports.config = {
   capabilities: {
     browserName: 'chrome',
     chromeOptions: {
-      args: ['--start-maximized']
-    }
+      args: ['--start-maximized'],
+    },
   },
   specs: specs,
   framework: 'jasmine2',
@@ -21,7 +21,7 @@ exports.config = {
   jasmineNodeOpts: {
     showColors: true,
     defaultTimeoutInterval: 120000,
-    print: function () {}
+    print: function () {},
   },
   onPrepare: function () {
     /* global angular: false, browser: false, jasmine: false */
@@ -33,19 +33,20 @@ exports.config = {
       // https://github.com/angular/protractor-cookbook/tree/master/jasmine-junit-reports
       var junitReporter = new jasmineReporters.JUnitXmlReporter({
         savePath: 'e2e-output/',
-        consolidateAll: true
+        consolidateAll: true,
 
         // results written to file: e2e-output/junitresults.xml
-
       });
       jasmine.getEnv().addReporter(junitReporter);
     }
     var SpecReporter = require('jasmine-spec-reporter').SpecReporter;
-    jasmine.getEnv().addReporter(new SpecReporter({
-      spec: {
-        displayStacktrace: true
-      }
-    }));
+    jasmine.getEnv().addReporter(
+      new SpecReporter({
+        spec: {
+          displayStacktrace: true,
+        },
+      })
+    );
 
     // Uncomment to pause tests on first failure
     /*
@@ -62,5 +63,5 @@ exports.config = {
   plugins: [failFast.init()],
   afterLaunch: function () {
     failFast.clean(); // Removes the fail file once all test runners have completed.
-  }
+  },
 };

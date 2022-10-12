@@ -2,14 +2,15 @@ import { expect, Page } from '@playwright/test';
 import { BasePage } from './base-page';
 
 export class NewLexProjectPage extends BasePage {
-
   readonly newLexProjectForm = this.page.locator('#new-lex-project-form');
 
   // form controls
   readonly backButton = this.page.locator('#back-button');
   readonly nextButton = this.page.locator('#next-button');
   readonly formStatus = this.page.locator('#form-status');
-  readonly progressIndicatorStep3Label = this.page.locator('#progress-indicator-step3-label');
+  readonly progressIndicatorStep3Label = this.page.locator(
+    '#progress-indicator-step3-label'
+  );
 
   // step 0: chooser
   readonly chooserPage = {
@@ -26,7 +27,7 @@ export class NewLexProjectPage extends BasePage {
     projectCodeExists: this.page.locator('#project-code-exists'),
     projectCodeAlphanumeric: this.page.locator('#project-code-alphanumeric'),
     projectCodeOk: this.page.locator('#project-code-ok'),
-    editProjectCodeCheckbox: this.page.locator('#edit-project-code')
+    editProjectCodeCheckbox: this.page.locator('#edit-project-code'),
   };
 
   // step 1: send receive credentials
@@ -38,8 +39,8 @@ export class NewLexProjectPage extends BasePage {
     passwordOk: this.page.locator('#password-ok'),
     projectNoAccess: this.page.locator('#project-no-access'),
     projectOk: this.page.locator('#project-ok'),
-    projectSelect: this.page.locator('#sr-project-select')
-  }
+    projectSelect: this.page.locator('#sr-project-select'),
+  };
 
   // step 2: initial data
   readonly initialDataPageBrowseButton = this.page.locator('#browse-button');
@@ -53,12 +54,16 @@ export class NewLexProjectPage extends BasePage {
   };
 
   // step 3 alternate: primary language
-  readonly primaryLanguagePageSelectButton = this.page.locator('#select-language-button');
+  readonly primaryLanguagePageSelectButton = this.page.locator(
+    '#select-language-button'
+  );
 
   // select language modal
   readonly selectLanguage = {
     searchLanguageInput: this.page.locator('.modal-body >> #search-text-input'),
-    languageRows: this.page.locator('.modal-body >> [data-ng-repeat*="language in $ctrl.languages"]'),
+    languageRows: this.page.locator(
+      '.modal-body >> [data-ng-repeat*="language in $ctrl.languages"]'
+    ),
     addButton: this.page.locator('.modal-footer >> #select-language-add-btn'),
   };
 
@@ -84,5 +89,4 @@ export class NewLexProjectPage extends BasePage {
   async expectFormIsNotValid() {
     await expect(this.nextButton).not.toHaveClass(/btn-primary(?:\s|$)/);
   }
-
 }

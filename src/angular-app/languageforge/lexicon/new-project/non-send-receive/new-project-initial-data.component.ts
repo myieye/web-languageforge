@@ -1,13 +1,19 @@
 import * as angular from 'angular';
 
-import {BytesFilterFunction} from '../../../../bellows/core/filters';
-import {NoticeService} from '../../../../bellows/core/notice/notice.service';
-import {SessionService} from '../../../../bellows/core/session.service';
-import {UploadFile, UploadResponse} from '../../../../bellows/shared/model/upload.model';
-import {LexiconNewProjectState} from '../lexicon-new-project-state.model';
-import {LexiconNewProjectController, NewProject} from '../lexicon-new-project.component';
-import {NewProjectSelectPrimaryLanguageState} from './new-project-select-primary-language.component';
-import {NewProjectVerifyDataState} from './new-project-verify-data.component';
+import { BytesFilterFunction } from '../../../../bellows/core/filters';
+import { NoticeService } from '../../../../bellows/core/notice/notice.service';
+import { SessionService } from '../../../../bellows/core/session.service';
+import {
+  UploadFile,
+  UploadResponse,
+} from '../../../../bellows/shared/model/upload.model';
+import { LexiconNewProjectState } from '../lexicon-new-project-state.model';
+import {
+  LexiconNewProjectController,
+  NewProject,
+} from '../lexicon-new-project.component';
+import { NewProjectSelectPrimaryLanguageState } from './new-project-select-primary-language.component';
+import { NewProjectVerifyDataState } from './new-project-verify-data.component';
 
 export class NewProjectInitialDataController implements angular.IController {
   npiNewProject: NewProject;
@@ -15,40 +21,57 @@ export class NewProjectInitialDataController implements angular.IController {
 
   showFlexHelp: boolean = false;
 
-  static $inject = ['$filter', 'Upload',
-    'sessionService', 'silNoticeService'];
-  constructor(private readonly $filter: angular.IFilterService, private readonly Upload: any,
-              private readonly sessionService: SessionService, private readonly notice: NoticeService) { }
+  static $inject = ['$filter', 'Upload', 'sessionService', 'silNoticeService'];
+  constructor(
+    private readonly $filter: angular.IFilterService,
+    private readonly Upload: any,
+    private readonly sessionService: SessionService,
+    private readonly notice: NoticeService
+  ) {}
 
   uploadFile(file: UploadFile): void {
     if (!file || file.$error) {
       return;
     }
 
-    this.sessionService.getSession().then(session => {
+    this.sessionService.getSession().then((session) => {
       if (file.size > session.fileSizeMax()) {
-        this.notice.push(this.notice.ERROR, '<b>' + file.name + '</b> (' +
-          this.$filter<BytesFilterFunction>('bytes')(file.size) + ') is too large. It must be smaller than ' +
-          this.$filter<BytesFilterFunction>('bytes')(session.fileSizeMax()) + '.');
+        this.notice.push(
+          this.notice.ERROR,
+          '<b>' +
+            file.name +
+            '</b> (' +
+            this.$filter<BytesFilterFunction>('bytes')(file.size) +
+            ') is too large. It must be smaller than ' +
+            this.$filter<BytesFilterFunction>('bytes')(session.fileSizeMax()) +
+            '.'
+        );
         return;
       }
 
       this.notice.setLoading('Importing ' + file.name + '...');
       this.Upload.upload({
         url: '/upload/lf-lexicon/import-zip',
-        data: { file }
-      }).then((response: UploadResponse) => {
+        data: { file },
+      }).then(
+        (response: UploadResponse) => {
           this.notice.cancelLoading();
           const isUploadSuccess = response.data.result;
           if (isUploadSuccess) {
-            this.notice.push(this.notice.SUCCESS, 'Successfully imported ' +
-              file.name);
-            this.npiNewProject.entriesImported = response.data.data.stats.importEntries;
+            this.notice.push(
+              this.notice.SUCCESS,
+              'Successfully imported ' + file.name
+            );
+            this.npiNewProject.entriesImported =
+              response.data.data.stats.importEntries;
             this.npiNewProject.importErrors = response.data.data.importErrors;
             this.npiGotoNextState();
           } else {
             this.npiNewProject.entriesImported = 0;
-            this.notice.push(this.notice.ERROR, response.data.data.errorMessage);
+            this.notice.push(
+              this.notice.ERROR,
+              response.data.data.errorMessage
+            );
           }
         },
 
@@ -70,20 +93,23 @@ export class NewProjectInitialDataController implements angular.IController {
         },
 
         (evt: ProgressEvent) => {
-          this.notice.setPercentComplete(Math.floor(100.0 * evt.loaded / evt.total));
-        });
+          this.notice.setPercentComplete(
+            Math.floor((100.0 * evt.loaded) / evt.total)
+          );
+        }
+      );
     });
   }
-
 }
 
 export const NewProjectInitialDataComponent: angular.IComponentOptions = {
   bindings: {
     npiNewProject: '=',
-    npiGotoNextState: '&'
+    npiGotoNextState: '&',
   },
   controller: NewProjectInitialDataController,
-  templateUrl: '/angular-app/languageforge/lexicon/new-project/non-send-receive/new-project-initial-data.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/new-project/non-send-receive/new-project-initial-data.component.html',
 };
 
 export const NewProjectInitialDataState = {
@@ -100,13 +126,15 @@ export const NewProjectInitialDataState = {
     show: {
       backButton: false,
       nextButton: true,
-      step3: true
+      step3: true,
     },
     nextButtonLabel: 'Skip',
     progressIndicatorStep1Label: 'Name',
     progressIndicatorStep2Label: 'Initial Data',
     progressIndicatorStep3Label: 'Verify',
-    isFormValid(controller: LexiconNewProjectController): angular.IPromise<boolean> {
+    isFormValid(
+      controller: LexiconNewProjectController
+    ): angular.IPromise<boolean> {
       return controller.neutral();
     },
     goNextState(controller: LexiconNewProjectController): void {
@@ -118,7 +146,6 @@ export const NewProjectInitialDataState = {
         controller.ok();
       }
     },
-    goPreviousState(): void {
-    }
-  }
+    goPreviousState(): void {},
+  },
 } as LexiconNewProjectState;

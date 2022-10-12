@@ -1,5 +1,5 @@
-import {BellowsLoginPage} from '../../../bellows/shared/login.page';
-import {ProjectSettingsPage} from '../shared/project-settings.page';
+import { BellowsLoginPage } from '../../../bellows/shared/login.page';
+import { ProjectSettingsPage } from '../shared/project-settings.page';
 
 describe('Lexicon E2E Project Settings', () => {
   const constants = require('../../../testConstants.json');
@@ -10,6 +10,8 @@ describe('Lexicon E2E Project Settings', () => {
     await loginPage.loginAsManager();
     await projectSettingsPage.get(constants.testProjectName);
     expect(await projectSettingsPage.tabs.project.isDisplayed());
-    expect<any>(await projectSettingsPage.projectTab.saveButton.isDisplayed()).toBe(true);
+    expect<any>(
+      await projectSettingsPage.projectTab.saveButton.isDisplayed()
+    ).toBe(true);
   });
 });

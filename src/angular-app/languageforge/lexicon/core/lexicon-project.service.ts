@@ -1,76 +1,109 @@
 import * as angular from 'angular';
 
-import {ApiService, JsonRpcCallback} from '../../../bellows/core/api/api.service';
-import {ApplicationHeaderService, HeaderSetting} from '../../../bellows/core/application-header.service';
-import {BreadcrumbService} from '../../../bellows/core/breadcrumbs/breadcrumb.service';
-import {SessionService} from '../../../bellows/core/session.service';
-import {LexiconProjectSettings} from '../shared/model/lexicon-project-settings.model';
-import {LexiconProject} from '../shared/model/lexicon-project.model';
-import {LexiconLinkService} from './lexicon-link.service';
-import {LexiconRightsService} from './lexicon-rights.service';
+import {
+  ApiService,
+  JsonRpcCallback,
+} from '../../../bellows/core/api/api.service';
+import {
+  ApplicationHeaderService,
+  HeaderSetting,
+} from '../../../bellows/core/application-header.service';
+import { BreadcrumbService } from '../../../bellows/core/breadcrumbs/breadcrumb.service';
+import { SessionService } from '../../../bellows/core/session.service';
+import { LexiconProjectSettings } from '../shared/model/lexicon-project-settings.model';
+import { LexiconProject } from '../shared/model/lexicon-project.model';
+import { LexiconLinkService } from './lexicon-link.service';
+import { LexiconRightsService } from './lexicon-rights.service';
 
 export class LexiconProjectService {
-  static $inject: string[] = ['$q', 'apiService', 'sessionService',
+  static $inject: string[] = [
+    '$q',
+    'apiService',
+    'sessionService',
     'breadcrumbService',
     'lexLinkService',
     'applicationHeaderService',
-    'lexRightsService'
+    'lexRightsService',
   ];
-  constructor(private $q: angular.IQService, private api: ApiService, private sessionService: SessionService,
-              private breadcrumbService: BreadcrumbService,
-              private linkService: LexiconLinkService,
-              private applicationHeaderService: ApplicationHeaderService,
-              private rightsService: LexiconRightsService) { }
+  constructor(
+    private $q: angular.IQService,
+    private api: ApiService,
+    private sessionService: SessionService,
+    private breadcrumbService: BreadcrumbService,
+    private linkService: LexiconLinkService,
+    private applicationHeaderService: ApplicationHeaderService,
+    private rightsService: LexiconRightsService
+  ) {}
 
-  setBreadcrumbs(view: string, label: string, forceRefresh: boolean = false): void {
-    this.sessionService.getSession(forceRefresh).then(session => {
-      this.breadcrumbService.set('top', [{
-        href: '/app/projects',
-        label: 'My Projects'
-      }, {
-        href: `/projects/${session.project<LexiconProject>().projectCode}`,
-        label: session.project<LexiconProject>().projectName
-      }, {
-        href: this.linkService.projectView(view),
-        label
-      }]);
+  setBreadcrumbs(
+    view: string,
+    label: string,
+    forceRefresh: boolean = false
+  ): void {
+    this.sessionService.getSession(forceRefresh).then((session) => {
+      this.breadcrumbService.set('top', [
+        {
+          href: '/app/projects',
+          label: 'My Projects',
+        },
+        {
+          href: `/projects/${session.project<LexiconProject>().projectCode}`,
+          label: session.project<LexiconProject>().projectName,
+        },
+        {
+          href: this.linkService.projectView(view),
+          label,
+        },
+      ]);
     });
   }
 
   setupSettings(): void {
-    this.rightsService.getRights().then(rights => {
+    this.rightsService.getRights().then((rights) => {
       const settings = [];
       if (rights.canEditProject()) {
-        settings.push(new HeaderSetting(
-          'dropdown-configuration',
-          'Configuration',
-          this.linkService.projectUrl() + 'configuration'
-        ));
-        settings.push(new HeaderSetting(
-          'dropdown-import-data',
-          'Import Data',
-          this.linkService.projectUrl() + 'importExport'
-        ));
-        settings.push(new HeaderSetting(
-          'userManagementLink',
-          'Share With Others',
-          '#',
-          false
-        ));
-        settings.push(new HeaderSetting(
-          'dropdown-project-settings',
-          'Project Settings',
-          this.linkService.projectUrl() + 'settings'
-        ));
-        if (!rights.session.project<LexiconProject>().isArchived &&
-          rights.session.projectSettings<LexiconProjectSettings>().hasSendReceive
+        settings.push(
+          new HeaderSetting(
+            'dropdown-configuration',
+            'Configuration',
+            this.linkService.projectUrl() + 'configuration'
+          )
+        );
+        settings.push(
+          new HeaderSetting(
+            'dropdown-import-data',
+            'Import Data',
+            this.linkService.projectUrl() + 'importExport'
+          )
+        );
+        settings.push(
+          new HeaderSetting(
+            'userManagementLink',
+            'Share With Others',
+            '#',
+            false
+          )
+        );
+        settings.push(
+          new HeaderSetting(
+            'dropdown-project-settings',
+            'Project Settings',
+            this.linkService.projectUrl() + 'settings'
+          )
+        );
+        if (
+          !rights.session.project<LexiconProject>().isArchived &&
+          rights.session.projectSettings<LexiconProjectSettings>()
+            .hasSendReceive
         ) {
-          settings.push(new HeaderSetting(
-            'dropdown-synchronize',
-            'Synchronize',
-            this.linkService.projectUrl() + 'sync',
-            true
-          ));
+          settings.push(
+            new HeaderSetting(
+              'dropdown-synchronize',
+              'Synchronize',
+              this.linkService.projectUrl() + 'sync',
+              true
+            )
+          );
         }
       }
       this.applicationHeaderService.setSettings(settings);
@@ -78,7 +111,7 @@ export class LexiconProjectService {
   }
 
   baseViewDto(view: string, label: string, callback: JsonRpcCallback) {
-    this.api.call('lex_baseViewDto', [], result => {
+    this.api.call('lex_baseViewDto', [], (result) => {
       if (result.ok) {
         this.setBreadcrumbs(view, label);
         this.setupSettings();
@@ -88,8 +121,16 @@ export class LexiconProjectService {
     });
   }
 
-  updateConfiguration(config: any, optionlists: any, callback?: JsonRpcCallback) {
-    return this.api.call('lex_configuration_update', [config, optionlists], callback);
+  updateConfiguration(
+    config: any,
+    optionlists: any,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'lex_configuration_update',
+      [config, optionlists],
+      callback
+    );
   }
 
   readProject(callback?: JsonRpcCallback) {
@@ -100,8 +141,16 @@ export class LexiconProjectService {
     return this.api.call('lex_project_update', [settings], callback);
   }
 
-  updateSettings(smsSettings: any, emailSettings: any, callback?: JsonRpcCallback) {
-    return this.api.call('project_updateSettings', [smsSettings, emailSettings], callback);
+  updateSettings(
+    smsSettings: any,
+    emailSettings: any,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'project_updateSettings',
+      [smsSettings, emailSettings],
+      callback
+    );
   }
 
   readSettings(callback?: JsonRpcCallback) {
@@ -117,7 +166,11 @@ export class LexiconProjectService {
   }
 
   removeMediaFile(mediaType: any, filename: any, callback?: JsonRpcCallback) {
-    return this.api.call('lex_project_removeMediaFile', [mediaType, filename], callback);
+    return this.api.call(
+      'lex_project_removeMediaFile',
+      [mediaType, filename],
+      callback
+    );
   }
 
   static isValidProjectCode(code: string): boolean {

@@ -1,26 +1,25 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { ProjectsPage } from './projects.page';
 
-
 type ProjectTab = {
   tabTitle: Locator;
   projectNameInput: Locator;
   defaultInterfaceLanguageInput: Locator;
   projectOwner: Locator;
   saveButton: Locator;
-}
+};
 
 type DeleteTab = {
   tabTitle: Locator;
   confirmDeleteInput: Locator;
   deleteProjectButton: Locator;
-}
+};
 
 // if more modal like this -> create a more general modal
 type DeleteModal = {
   cancel: Locator;
   confirm: Locator;
-}
+};
 
 export class ProjectSettingsPage {
   readonly page: Page;
@@ -34,7 +33,6 @@ export class ProjectSettingsPage {
 
   readonly deleteModal: DeleteModal;
 
-
   constructor(page: Page) {
     this.page = page;
     this.projectsPage = new ProjectsPage(this.page);
@@ -47,18 +45,18 @@ export class ProjectSettingsPage {
       projectNameInput: page.locator('#projName'),
       defaultInterfaceLanguageInput: page.locator('#language'),
       projectOwner: page.locator('#e2e-test-project-owner'),
-      saveButton: page.locator('#project-settings-save-btn')
+      saveButton: page.locator('#project-settings-save-btn'),
     };
 
     this.deleteTab = {
       tabTitle: page.locator('li[heading="Delete"]'),
       confirmDeleteInput: page.locator('#deletebox'),
-      deleteProjectButton: page.locator('text=Delete this project')
+      deleteProjectButton: page.locator('text=Delete this project'),
     };
 
     this.deleteModal = {
       cancel: page.locator('div.modal-content >> text="Cancel"'),
-      confirm: page.locator('div.modal-content >> text="Delete"')
+      confirm: page.locator('div.modal-content >> text="Delete"'),
     };
   }
 
@@ -75,12 +73,16 @@ export class ProjectSettingsPage {
   // navigate to project without UI
   async gotoProjectSettingsDirectly(projectId: string, projectName: string) {
     await this.page.goto('app/lexicon/' + projectId + '/#!/settings');
-    await expect(this.page.locator('.page-name >> text=' + projectName)).toBeVisible();
+    await expect(
+      this.page.locator('.page-name >> text=' + projectName)
+    ).toBeVisible();
   }
 
   async gotoProjectDirectly(projectId: string, projectName: string) {
     await this.page.goto('app/lexicon/' + projectId);
-    await expect(this.page.locator('.page-name >> text=' + projectName)).toBeVisible();
+    await expect(
+      this.page.locator('.page-name >> text=' + projectName)
+    ).toBeVisible();
   }
 
   async deleteProject() {

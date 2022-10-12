@@ -1,12 +1,12 @@
 import 'jasmine';
-import {browser, ExpectedConditions, protractor} from 'protractor';
+import { browser, ExpectedConditions, protractor } from 'protractor';
 
-import {BellowsLoginPage} from '../bellows/shared/login.page';
-import {ProjectsPage} from '../bellows/shared/projects.page';
-import {ConfigurationPage} from './lexicon/shared/configuration.page';
-import {EditorPage} from './lexicon/shared/editor.page';
-import {NewLexProjectPage} from './lexicon/shared/new-lex-project.page';
-import {ProjectSettingsPage} from './lexicon/shared/project-settings.page';
+import { BellowsLoginPage } from '../bellows/shared/login.page';
+import { ProjectsPage } from '../bellows/shared/projects.page';
+import { ConfigurationPage } from './lexicon/shared/configuration.page';
+import { EditorPage } from './lexicon/shared/editor.page';
+import { NewLexProjectPage } from './lexicon/shared/new-lex-project.page';
+import { ProjectSettingsPage } from './lexicon/shared/project-settings.page';
 
 describe('Lexicon E2E Page Traversal', () => {
   const constants = require('../testConstants.json');
@@ -25,39 +25,82 @@ describe('Lexicon E2E Page Traversal', () => {
       await configurationPage.unifiedPane.inputSystem.addGroupButton.click();
       await browser.$('body').sendKeys(protractor.Key.ESCAPE);
       await browser.wait(
-        ExpectedConditions.elementToBeClickable(configurationPage.unifiedPane.inputSystem.addInputSystemButton),
-        constants.conditionTimeout);
+        ExpectedConditions.elementToBeClickable(
+          configurationPage.unifiedPane.inputSystem.addInputSystemButton
+        ),
+        constants.conditionTimeout
+      );
       await configurationPage.unifiedPane.inputSystem.addInputSystemButton.click();
       await browser.$('body').sendKeys(protractor.Key.ESCAPE);
-      await browser.wait(ExpectedConditions.elementToBeClickable(configurationPage.tabs.unified), constants.conditionTimeout);
+      await browser.wait(
+        ExpectedConditions.elementToBeClickable(configurationPage.tabs.unified),
+        constants.conditionTimeout
+      );
       await configurationPage.tabs.unified.click();
       await configurationPage.unifiedPane.entry.addGroupButton.click();
       await browser.$('body').sendKeys(protractor.Key.ESCAPE);
       await browser.$('body').sendKeys(protractor.Key.ESCAPE);
-      await browser.wait(ExpectedConditions.elementToBeClickable(configurationPage.unifiedPane.sense.addGroupButton),
-        constants.conditionTimeout);
-      await configurationPage.unifiedPane.hiddenIfEmptyCheckbox('Citation Form').click();
-      await configurationPage.unifiedPane.fieldSpecificButton('Citation Form').click();
-      await configurationPage.unifiedPane.entry.fieldSpecificInputSystemCheckbox('Citation Form', 1).click();
-      await configurationPage.unifiedPane.fieldSpecificButton('Citation Form').click();
+      await browser.wait(
+        ExpectedConditions.elementToBeClickable(
+          configurationPage.unifiedPane.sense.addGroupButton
+        ),
+        constants.conditionTimeout
+      );
+      await configurationPage.unifiedPane
+        .hiddenIfEmptyCheckbox('Citation Form')
+        .click();
+      await configurationPage.unifiedPane
+        .fieldSpecificButton('Citation Form')
+        .click();
+      await configurationPage.unifiedPane.entry
+        .fieldSpecificInputSystemCheckbox('Citation Form', 1)
+        .click();
+      await configurationPage.unifiedPane
+        .fieldSpecificButton('Citation Form')
+        .click();
       await configurationPage.unifiedPane.sense.addGroupButton.click();
       await browser.$('body').sendKeys(protractor.Key.ESCAPE);
       await browser.$('body').sendKeys(protractor.Key.ESCAPE);
-      await browser.wait(ExpectedConditions.elementToBeClickable(configurationPage.unifiedPane.example.addGroupButton),
-        constants.conditionTimeout);
-      await configurationPage.unifiedPane.hiddenIfEmptyCheckbox('Pictures').click();
-      await configurationPage.unifiedPane.fieldSpecificButton('Pictures').click();
-      await configurationPage.unifiedPane.sense.fieldSpecificInputSystemCheckbox('Pictures', 1).click();
-      await configurationPage.unifiedPane.fieldSpecificCaptionHiddenIfEmptyCheckbox('Pictures').click();
-      await configurationPage.unifiedPane.fieldSpecificButton('Pictures').click();
+      await browser.wait(
+        ExpectedConditions.elementToBeClickable(
+          configurationPage.unifiedPane.example.addGroupButton
+        ),
+        constants.conditionTimeout
+      );
+      await configurationPage.unifiedPane
+        .hiddenIfEmptyCheckbox('Pictures')
+        .click();
+      await configurationPage.unifiedPane
+        .fieldSpecificButton('Pictures')
+        .click();
+      await configurationPage.unifiedPane.sense
+        .fieldSpecificInputSystemCheckbox('Pictures', 1)
+        .click();
+      await configurationPage.unifiedPane
+        .fieldSpecificCaptionHiddenIfEmptyCheckbox('Pictures')
+        .click();
+      await configurationPage.unifiedPane
+        .fieldSpecificButton('Pictures')
+        .click();
       await configurationPage.unifiedPane.example.addGroupButton.click();
       await browser.$('body').sendKeys(protractor.Key.ESCAPE);
       await browser.$('body').sendKeys(protractor.Key.ESCAPE);
-      await browser.wait(ExpectedConditions.elementToBeClickable(configurationPage.tabs.unified), constants.conditionTimeout);
-      await configurationPage.unifiedPane.hiddenIfEmptyCheckbox('Translation').click();
-      await configurationPage.unifiedPane.fieldSpecificButton('Translation').click();
-      await configurationPage.unifiedPane.example.fieldSpecificInputSystemCheckbox('Translation', 0).click();
-      await configurationPage.unifiedPane.fieldSpecificButton('Translation').click();
+      await browser.wait(
+        ExpectedConditions.elementToBeClickable(configurationPage.tabs.unified),
+        constants.conditionTimeout
+      );
+      await configurationPage.unifiedPane
+        .hiddenIfEmptyCheckbox('Translation')
+        .click();
+      await configurationPage.unifiedPane
+        .fieldSpecificButton('Translation')
+        .click();
+      await configurationPage.unifiedPane.example
+        .fieldSpecificInputSystemCheckbox('Translation', 0)
+        .click();
+      await configurationPage.unifiedPane
+        .fieldSpecificButton('Translation')
+        .click();
     });
   });
 
@@ -65,7 +108,9 @@ describe('Lexicon E2E Page Traversal', () => {
     it('Edit view', async () => {
       await projectsPage.get();
       await projectsPage.clickOnProject(constants.testProjectName);
-      await editorPage.edit.clickEntryByLexeme(constants.testEntry1.lexeme.th.value);
+      await editorPage.edit.clickEntryByLexeme(
+        constants.testEntry1.lexeme.th.value
+      );
       await editorPage.noticeList.count();
       await editorPage.edit.entriesList.count();
       await editorPage.edit.senses.count();

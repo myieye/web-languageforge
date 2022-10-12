@@ -1,8 +1,8 @@
-import {browser, ExpectedConditions} from 'protractor';
+import { browser, ExpectedConditions } from 'protractor';
 
-import {BellowsLoginPage} from './shared/login.page';
-import {SfUserProfilePage} from './shared/user-profile.page';
-import {Utils} from './shared/utils';
+import { BellowsLoginPage } from './shared/login.page';
+import { SfUserProfilePage } from './shared/user-profile.page';
+import { Utils } from './shared/utils';
 
 describe('Bellows E2E User Profile app', () => {
   const constants = require('../testConstants.json');
@@ -13,8 +13,7 @@ describe('Bellows E2E User Profile app', () => {
   const usernames = [constants.memberUsername, constants.managerUsername];
   const newUsername = 'newusername';
   // Run the Activity E2E as each test user
-  usernames.forEach(expectedUsername => {
-
+  usernames.forEach((expectedUsername) => {
     const newEmail = 'newemail@example.com';
     let newColor: string;
     let newShape: string;
@@ -46,8 +45,10 @@ describe('Bellows E2E User Profile app', () => {
     }
 
     function logInAsRole() {
-      if (expectedUsername === constants.memberUsername) return loginPage.loginAsMember();
-      else if (expectedUsername === constants.managerUsername) return loginPage.loginAsManager();
+      if (expectedUsername === constants.memberUsername)
+        return loginPage.loginAsMember();
+      else if (expectedUsername === constants.managerUsername)
+        return loginPage.loginAsManager();
     }
 
     // Perform activity E2E tests according to the different roles
@@ -59,13 +60,25 @@ describe('Bellows E2E User Profile app', () => {
       it('Verify initial "My Account" settings created from setupTestEnvironment.php', async () => {
         await userProfile.getMyAccount();
 
-        expect(await userProfile.myAccountTab.username.getAttribute('value')).toEqual(expectedUsername);
-        expect(await userProfile.myAccountTab.avatar.getAttribute('src')).toContain(constants.avatar);
-        expect<string>(await userProfile.myAccountTab.avatarColor.$('option:checked').getText())
-          .toBe('Select a Color...');
-        expect<string>(await userProfile.myAccountTab.avatarShape.$('option:checked').getText())
-          .toBe('Choose an animal...');
-        expect<string>(await userProfile.myAccountTab.mobilePhoneInput.getAttribute('value')).toEqual('');
+        expect(
+          await userProfile.myAccountTab.username.getAttribute('value')
+        ).toEqual(expectedUsername);
+        expect(
+          await userProfile.myAccountTab.avatar.getAttribute('src')
+        ).toContain(constants.avatar);
+        expect<string>(
+          await userProfile.myAccountTab.avatarColor
+            .$('option:checked')
+            .getText()
+        ).toBe('Select a Color...');
+        expect<string>(
+          await userProfile.myAccountTab.avatarShape
+            .$('option:checked')
+            .getText()
+        ).toBe('Choose an animal...');
+        expect<string>(
+          await userProfile.myAccountTab.mobilePhoneInput.getAttribute('value')
+        ).toEqual('');
         expect(await userProfile.myAccountTab.emailBtn.isSelected());
       });
 
@@ -75,9 +88,15 @@ describe('Bellows E2E User Profile app', () => {
         const expectedAge: string = '';
         const expectedGender: string = '';
 
-        expect<string>(await userProfile.aboutMeTab.fullName.getAttribute('value')).toEqual(expectedFullname);
-        expect<string>(await userProfile.aboutMeTab.age.getAttribute('value')).toEqual(expectedAge);
-        expect<string>(await userProfile.aboutMeTab.gender.$('option:checked').getText()).toBe(expectedGender);
+        expect<string>(
+          await userProfile.aboutMeTab.fullName.getAttribute('value')
+        ).toEqual(expectedFullname);
+        expect<string>(
+          await userProfile.aboutMeTab.age.getAttribute('value')
+        ).toEqual(expectedAge);
+        expect<string>(
+          await userProfile.aboutMeTab.gender.$('option:checked').getText()
+        ).toBe(expectedGender);
       });
 
       it('Update and store "My Account" settings', async () => {
@@ -88,7 +107,9 @@ describe('Bellows E2E User Profile app', () => {
         await userProfile.myAccountTab.updateEmail(newEmail);
 
         // Ensure "Blue" won't match "Steel Blue", etc.
-        await userProfile.myAccountTab.selectColor(new RegExp('^' + newColor + '$'));
+        await userProfile.myAccountTab.selectColor(
+          new RegExp('^' + newColor + '$')
+        );
         await userProfile.myAccountTab.selectShape(newShape);
 
         await userProfile.myAccountTab.updateMobilePhone(newMobilePhone);
@@ -104,25 +125,48 @@ describe('Bellows E2E User Profile app', () => {
 
       it('Verify that new profile settings persisted', async () => {
         await browser.refresh();
-        await browser.wait(ExpectedConditions.visibilityOf(userProfile.myAccountTab.emailInput), constants.conditionTimeout);
+        await browser.wait(
+          ExpectedConditions.visibilityOf(userProfile.myAccountTab.emailInput),
+          constants.conditionTimeout
+        );
 
         // Verify values.
-        expect<any>(await userProfile.myAccountTab.emailInput.getAttribute('value')).toEqual(newEmail);
-        expect<any>(await userProfile.myAccountTab.avatar.getAttribute('src')).toContain(expectedAvatar);
-        expect<any>(await userProfile.myAccountTab.avatarColor.$('option:checked').getText()).toBe(newColor);
-        expect<any>(await userProfile.myAccountTab.avatarShape.$('option:checked').getText()).toBe(newShape);
-        expect<any>(await userProfile.myAccountTab.mobilePhoneInput.getAttribute('value')).toEqual(newMobilePhone);
+        expect<any>(
+          await userProfile.myAccountTab.emailInput.getAttribute('value')
+        ).toEqual(newEmail);
+        expect<any>(
+          await userProfile.myAccountTab.avatar.getAttribute('src')
+        ).toContain(expectedAvatar);
+        expect<any>(
+          await userProfile.myAccountTab.avatarColor
+            .$('option:checked')
+            .getText()
+        ).toBe(newColor);
+        expect<any>(
+          await userProfile.myAccountTab.avatarShape
+            .$('option:checked')
+            .getText()
+        ).toBe(newShape);
+        expect<any>(
+          await userProfile.myAccountTab.mobilePhoneInput.getAttribute('value')
+        ).toEqual(newMobilePhone);
         expect(await userProfile.myAccountTab.bothBtn.isSelected());
 
         // Restore email address
         await userProfile.myAccountTab.updateEmail(originalEmail);
         await userProfile.myAccountTab.saveBtn.click().then(async () => {
           await browser.refresh();
-          await browser.wait(ExpectedConditions.visibilityOf(userProfile.myAccountTab.emailInput),
-          constants.conditionTimeout);
+          await browser.wait(
+            ExpectedConditions.visibilityOf(
+              userProfile.myAccountTab.emailInput
+            ),
+            constants.conditionTimeout
+          );
         });
 
-        expect<any>(await userProfile.myAccountTab.emailInput.getAttribute('value')).toEqual(originalEmail);
+        expect<any>(
+          await userProfile.myAccountTab.emailInput.getAttribute('value')
+        ).toEqual(originalEmail);
       });
 
       it('Update and store different username. Login with new credentials', async () => {
@@ -130,43 +174,79 @@ describe('Bellows E2E User Profile app', () => {
         await userProfile.myAccountTab.updateEmail(newEmail);
 
         // Change to taken username
-        await userProfile.myAccountTab.updateUsername(constants.observerUsername);
-        await browser.wait(ExpectedConditions.visibilityOf(userProfile.myAccountTab.usernameTaken),
-          constants.conditionTimeout);
-        expect<any>(await userProfile.myAccountTab.usernameTaken.isDisplayed()).toBe(true);
-        expect<any>(await userProfile.myAccountTab.saveBtn.isEnabled()).toBe(false);
+        await userProfile.myAccountTab.updateUsername(
+          constants.observerUsername
+        );
+        await browser.wait(
+          ExpectedConditions.visibilityOf(
+            userProfile.myAccountTab.usernameTaken
+          ),
+          constants.conditionTimeout
+        );
+        expect<any>(
+          await userProfile.myAccountTab.usernameTaken.isDisplayed()
+        ).toBe(true);
+        expect<any>(await userProfile.myAccountTab.saveBtn.isEnabled()).toBe(
+          false
+        );
 
         // Change to new username
         await userProfile.myAccountTab.updateUsername(newUsername);
-        expect<any>(await userProfile.myAccountTab.usernameTaken.isDisplayed()).toBe(false);
+        expect<any>(
+          await userProfile.myAccountTab.usernameTaken.isDisplayed()
+        ).toBe(false);
 
         // Save, Cancel the confirmation modal
-        expect<any>(await userProfile.myAccountTab.saveBtn.isEnabled()).toBe(true);
+        expect<any>(await userProfile.myAccountTab.saveBtn.isEnabled()).toBe(
+          true
+        );
         await userProfile.myAccountTab.saveBtn.click();
         await Utils.clickModalButton('Cancel');
-        await browser.wait(ExpectedConditions.elementToBeClickable(userProfile.myAccountTab.saveBtn));
+        await browser.wait(
+          ExpectedConditions.elementToBeClickable(
+            userProfile.myAccountTab.saveBtn
+          )
+        );
 
         await browser.refresh();
 
         // Confirm email not changed
-        await browser.wait(ExpectedConditions.visibilityOf(userProfile.myAccountTab.emailInput), constants.conditionTimeout);
-        await browser.wait(ExpectedConditions.elementToBeClickable(userProfile.myAccountTab.saveBtn));
+        await browser.wait(
+          ExpectedConditions.visibilityOf(userProfile.myAccountTab.emailInput),
+          constants.conditionTimeout
+        );
+        await browser.wait(
+          ExpectedConditions.elementToBeClickable(
+            userProfile.myAccountTab.saveBtn
+          )
+        );
         await Utils.scrollTop();
-        expect<any>(await userProfile.myAccountTab.emailInput.getAttribute('value')).toEqual(originalEmail);
+        expect<any>(
+          await userProfile.myAccountTab.emailInput.getAttribute('value')
+        ).toEqual(originalEmail);
 
         // Change to new username
         await userProfile.myAccountTab.updateUsername(newUsername);
-        expect<any>(await userProfile.myAccountTab.usernameTaken.isDisplayed()).toBe(false);
+        expect<any>(
+          await userProfile.myAccountTab.usernameTaken.isDisplayed()
+        ).toBe(false);
 
         // Save changes
-        expect<any>(await userProfile.myAccountTab.saveBtn.isEnabled()).toBe(true);
+        expect<any>(await userProfile.myAccountTab.saveBtn.isEnabled()).toBe(
+          true
+        );
         await userProfile.myAccountTab.saveBtn.click();
 
         await Utils.clickModalButton('Save changes');
         await Utils.waitForNewAngularPage('login');
-        await browser.wait(ExpectedConditions.visibilityOf(loginPage.username), constants.conditionTimeout);
+        await browser.wait(
+          ExpectedConditions.visibilityOf(loginPage.username),
+          constants.conditionTimeout
+        );
         expect<any>(await loginPage.infoMessages.count()).toBe(1);
-        expect(await loginPage.infoMessages.first().getText()).toContain('Username changed. Please login.');
+        expect(await loginPage.infoMessages.first().getText()).toContain(
+          'Username changed. Please login.'
+        );
       });
 
       it('Login with new username and revert to original username', async () => {
@@ -174,7 +254,9 @@ describe('Bellows E2E User Profile app', () => {
         await loginPage.login(newUsername, password);
 
         await userProfile.getMyAccount();
-        expect<any>(await userProfile.myAccountTab.username.getAttribute('value')).toEqual(newUsername);
+        expect<any>(
+          await userProfile.myAccountTab.username.getAttribute('value')
+        ).toEqual(newUsername);
         await userProfile.myAccountTab.updateUsername(expectedUsername);
         await userProfile.myAccountTab.saveBtn.click();
         await Utils.clickModalButton('Save changes');
@@ -197,7 +279,7 @@ describe('Bellows E2E User Profile app', () => {
             newAge = '3.1415';
             newGender = 'Female';
             break;
-        case constants.managerUsername:
+          case constants.managerUsername:
             newFullName = 'MrAdmin';
             newAge = '33.33';
             newGender = 'Male';
@@ -212,14 +294,22 @@ describe('Bellows E2E User Profile app', () => {
 
         // Submit updated profile
         await userProfile.aboutMeTab.saveBtn.click();
-        expect<any>(await userProfile.aboutMeTab.fullName.getAttribute('value')).toEqual(newFullName);
+        expect<any>(
+          await userProfile.aboutMeTab.fullName.getAttribute('value')
+        ).toEqual(newFullName);
 
         // Verify values.  Browse to different URL first to force new page load
         await userProfile.getAboutMe();
 
-        expect<any>(await userProfile.aboutMeTab.fullName.getAttribute('value')).toEqual(newFullName);
-        expect<any>(await userProfile.aboutMeTab.age.getAttribute('value')).toEqual(newAge);
-        expect<any>(await userProfile.aboutMeTab.gender.$('option:checked').getText()).toBe(newGender);
+        expect<any>(
+          await userProfile.aboutMeTab.fullName.getAttribute('value')
+        ).toEqual(newFullName);
+        expect<any>(
+          await userProfile.aboutMeTab.age.getAttribute('value')
+        ).toEqual(newAge);
+        expect<any>(
+          await userProfile.aboutMeTab.gender.$('option:checked').getText()
+        ).toBe(newGender);
       });
     });
   });

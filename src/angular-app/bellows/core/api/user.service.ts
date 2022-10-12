@@ -38,24 +38,61 @@ export class UserService {
     return this.api.call('user_list', [], callback);
   }
 
-  typeahead(term: string, projectIdToExclude: string = '', callback?: JsonRpcCallback) {
-    return this.api.call('user_typeahead', [term, projectIdToExclude], callback);
+  typeahead(
+    term: string,
+    projectIdToExclude: string = '',
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'user_typeahead',
+      [term, projectIdToExclude],
+      callback
+    );
   }
 
-  typeaheadExclusive(term: string, projectIdToExclude: string = '', callback?: JsonRpcCallback) {
-    return this.api.call('user_typeaheadExclusive', [term, projectIdToExclude], callback);
+  typeaheadExclusive(
+    term: string,
+    projectIdToExclude: string = '',
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'user_typeaheadExclusive',
+      [term, projectIdToExclude],
+      callback
+    );
   }
 
-  changePassword(userId: string, newPassword: string, callback?: JsonRpcCallback) {
+  changePassword(
+    userId: string,
+    newPassword: string,
+    callback?: JsonRpcCallback
+  ) {
     return this.api.call('change_password', [userId, newPassword], callback);
   }
 
-  resetPassword(resetPasswordKey: string, newPassword: string, callback?: JsonRpcCallback) {
-    return this.api.call('reset_password', [resetPasswordKey, newPassword], callback);
+  resetPassword(
+    resetPasswordKey: string,
+    newPassword: string,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'reset_password',
+      [resetPasswordKey, newPassword],
+      callback
+    );
   }
 
-  checkUniqueIdentity(userId: string, updatedUsername: string, updatedEmail: string, callback?: JsonRpcCallback) {
-    return this.api.call('check_unique_identity', [userId, updatedUsername, updatedEmail], callback);
+  checkUniqueIdentity(
+    userId: string,
+    updatedUsername: string,
+    updatedEmail: string,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'check_unique_identity',
+      [userId, updatedUsername, updatedEmail],
+      callback
+    );
   }
 
   calculateUsername(usernameBase: string) {
@@ -78,8 +115,16 @@ export class UserService {
     return this.api.call('user_sendInvite', [toEmail, roleKey], callback);
   }
 
-  checkLdapiUserPassword(username: string, password: string, callback?: JsonRpcCallback) {
-    return this.api.call('ldapi_check_user_password', [username, password], callback);
+  checkLdapiUserPassword(
+    username: string,
+    password: string,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'ldapi_check_user_password',
+      [username, password],
+      callback
+    );
   }
 
   getLdapiUser(username: string, callback?: JsonRpcCallback) {
@@ -94,23 +139,35 @@ export class UserService {
     return this.api.call('ldapi_get_projects_for_user', [username], callback);
   }
 
-  ldapiUserIsManagerOfProject(username: string, projectCode: string, callback?: JsonRpcCallback) {
-    return this.api.call('ldapi_user_is_manager_of_project', [username, projectCode], callback);
+  ldapiUserIsManagerOfProject(
+    username: string,
+    projectCode: string,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'ldapi_user_is_manager_of_project',
+      [username, projectCode],
+      callback
+    );
   }
 
   searchLdapiUsers(searchText: string, callback?: JsonRpcCallback) {
     return this.api.call('ldapi_search_users', [searchText], callback);
   }
 
-  updateLdapiUser(username: string, userDetails: User, callback?: JsonRpcCallback) {
+  updateLdapiUser(
+    username: string,
+    userDetails: User,
+    callback?: JsonRpcCallback
+  ) {
     const nameParts = this.splitName(userDetails.name);
     const apiUser = {
       username: userDetails.username,
       firstname: nameParts[0],
       lastname: nameParts[1],
       emailAddress: userDetails.email,
-      password: '',  // This means "no change" in the API
-      mustChangePassword: false
+      password: '', // This means "no change" in the API
+      mustChangePassword: false,
     };
     return this.api.call('ldapi_update_user', [username, apiUser], callback);
   }
@@ -123,5 +180,4 @@ export class UserService {
     }
     return parts;
   }
-
 }

@@ -1,26 +1,42 @@
 import * as angular from 'angular';
 
-import {SemanticDomain, SemanticDomainsService} from '../../../core/semantic-domains/semantic-domains.service';
-import {FieldMultiOptionListController} from './dc-multioptionlist.component';
+import {
+  SemanticDomain,
+  SemanticDomainsService,
+} from '../../../core/semantic-domains/semantic-domains.service';
+import { FieldMultiOptionListController } from './dc-multioptionlist.component';
 
-export class FieldSemanticDomainController extends FieldMultiOptionListController implements angular.IController {
+export class FieldSemanticDomainController
+  extends FieldMultiOptionListController
+  implements angular.IController
+{
   options: SemanticDomain[] = [];
 
   static $inject = ['$scope', '$state', 'semanticDomainsService'];
-  constructor(private readonly $scope: angular.IScope, protected $state: angular.ui.IStateService,
-              private readonly semanticDomains: SemanticDomainsService) {
+  constructor(
+    private readonly $scope: angular.IScope,
+    protected $state: angular.ui.IStateService,
+    private readonly semanticDomains: SemanticDomainsService
+  ) {
     super($state);
   }
 
   $onInit(): void {
     this.contextGuid = this.parentContextGuid;
-    this.semanticDomains.setLanguageCode(this.control.interfaceConfig.languageCode).then(this.createOptions);
+    this.semanticDomains
+      .setLanguageCode(this.control.interfaceConfig.languageCode)
+      .then(this.createOptions);
 
-    this.$scope.$watch(() => this.control.interfaceConfig.languageCode, (newVal: string) => {
-      if (newVal != null) {
-        this.semanticDomains.setLanguageCode(this.control.interfaceConfig.languageCode).then(this.createOptions);
+    this.$scope.$watch(
+      () => this.control.interfaceConfig.languageCode,
+      (newVal: string) => {
+        if (newVal != null) {
+          this.semanticDomains
+            .setLanguageCode(this.control.interfaceConfig.languageCode)
+            .then(this.createOptions);
+        }
       }
-    });
+    );
   }
 
   getDisplayName(key: string): string {
@@ -33,7 +49,9 @@ export class FieldSemanticDomainController extends FieldMultiOptionListControlle
   }
 
   showDeleteButton(valueToBeDeleted: string, value: string): boolean {
-    if (this.semanticDomains.data != null && this.isAtEditorEntry() &&
+    if (
+      this.semanticDomains.data != null &&
+      this.isAtEditorEntry() &&
       this.control.rights.canEditEntry()
     ) {
       return valueToBeDeleted === value;
@@ -44,12 +62,17 @@ export class FieldSemanticDomainController extends FieldMultiOptionListControlle
 
   orderItemsByListOrder = (key: string): string => {
     return key;
-  }
+  };
 
   showAddButton(): boolean {
-    return this.control.rights.canEditEntry() && this.isAtEditorEntry() && !this.isAdding && this.model != null &&
+    return (
+      this.control.rights.canEditEntry() &&
+      this.isAtEditorEntry() &&
+      !this.isAdding &&
+      this.model != null &&
       this.semanticDomains.data != null &&
-      this.model.values.length < Object.keys(this.semanticDomains.data).length;
+      this.model.values.length < Object.keys(this.semanticDomains.data).length
+    );
   }
 
   private createOptions = (): void => {
@@ -59,8 +82,7 @@ export class FieldSemanticDomainController extends FieldMultiOptionListControlle
         this.options.push(this.semanticDomains.data[key]);
       }
     }
-  }
-
+  };
 }
 
 export const FieldSemanticDomainComponent: angular.IComponentOptions = {
@@ -70,8 +92,9 @@ export const FieldSemanticDomainComponent: angular.IComponentOptions = {
     control: '<',
     fieldName: '<',
     parentContextGuid: '<',
-    selectField: '&?'
+    selectField: '&?',
   },
   controller: FieldSemanticDomainController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-semanticdomain.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-semanticdomain.component.html',
 };

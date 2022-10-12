@@ -1,4 +1,4 @@
-import {browser, by, element} from 'protractor';
+import { browser, by, element } from 'protractor';
 
 export class SignupPage {
   static get() {
@@ -6,7 +6,9 @@ export class SignupPage {
   }
 
   static getPrefilledEmail(email: string) {
-    return browser.get(browser.baseUrl + '/public/signup#!/?e=' + encodeURIComponent(email));
+    return browser.get(
+      browser.baseUrl + '/public/signup#!/?e=' + encodeURIComponent(email)
+    );
   }
 
   signupForm = element(by.id('signupForm'));
@@ -41,18 +43,18 @@ export class SignupPage {
       return this.captcha.expectedItemName.getText().then((result: string) => {
         const captchaDiv = element(by.id('pui-captcha'));
         switch (result) {
-          case 'Blue Square' :
+          case 'Blue Square':
             return captchaDiv.element(by.id('captcha0')).click();
-          case 'Yellow Circle' :
+          case 'Yellow Circle':
             return captchaDiv.element(by.id('captcha1')).click();
-          case 'Red Triangle' :
+          case 'Red Triangle':
             return captchaDiv.element(by.id('captcha2')).click();
         }
       });
-    }
+    },
   };
 
   captchaInvalid = element(by.id('captchaInvalid'));
   signupButton = element(by.id('submit'));
-  noticeList  = element.all(by.repeater('notice in $ctrl.notices()'));
+  noticeList = element.all(by.repeater('notice in $ctrl.notices()'));
 }

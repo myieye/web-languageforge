@@ -1,9 +1,12 @@
 import * as angular from 'angular';
 
-import {LexiconNewProjectState} from '../lexicon-new-project-state.model';
-import {LexiconNewProjectController, NewProject} from '../lexicon-new-project.component';
-import {NewProjectChooserState} from '../new-project-chooser.component';
-import {NewProjectInitialDataState} from './new-project-initial-data.component';
+import { LexiconNewProjectState } from '../lexicon-new-project-state.model';
+import {
+  LexiconNewProjectController,
+  NewProject,
+} from '../lexicon-new-project.component';
+import { NewProjectChooserState } from '../new-project-chooser.component';
+import { NewProjectInitialDataState } from './new-project-initial-data.component';
 
 export class NewProjectNameController implements angular.IController {
   npnNewProject: NewProject;
@@ -13,42 +16,54 @@ export class NewProjectNameController implements angular.IController {
   npnValidateForm: () => void;
 
   static $inject = ['$scope'];
-  constructor(private readonly $scope: angular.IScope) { }
+  constructor(private readonly $scope: angular.IScope) {}
 
   $onInit(): void {
+    this.$scope.$watch(
+      () => this.npnProjectCodeState,
+      (newVal: string, oldVal: string) => {
+        if (!newVal || newVal === oldVal) {
+          return;
+        }
 
-    this.$scope.$watch(() => this.npnProjectCodeState, (newVal: string, oldVal: string) => {
-      if (!newVal || newVal === oldVal) {
-        return;
+        if (newVal === 'unchecked') {
+          // User just typed in the project name box. Need to wait just a bit for the idle-validate to kick in.
+          return;
+        }
+
+        if (oldVal === 'loading') {
+          // Project code state just resolved. Validate rest of form so Forward button can activate.
+          this.npnValidateForm();
+        }
       }
+    );
 
-      if (newVal === 'unchecked') {
-        // User just typed in the project name box. Need to wait just a bit for the idle-validate to kick in.
-        return;
+    this.$scope.$watch(
+      () => this.npnNewProject.editProjectCode,
+      (newVal: boolean, oldVal: boolean) => {
+        if (oldVal && !newVal) {
+          // When user unchecks the "edit project code" box, go back to setting it from project name
+          this.npnNewProject.projectCode =
+            NewProjectNameController.projectNameToCode(
+              this.npnNewProject.projectName
+            );
+          this.npnCheckProjectCode();
+        }
       }
+    );
 
-      if (oldVal === 'loading') {
-        // Project code state just resolved. Validate rest of form so Forward button can activate.
-        this.npnValidateForm();
+    this.$scope.$watch(
+      () => this.npnNewProject.projectName,
+      (newVal: string, oldVal: string) => {
+        if (newVal == null) {
+          this.npnNewProject.projectCode = '';
+        } else if (newVal !== oldVal) {
+          this.npnNewProject.projectCode = newVal
+            .toLowerCase()
+            .replace(/ /g, '_');
+        }
       }
-    });
-
-    this.$scope.$watch(() => this.npnNewProject.editProjectCode, (newVal: boolean, oldVal: boolean) => {
-      if (oldVal && !newVal) {
-        // When user unchecks the "edit project code" box, go back to setting it from project name
-        this.npnNewProject.projectCode = NewProjectNameController.projectNameToCode(this.npnNewProject.projectName);
-        this.npnCheckProjectCode();
-      }
-    });
-
-    this.$scope.$watch(() => this.npnNewProject.projectName, (newVal: string, oldVal: string) => {
-      if (newVal == null) {
-        this.npnNewProject.projectCode = '';
-      } else if (newVal !== oldVal) {
-        this.npnNewProject.projectCode = newVal.toLowerCase().replace(/ /g, '_');
-      }
-    });
-
+    );
   }
 
   private static projectNameToCode(name: string): string {
@@ -57,7 +72,6 @@ export class NewProjectNameController implements angular.IController {
     }
     return name.toLowerCase().replace(/ /g, '_');
   }
-
 }
 
 export const NewProjectNameComponent: angular.IComponentOptions = {
@@ -66,10 +80,11 @@ export const NewProjectNameComponent: angular.IComponentOptions = {
     npnProjectCodeState: '<',
     npnCheckProjectCode: '&',
     npnResetValidateProjectForm: '&',
-    npnValidateForm: '&'
+    npnValidateForm: '&',
   },
   controller: NewProjectNameController,
-  templateUrl: '/angular-app/languageforge/lexicon/new-project/non-send-receive/new-project-name.controller.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/new-project/non-send-receive/new-project-name.controller.html',
 };
 
 export const NewProjectNameState = {
@@ -88,20 +103,26 @@ export const NewProjectNameState = {
     show: {
       backButton: true,
       nextButton: true,
-      step3: true
+      step3: true,
     },
     nextButtonLabel: 'Next',
     progressIndicatorStep1Label: 'Name',
     progressIndicatorStep2Label: 'Initial Data',
     progressIndicatorStep3Label: 'Verify',
-    isFormValid(controller: LexiconNewProjectController): angular.IPromise<boolean> {
+    isFormValid(
+      controller: LexiconNewProjectController
+    ): angular.IPromise<boolean> {
       if (!controller.newProject.projectName) {
-        return controller.error('Project Name cannot be empty. Please enter a project name.');
+        return controller.error(
+          'Project Name cannot be empty. Please enter a project name.'
+        );
       }
 
       if (!controller.newProject.projectCode) {
-        return controller.error('Project Code cannot be empty. ' +
-          'Please enter a project code or uncheck "Edit project code".');
+        return controller.error(
+          'Project Code cannot be empty. ' +
+            'Please enter a project code or uncheck "Edit project code".'
+        );
       }
 
       if (!controller.newProject.appName) {
@@ -117,26 +138,36 @@ export const NewProjectNameState = {
           case 'ok':
             return controller.ok();
           case 'exists':
-            return controller.error('Another project with code \'' + controller.newProject.projectCode +
-              '\' already exists.');
+            return controller.error(
+              "Another project with code '" +
+                controller.newProject.projectCode +
+                "' already exists."
+            );
           case 'invalid':
-            return controller.error('Project Code must begin with a letter, ' +
-              'and only contain lower-case letters, numbers, dashes and underscores.');
+            return controller.error(
+              'Project Code must begin with a letter, ' +
+                'and only contain lower-case letters, numbers, dashes and underscores.'
+            );
           case 'loading':
             return controller.error();
           case 'empty':
             return controller.neutral();
           default:
-
             // Project code state is unknown. Give a generic message,
             // adapted based on whether the user checked "Edit project code" or not.
             if (controller.newProject.editProjectCode) {
-              return controller.error('Project code \'' + controller.newProject.projectCode +
-                '\' cannot be used. Please choose a new project code.');
+              return controller.error(
+                "Project code '" +
+                  controller.newProject.projectCode +
+                  "' cannot be used. Please choose a new project code."
+              );
             } else {
-              return controller.error('Project code \'' + controller.newProject.projectCode +
-                '\' cannot be used. Either change the project name, ' +
-                'or check the "Edit project code" box and choose a new code.');
+              return controller.error(
+                "Project code '" +
+                  controller.newProject.projectCode +
+                  "' cannot be used. Either change the project name, " +
+                  'or check the "Edit project code" box and choose a new code.'
+              );
             }
         }
       });
@@ -151,6 +182,6 @@ export const NewProjectNameState = {
     },
     goPreviousState(controller: LexiconNewProjectController): void {
       controller.$state.go(NewProjectChooserState.name);
-    }
-  }
+    },
+  },
 } as LexiconNewProjectState;

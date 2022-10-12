@@ -4,10 +4,12 @@ export class HeaderData {
 }
 
 export class HeaderSetting {
-  constructor(public id: string,
-              public label: string,
-              public href: string = '',
-              public divider: boolean = false) { }
+  constructor(
+    public id: string,
+    public label: string,
+    public href: string = '',
+    public divider: boolean = false
+  ) {}
 }
 
 export class ApplicationHeaderService {

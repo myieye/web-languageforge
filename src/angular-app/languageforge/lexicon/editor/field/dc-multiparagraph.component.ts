@@ -1,9 +1,12 @@
 import * as angular from 'angular';
 
-import {LexiconUtilityService} from '../../core/lexicon-utility.service';
-import {LexMultiParagraph} from '../../shared/model/lex-multi-paragraph.model';
-import {LexConfigInputSystems, LexConfigMultiParagraph} from '../../shared/model/lexicon-config.model';
-import {FieldControl} from './field-control.model';
+import { LexiconUtilityService } from '../../core/lexicon-utility.service';
+import { LexMultiParagraph } from '../../shared/model/lex-multi-paragraph.model';
+import {
+  LexConfigInputSystems,
+  LexConfigMultiParagraph,
+} from '../../shared/model/lexicon-config.model';
+import { FieldControl } from './field-control.model';
 
 export class FieldMultiParagraphController implements angular.IController {
   model: LexMultiParagraph;
@@ -16,7 +19,7 @@ export class FieldMultiParagraphController implements angular.IController {
   inputSystems: LexConfigInputSystems;
 
   static $inject = ['$state'];
-  constructor(private $state: angular.ui.IStateService) { }
+  constructor(private $state: angular.ui.IStateService) {}
 
   $onInit(): void {
     this.inputSystems = this.control.config.inputSystems;
@@ -32,7 +35,7 @@ export class FieldMultiParagraphController implements angular.IController {
       return 'ltr';
     }
 
-    return (this.inputSystems[tag].isRightToLeft) ? 'rtl' : 'ltr';
+    return this.inputSystems[tag].isRightToLeft ? 'rtl' : 'ltr';
   }
 
   modelContainsSpan(tag: string): boolean {
@@ -42,7 +45,6 @@ export class FieldMultiParagraphController implements angular.IController {
 
     return this.model.paragraphsHtml.includes('</span>');
   }
-
 }
 
 export const FieldMultiParagraphComponent: angular.IComponentOptions = {
@@ -51,8 +53,9 @@ export const FieldMultiParagraphComponent: angular.IComponentOptions = {
     config: '<',
     control: '<',
     fieldName: '<',
-    parentContextGuid: '<'
+    parentContextGuid: '<',
   },
   controller: FieldMultiParagraphController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-multiparagraph.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-multiparagraph.component.html',
 };

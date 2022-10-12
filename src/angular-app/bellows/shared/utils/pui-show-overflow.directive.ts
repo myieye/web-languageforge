@@ -5,14 +5,18 @@ export function PuiShowOverflow(): angular.IDirective {
     restrict: 'A',
     scope: {
       ngBind: '=',
-      ngBindHtml: '='
+      ngBindHtml: '=',
     },
     link($scope, $element, $attrs) {
       function updateTitle(newValue: string) {
-        if (angular.isDefined(newValue) &&
-          ($element[0].offsetHeight > 0 || $element[0].offsetWidth > 0)) {
-          if ($element[0].offsetHeight < $element[0].scrollHeight ||
-            $element[0].offsetWidth < $element[0].scrollWidth) {
+        if (
+          angular.isDefined(newValue) &&
+          ($element[0].offsetHeight > 0 || $element[0].offsetWidth > 0)
+        ) {
+          if (
+            $element[0].offsetHeight < $element[0].scrollHeight ||
+            $element[0].offsetWidth < $element[0].scrollWidth
+          ) {
             // make multiline and strip html tags
             const multiline = newValue.replace('</p><p>', '\r\n');
             $attrs.$set('title', multiline.replace(/<[^>]+>/gm, ''));
@@ -24,6 +28,6 @@ export function PuiShowOverflow(): angular.IDirective {
 
       $scope.$watch('ngBind', updateTitle);
       $scope.$watch('ngBindHtml', updateTitle);
-    }
+    },
   };
 }

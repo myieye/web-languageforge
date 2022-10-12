@@ -1,10 +1,10 @@
 import * as angular from 'angular';
 
-import {LexiconUtilityService} from '../../core/lexicon-utility.service';
-import {LexMultiValue} from '../../shared/model/lex-multi-value.model';
-import {LexConfigOptionList} from '../../shared/model/lexicon-config.model';
-import {LexOptionListItem} from '../../shared/model/option-list.model';
-import {FieldControl} from './field-control.model';
+import { LexiconUtilityService } from '../../core/lexicon-utility.service';
+import { LexMultiValue } from '../../shared/model/lex-multi-value.model';
+import { LexConfigOptionList } from '../../shared/model/lexicon-config.model';
+import { LexOptionListItem } from '../../shared/model/option-list.model';
+import { FieldControl } from './field-control.model';
 
 export class FieldOptionListController implements angular.IController {
   model: LexOptionListItem | LexMultiValue;
@@ -17,7 +17,7 @@ export class FieldOptionListController implements angular.IController {
   contextGuid: string;
 
   static $inject = ['$state'];
-  constructor(protected $state: angular.ui.IStateService) { }
+  constructor(protected $state: angular.ui.IStateService) {}
 
   $onInit(): void {
     this.contextGuid = this.parentContextGuid;
@@ -40,7 +40,6 @@ export class FieldOptionListController implements angular.IController {
 
     return displayName;
   }
-
 }
 
 export const FieldOptionListComponent: angular.IComponentOptions = {
@@ -50,8 +49,9 @@ export const FieldOptionListComponent: angular.IComponentOptions = {
     control: '<',
     items: '<',
     fieldName: '<',
-    parentContextGuid: '<'
+    parentContextGuid: '<',
   },
   controller: FieldOptionListController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-optionlist.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-optionlist.component.html',
 };

@@ -7,8 +7,13 @@ import { expect, Locator, Page } from '@playwright/test';
  * @param selectElement , \<select\>
  * @param textShouldBeSelectedOption , e.g. 'Pizza Margherita' or a substring, e.g. 'Margherita'
  */
-export async function expectOptionSelectedInSelectElement(selectElement: Locator, textShouldBeSelectedOption: string) {
+export async function expectOptionSelectedInSelectElement(
+  selectElement: Locator,
+  textShouldBeSelectedOption: string
+) {
   const selectedValue: string = await selectElement.inputValue();
-  const shouldBeSelectedOption: Locator = selectElement.locator('option').filter({ hasText: textShouldBeSelectedOption });
+  const shouldBeSelectedOption: Locator = selectElement
+    .locator('option')
+    .filter({ hasText: textShouldBeSelectedOption });
   await expect(shouldBeSelectedOption).toHaveAttribute('value', selectedValue);
 }

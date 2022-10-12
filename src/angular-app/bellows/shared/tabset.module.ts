@@ -17,7 +17,7 @@ export class TabSetController implements angular.IController {
   tabs: Tab[] = [];
 
   static $inject = ['$scope'];
-  constructor(private $scope: TabSetScope) { }
+  constructor(private $scope: TabSetScope) {}
 
   $onInit(): void {
     this.$scope.active = this.$scope.active || 0;
@@ -37,14 +37,13 @@ export class TabSetController implements angular.IController {
     this.tabs[index].onSelect();
     this.$scope.active = index;
     for (const i of Object.keys(this.tabs)) {
-      this.tabs[i].selected = (parseInt(i, 10) === index);
+      this.tabs[i].selected = parseInt(i, 10) === index;
     }
   }
 
   selectedTab(): Tab {
     return this.tabs[this.$scope.active];
   }
-
 }
 
 // Tab directives heavily inspired by https://toddmotto.com/directive-to-directive-communication-with-require/
@@ -52,7 +51,7 @@ export function PuiTabset(): angular.IDirective {
   return {
     restrict: 'E',
     scope: {
-      active: '=?'
+      active: '=?',
     },
     transclude: true,
     controller: TabSetController,
@@ -79,7 +78,7 @@ export function PuiTabset(): angular.IDirective {
           </ul>
           <div data-ng-transclude></div>
       </div>
-    `
+    `,
   };
 }
 
@@ -101,7 +100,7 @@ export function PuiTab(): angular.IDirective {
     scope: {
       heading: '@',
       select: '&?',
-      tabIf: '<'
+      tabIf: '<',
     },
     template: `
       <div data-ng-show="tab.selected" class="tab-pane" data-ng-class="{ active: tab.selected }">
@@ -114,15 +113,14 @@ export function PuiTab(): angular.IDirective {
         selected: false,
         visible(): boolean {
           return $scope.tabIf !== false;
-        }
+        },
       } as Tab;
       $ctrl.addTab($scope.tab);
-    }
+    },
   };
 }
 
 export const TabSetModule = angular
   .module('palaso.ui.tabset', [])
   .directive('puiTabset', PuiTabset)
-  .directive('puiTab', PuiTab)
-  .name;
+  .directive('puiTab', PuiTab).name;

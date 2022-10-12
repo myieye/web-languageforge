@@ -10,34 +10,45 @@ export class ListViewController implements angular.IController {
   filteredItems: any[] = [];
   itemsFilter: any[];
 
-  itemsPerPage: string = '10';  // This should match the default value for the selector above
+  itemsPerPage: string = '10'; // This should match the default value for the selector above
   currentPage: number = 1;
 
-  private noOfPages: number = 3;  // TODO: calculate this automatically
+  private noOfPages: number = 3; // TODO: calculate this automatically
 
-  static $inject: string[] = ['$scope',
-    '$filter'];
-  constructor(private readonly $scope: angular.IScope,
-              private readonly $filter: angular.IFilterService) { }
+  static $inject: string[] = ['$scope', '$filter'];
+  constructor(
+    private readonly $scope: angular.IScope,
+    private readonly $filter: angular.IFilterService
+  ) {}
 
   $onInit(): void {
     this.query();
 
-    this.$scope.$watch(() => this.items, () => {
-      this.updateFilteredItems();
-    }, true);
+    this.$scope.$watch(
+      () => this.items,
+      () => {
+        this.updateFilteredItems();
+      },
+      true
+    );
 
-    this.$scope.$watch(() => this.filteredItems, (items: any[]) => {
-      if (items) {
-        this.updatePages();
-        this.updateVisibleItems();
+    this.$scope.$watch(
+      () => this.filteredItems,
+      (items: any[]) => {
+        if (items) {
+          this.updatePages();
+          this.updateVisibleItems();
+        }
+      },
+      true
+    );
+
+    this.$scope.$watch(
+      () => this.itemsFilter,
+      () => {
+        this.updateFilteredItems();
       }
-    }, true);
-
-    this.$scope.$watch(() => this.itemsFilter, () => {
-      this.updateFilteredItems();
-    });
-
+    );
   }
 
   changeItemsPerPage(): void {
@@ -63,11 +74,12 @@ export class ListViewController implements angular.IController {
     if (Array.isArray(this.filteredItems)) {
       this.visibleItems = this.filteredItems.slice(sliceStart, sliceEnd);
     }
-    
   }
 
   private updatePages(): void {
-    this.noOfPages = Math.ceil(this.filteredItems.length / parseInt(this.itemsPerPage, 10));
+    this.noOfPages = Math.ceil(
+      this.filteredItems.length / parseInt(this.itemsPerPage, 10)
+    );
     if (this.currentPage > this.noOfPages) {
       // This can happen if items have been deleted, for example
       this.currentPage = this.noOfPages;
@@ -94,7 +106,6 @@ export class ListViewController implements angular.IController {
     this.updateFilteredItems();
     this.updatePages();
   }
-
 }
 
 export const ListViewComponent: angular.IComponentOptions = {
@@ -105,14 +116,13 @@ export const ListViewComponent: angular.IComponentOptions = {
     hideIfEmpty: '@',
     visibleItems: '=',
     filteredItems: '=?',
-    itemsFilter: '=?'
+    itemsFilter: '=?',
   },
   controller: ListViewController,
   transclude: true,
-  templateUrl: '/angular-app/bellows/shared/list-view.component.html'
+  templateUrl: '/angular-app/bellows/shared/list-view.component.html',
 };
 
 export const ListViewModule = angular
   .module('palaso.ui.listview', ['ui.bootstrap'])
-  .component('listview', ListViewComponent)
-  .name;
+  .component('listview', ListViewComponent).name;

@@ -13,11 +13,10 @@ export function PuiIntlTelInput(): angular.IDirective {
           $(element).intlTelInput('setNumber', value);
         }
       });
-    }
+    },
   };
 }
 
 export const InternationalTelephoneInputModule = angular
   .module('palaso.ui.intlTelInput', [])
-  .directive('puiIntlTelInput', PuiIntlTelInput)
-  .name;
+  .directive('puiIntlTelInput', PuiIntlTelInput).name;

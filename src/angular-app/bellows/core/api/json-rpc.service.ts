@@ -25,8 +25,12 @@ export class JsonRpcService {
   lastId: number;
 
   static $inject: string[] = ['$http', '$window', 'error', 'exceptionHandler'];
-  constructor(private $http: angular.IHttpService, private $window: angular.IWindowService, private error: ErrorService,
-              private exceptionHandler: ExceptionHandlingService) {
+  constructor(
+    private $http: angular.IHttpService,
+    private $window: angular.IWindowService,
+    private error: ErrorService,
+    private exceptionHandler: ExceptionHandlingService
+  ) {
     this.lastId = 0;
   }
 
@@ -49,9 +53,15 @@ export class JsonRpcService {
    *   - {function([headerName])} - headers
    *   - {Object} config
    */
-  call(url: string, method: string, options: any, remoteParams: any[], callback: JsonRpcCallback) {
+  call(
+    url: string,
+    method: string,
+    options: any,
+    remoteParams: any[],
+    callback: JsonRpcCallback
+  ) {
     const params: any = {};
-    Object.keys(options).forEach(prop => {
+    Object.keys(options).forEach((prop) => {
       params[prop] = options[prop];
     });
 
@@ -61,12 +71,12 @@ export class JsonRpcService {
       version: '2.0',
       method,
       params,
-      id: this.nextId()
+      id: this.nextId(),
     };
     const httpRequest: angular.IRequestConfig = {
       url,
       method: 'POST',
-      data: JSON.stringify(jsonRequest)
+      data: JSON.stringify(jsonRequest),
     };
     const result: JsonRpcResult | any = {};
     const request = this.$http(httpRequest);
@@ -90,14 +100,14 @@ export class JsonRpcService {
             type = 'The requested resource is not available.';
             break;
           case 'UserNotAuthenticatedException':
-            type = 'You\'re not currently signed in.';
+            type = "You're not currently signed in.";
 
             // redirect to login page with message
             this.error.error('You will now be redirected to the login page.');
             this.$window.location.href = '/auth/login';
             return;
           case 'UserUnauthorizedException':
-            type = 'You don\'t have sufficient privileges.';
+            type = "You don't have sufficient privileges.";
             break;
           default:
             // silently swallow unknown exceptions and don't bug (heh) the user about things they can't fix
@@ -119,7 +129,6 @@ export class JsonRpcService {
         result.config = response.config;
         if (callback) callback(result);
       }
-
     };
 
     const requestError = (response: any) => {
@@ -127,7 +136,11 @@ export class JsonRpcService {
       // otherwise fail silently (the browser will console log a failed connection anyway)
       if (response.status > 0 && response.status !== '0') {
         // just absorb 502's, nothing the user can do about it.
-        response.status !== 502 && this.error.notify('RPC Error', 'Server Status Code ' + response.status);
+        response.status !== 502 &&
+          this.error.notify(
+            'RPC Error',
+            'Server Status Code ' + response.status
+          );
         result.ok = false;
         result.data = response.data;
         result.status = response.status;
@@ -141,10 +154,8 @@ export class JsonRpcService {
 
     return request;
   }
-
 }
 
 export const JsonRpcModule = angular
   .module('jsonRpc', [ErrorModule])
-  .service('jsonRpc', JsonRpcService)
-  .name;
+  .service('jsonRpc', JsonRpcService).name;

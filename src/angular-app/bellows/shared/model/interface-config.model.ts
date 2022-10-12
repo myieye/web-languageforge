@@ -1,4 +1,4 @@
-import {OrderedOptions} from './options.model';
+import { OrderedOptions } from './options.model';
 
 export class InterfaceConfig {
   direction = 'ltr';

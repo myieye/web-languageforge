@@ -54,9 +54,9 @@ services:
       - FACEBOOK_CLIENT_SECRET=bogus-development-token
       - REMEMBER_ME_SECRET=bogus-development-key
       - LANGUAGE_DEPOT_API_TOKEN=bogus-development-token
-    command: ["/run-with-wait.sh"]
+    command: ['/run-with-wait.sh']
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     volumes:
       # holds things like audio files or pictures attached to words within a project
       - lf-project-assets:/var/www/src/assets
@@ -210,7 +210,7 @@ services:
     volumes:
       - /dev/shm:/dev/shm
     ports:
-      - "5900:5900"
+      - '5900:5900'
 
   ld-db:
     image: mysql:5.7
@@ -272,9 +272,9 @@ services:
       - ../webpack-prd.config.js:/data/webpack-prd.config.js
       - ../package.json:/data/package.json
       - ../package-lock.json:/data/package-lock.json
-# uncomment on dev machine for convenience but don't commit - it messes up the e2e test run by
-# clobbering the JS files produced by tsc in the built image.
-#      - ../test:/data/test
+  # uncomment on dev machine for convenience but don't commit - it messes up the e2e test run by
+  # clobbering the JS files produced by tsc in the built image.
+  #      - ../test:/data/test
 
   app-for-e2e:
     build:
@@ -326,7 +326,7 @@ services:
       - XDEBUG_MODE=develop,debug
     command: sh -c "/wait && apache2-foreground"
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     volumes:
       - ../test/e2e/utils/TestControl.php:/var/www/src/Api/Service/TestControl.php
       - ../test/e2e/shared-files:/tmp/e2e-shared-files
@@ -353,7 +353,7 @@ services:
       # XDebug is intended for local development only.  Uncomment the following 3 lines:
       # - XDEBUG_MODE=develop,debug
     # extra_hosts:
-      # - "host.docker.internal:host-gateway"
+    # - "host.docker.internal:host-gateway"
     command: sh -c "/wait && /run.sh"
     volumes:
       # for developer convenience

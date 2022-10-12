@@ -9,15 +9,14 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
-  - name: http
-    protocol: TCP
-    port: 80
-    targetPort: 80
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
   selector:
     app: app
 
 ---
-
 # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -32,7 +31,6 @@ spec:
   storageClassName: weekly-snapshots-retain-4 # provided by LTOps
 
 ---
-
 # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -47,7 +45,6 @@ spec:
   storageClassName: weekly-snapshots-retain-4 # provided by LTOps
 
 ---
-
 # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#writing-a-deployment-spec
 apiVersion: apps/v1
 kind: Deployment
@@ -66,100 +63,100 @@ spec:
         app: app
     spec:
       volumes:
-      - name: assets
-        persistentVolumeClaim:
-          claimName: lf-project-assets
-      - name: sendreceive-data
-        persistentVolumeClaim:
-          claimName: lfmerge-sendreceive-data
+        - name: assets
+          persistentVolumeClaim:
+            claimName: lf-project-assets
+        - name: sendreceive-data
+          persistentVolumeClaim:
+            claimName: lfmerge-sendreceive-data
       initContainers:
-      - name: initialize-volume-ownership
-        image: busybox:1.33
-        resources:
-          requests:
-            memory: 25Mi
-          limits:
-            memory: 50Mi
-        command:
-          - 'sh'
-          - '-c'
-          - |-
-            mkdir /var/lib/languageforge/lexicon/sendreceive/state
-            chown www-data:www-data /var/www/html/assets /var/lib/languageforge/lexicon/sendreceive /var/lib/languageforge/lexicon/sendreceive/state
-        volumeMounts:
-          - mountPath: /var/www/html/assets
-            name: assets
-          - mountPath: /var/lib/languageforge/lexicon/sendreceive
-            name: sendreceive-data
+        - name: initialize-volume-ownership
+          image: busybox:1.33
+          resources:
+            requests:
+              memory: 25Mi
+            limits:
+              memory: 50Mi
+          command:
+            - 'sh'
+            - '-c'
+            - |-
+              mkdir /var/lib/languageforge/lexicon/sendreceive/state
+              chown www-data:www-data /var/www/html/assets /var/lib/languageforge/lexicon/sendreceive /var/lib/languageforge/lexicon/sendreceive/state
+          volumeMounts:
+            - mountPath: /var/www/html/assets
+              name: assets
+            - mountPath: /var/lib/languageforge/lexicon/sendreceive
+              name: sendreceive-data
       containers:
-      - name: app
-        image: sillsdev/web-languageforge:{{VERSION}}
-        imagePullPolicy: Always
-        # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
-        resources:
-          requests:
-            memory: 110Mi
-            cpu: 0.1
-          limits:
-            memory: 500Mi
-        volumeMounts:
-          - mountPath: /var/www/html/assets
-            name: assets
-          - mountPath: /var/lib/languageforge/lexicon/sendreceive
-            name: sendreceive-data
-        env:
-          - name: DATABASE
-            value: scriptureforge
-          - name: ENVIRONMENT
-            value: production
-          - name: WEBSITE
-            value: {{WEBSITE}}
-          - name: MAIL_HOST
-            value: mail
-          - name: LFMERGE_LOGGING_DEST
-            value: syslog
-          - name: MONGODB_CONN
-            valueFrom:
-              secretKeyRef:
-                key: MONGODB_CONN
-                name: app
-          - name: REMEMBER_ME_SECRET
-            valueFrom:
-              secretKeyRef:
-                key: REMEMBER_ME_SECRET
-                name: app
-          - name: LDAPI_BASE_URL
-            valueFrom:
-              secretKeyRef:
-                key: LDAPI_BASE_URL
-                name: ld-api
-          - name: LANGUAGE_DEPOT_API_TOKEN
-            valueFrom:
-              secretKeyRef:
-                key: LANGUAGE_DEPOT_API_TOKEN
-                name: ld-api
-          - name: FACEBOOK_CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                key: FACEBOOK_CLIENT_ID
-                name: oauth
-          - name: FACEBOOK_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                key: FACEBOOK_CLIENT_SECRET
-                name: oauth
-          - name: GOOGLE_CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                key: GOOGLE_CLIENT_ID
-                name: oauth
-          - name: GOOGLE_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                key: GOOGLE_CLIENT_SECRET
-                name: oauth
-          - name: LANGUAGE_DEPOT_TRUST_TOKEN
-            valueFrom:
-              secretKeyRef:
-                key: LD_TRUST_TOKEN
-                name: ld-trust-token
+        - name: app
+          image: sillsdev/web-languageforge:{{VERSION}}
+          imagePullPolicy: Always
+          # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
+          resources:
+            requests:
+              memory: 110Mi
+              cpu: 0.1
+            limits:
+              memory: 500Mi
+          volumeMounts:
+            - mountPath: /var/www/html/assets
+              name: assets
+            - mountPath: /var/lib/languageforge/lexicon/sendreceive
+              name: sendreceive-data
+          env:
+            - name: DATABASE
+              value: scriptureforge
+            - name: ENVIRONMENT
+              value: production
+            - name: WEBSITE
+              value: { { WEBSITE } }
+            - name: MAIL_HOST
+              value: mail
+            - name: LFMERGE_LOGGING_DEST
+              value: syslog
+            - name: MONGODB_CONN
+              valueFrom:
+                secretKeyRef:
+                  key: MONGODB_CONN
+                  name: app
+            - name: REMEMBER_ME_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: REMEMBER_ME_SECRET
+                  name: app
+            - name: LDAPI_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: LDAPI_BASE_URL
+                  name: ld-api
+            - name: LANGUAGE_DEPOT_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: LANGUAGE_DEPOT_API_TOKEN
+                  name: ld-api
+            - name: FACEBOOK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: FACEBOOK_CLIENT_ID
+                  name: oauth
+            - name: FACEBOOK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: FACEBOOK_CLIENT_SECRET
+                  name: oauth
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: GOOGLE_CLIENT_ID
+                  name: oauth
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: GOOGLE_CLIENT_SECRET
+                  name: oauth
+            - name: LANGUAGE_DEPOT_TRUST_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: LD_TRUST_TOKEN
+                  name: ld-trust-token

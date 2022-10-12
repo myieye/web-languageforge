@@ -9,23 +9,22 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: 60M
 spec:
   rules:
-  - host: {{WEBSITE}}
-    http:
-      paths:
-      - path: /
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: next-proxy
-            port:
-              number: 80
+    - host: { { WEBSITE } }
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: next-proxy
+                port:
+                  number: 80
   tls:
-  - hosts:
-    - {{WEBSITE}}
-    secretName: languageforge-tls
+    - hosts:
+        - { { WEBSITE } }
+      secretName: languageforge-tls
 
 ---
-
 # https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service
 apiVersion: v1
 kind: Service
@@ -36,15 +35,14 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - name: http
-    protocol: TCP
-    port: 80
-    targetPort: 80
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
   selector:
     app: next-proxy
 
 ---
-
 # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#writing-a-deployment-spec
 apiVersion: apps/v1
 kind: Deployment
@@ -63,18 +61,18 @@ spec:
         app: next-proxy
     spec:
       containers:
-      - name: next-proxy
-        image: sillsdev/web-languageforge:{{VERSION}}
-        # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
-        imagePullPolicy: Always
-        resources:
-          requests:
-            memory: 25Mi
-            cpu: 0.1
-          limits:
-            memory: 75Mi
-        env:
-          - name: LEGACY_APP
-            value: app:80
-          - name: NEXT_APP
-            value: next-app:3000
+        - name: next-proxy
+          image: sillsdev/web-languageforge:{{VERSION}}
+          # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 25Mi
+              cpu: 0.1
+            limits:
+              memory: 75Mi
+          env:
+            - name: LEGACY_APP
+              value: app:80
+            - name: NEXT_APP
+              value: next-app:3000

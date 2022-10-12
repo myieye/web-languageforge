@@ -7,7 +7,10 @@ export class NoticeController implements angular.IController {
   issueEmail: string;
 
   static $inject: string[] = ['silNoticeService', 'sessionService'];
-  constructor(private noticeService: NoticeService, private sessionService: SessionService) {
+  constructor(
+    private noticeService: NoticeService,
+    private sessionService: SessionService
+  ) {
     this.issueEmail = 'issues@languageforge.org';
     sessionService.getSession().then((session: Session) => {
       this.issueEmail = 'issues@' + session.baseSite() + '.org';
@@ -45,5 +48,5 @@ export class NoticeController implements angular.IController {
 
 export const NoticeComponent: angular.IComponentOptions = {
   templateUrl: '/angular-app/bellows/core/notice/notice.component.html',
-  controller: NoticeController
+  controller: NoticeController,
 };

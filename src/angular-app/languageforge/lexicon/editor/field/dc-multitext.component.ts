@@ -1,10 +1,13 @@
 import * as angular from 'angular';
 
-import {LexiconUtilityService} from '../../core/lexicon-utility.service';
-import {LexMultiText} from '../../shared/model/lex-multi-text.model';
-import {LexPicture} from '../../shared/model/lex-picture.model';
-import {LexConfigInputSystems, LexConfigMultiText} from '../../shared/model/lexicon-config.model';
-import {FieldControl} from './field-control.model';
+import { LexiconUtilityService } from '../../core/lexicon-utility.service';
+import { LexMultiText } from '../../shared/model/lex-multi-text.model';
+import { LexPicture } from '../../shared/model/lex-picture.model';
+import {
+  LexConfigInputSystems,
+  LexConfigMultiText,
+} from '../../shared/model/lexicon-config.model';
+import { FieldControl } from './field-control.model';
 
 export class FieldMultiTextController implements angular.IController {
   model: LexMultiText;
@@ -20,7 +23,7 @@ export class FieldMultiTextController implements angular.IController {
   inputSystems: LexConfigInputSystems;
 
   static $inject = ['$state'];
-  constructor(private $state: angular.ui.IStateService) { }
+  constructor(private $state: angular.ui.IStateService) {}
 
   $onInit(): void {
     this.inputSystems = this.control.config.inputSystems;
@@ -39,7 +42,7 @@ export class FieldMultiTextController implements angular.IController {
       return 'ltr';
     }
 
-    return (this.inputSystems[tag].isRightToLeft) ? 'rtl' : 'ltr';
+    return this.inputSystems[tag].isRightToLeft ? 'rtl' : 'ltr';
   }
 
   selectInputSystem(tag: string): void {
@@ -48,7 +51,7 @@ export class FieldMultiTextController implements angular.IController {
     }
 
     this.selectField({
-      inputSystem: tag
+      inputSystem: tag,
     });
   }
 
@@ -58,9 +61,10 @@ export class FieldMultiTextController implements angular.IController {
     }
 
     const str = this.model[tag].value;
-    return (new DOMParser().parseFromString(str, 'text/html').body.children.length) > 0;
+    return (
+      new DOMParser().parseFromString(str, 'text/html').body.children.length > 0
+    );
   }
-
 }
 
 export const FieldMultiTextComponent: angular.IComponentOptions = {
@@ -71,8 +75,9 @@ export const FieldMultiTextComponent: angular.IComponentOptions = {
     fieldName: '<',
     parentContextGuid: '<',
     picture: '<?',
-    selectField: '&?'
+    selectField: '&?',
   },
   controller: FieldMultiTextController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-multitext.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-multitext.component.html',
 };

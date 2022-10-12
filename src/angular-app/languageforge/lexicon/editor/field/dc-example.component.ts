@@ -1,9 +1,9 @@
 import * as angular from 'angular';
 
-import {LexiconUtilityService} from '../../core/lexicon-utility.service';
-import {LexExample} from '../../shared/model/lex-example.model';
-import {LexConfigFieldList} from '../../shared/model/lexicon-config.model';
-import {FieldControl} from './field-control.model';
+import { LexiconUtilityService } from '../../core/lexicon-utility.service';
+import { LexExample } from '../../shared/model/lex-example.model';
+import { LexConfigFieldList } from '../../shared/model/lexicon-config.model';
+import { FieldControl } from './field-control.model';
 
 export class FieldExampleController implements angular.IController {
   model: LexExample;
@@ -18,7 +18,7 @@ export class FieldExampleController implements angular.IController {
   contextGuid: string;
 
   static $inject = ['$state'];
-  constructor(private $state: angular.ui.IStateService) { }
+  constructor(private $state: angular.ui.IStateService) {}
 
   $onInit(): void {
     this.contextGuid = this.parentContextGuid + ' example#' + this.model.guid;
@@ -39,7 +39,6 @@ export class FieldExampleController implements angular.IController {
   isAtEditorEntry(): boolean {
     return LexiconUtilityService.isAtEditorEntry(this.$state);
   }
-
 }
 
 export const FieldExampleComponent: angular.IComponentOptions = {
@@ -51,8 +50,9 @@ export const FieldExampleComponent: angular.IComponentOptions = {
     parentContextGuid: '<',
     numExamples: '<',
     move: '<',
-    remove: '<'
+    remove: '<',
   },
   controller: FieldExampleController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-example.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-example.component.html',
 };

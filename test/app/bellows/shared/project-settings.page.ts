@@ -1,4 +1,4 @@
-import {browser, by, element, ExpectedConditions} from 'protractor';
+import { browser, by, element, ExpectedConditions } from 'protractor';
 
 import { ProjectsPage } from './projects.page';
 
@@ -13,9 +13,15 @@ export class BellowsProjectSettingsPage {
   async get(projectName: string) {
     await this.projectsPage.get();
     await this.projectsPage.clickOnProject(projectName);
-    await browser.wait(ExpectedConditions.visibilityOf(this.settingsMenuLink), this.conditionTimeout);
+    await browser.wait(
+      ExpectedConditions.visibilityOf(this.settingsMenuLink),
+      this.conditionTimeout
+    );
     await this.settingsMenuLink.click();
-    await browser.wait(ExpectedConditions.visibilityOf(this.projectSettingsLink), this.conditionTimeout);
+    await browser.wait(
+      ExpectedConditions.visibilityOf(this.projectSettingsLink),
+      this.conditionTimeout
+    );
     return this.projectSettingsLink.click();
   }
 
@@ -34,19 +40,18 @@ export class BellowsProjectSettingsPage {
     project: element(by.linkText('Project Properties')),
     // reports: element(by.linkText('Reports')), // This feature is never tested
     // archive: element(by.linkText('Archive')), // This is a disabled feature
-    remove: element(by.linkText('Delete'))
+    remove: element(by.linkText('Delete')),
   };
 
   projectTab = {
     name: element(by.model('project.projectName')),
     code: element(by.model('project.projectCode')),
     projectOwner: element(by.binding('project.ownerRef.username')),
-    saveButton: element(by.id('project-properties-save-button'))
+    saveButton: element(by.id('project-properties-save-button')),
   };
 
   // placeholder since we don't have Reports tests
-  reportsTab = {
-  };
+  reportsTab = {};
 
   // Archive tab currently disabled
   // this.archiveTab = {
@@ -55,6 +60,6 @@ export class BellowsProjectSettingsPage {
 
   deleteTab = {
     deleteBoxText: this.activePane.element(by.id('deletebox')),
-    deleteButton: this.activePane.element(by.id('deleteProject'))
+    deleteButton: this.activePane.element(by.id('deleteProject')),
   };
 }

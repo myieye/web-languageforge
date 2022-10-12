@@ -8,7 +8,7 @@ test.describe('E2E Signup app', () => {
 
   test.beforeAll(async ({ anonTab }) => {
     signupPage = new SignupPage(anonTab);
-  })
+  });
 
   test('Cannot submit if email is invalid', async () => {
     await signupPage.goto();
@@ -90,7 +90,7 @@ test.describe('E2E Signup app', () => {
     await expect(signupPage.emailTaken).toBeVisible();
   });
 
-  test('Can prefill email address that can\'t be changed', async () => {
+  test("Can prefill email address that can't be changed", async () => {
     await signupPage.goto(constants.unusedEmail);
 
     await expect(signupPage.emailInput).toBeDisabled();
@@ -117,14 +117,16 @@ test.describe('E2E Signup app', () => {
     await signupPage.signupButton.click();
 
     // Verify new user logged in and redirected to projects page
-    await signupPage.page.waitForURL("**/app/projects");
+    await signupPage.page.waitForURL('**/app/projects');
     expect(signupPage.page.url()).toContain('/app/projects');
   });
 
-  test('Redirects to projects page if already logged in', async ({ memberTab }) => {
+  test('Redirects to projects page if already logged in', async ({
+    memberTab,
+  }) => {
     const signupPageMember = new SignupPage(memberTab);
     await Promise.all([
-      signupPageMember.page.waitForURL("**/app/projects"),
+      signupPageMember.page.waitForURL('**/app/projects'),
       signupPageMember.page.goto(SignupPage.url),
     ]);
     expect(signupPageMember.page.url()).toContain('/app/projects');

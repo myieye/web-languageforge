@@ -8,13 +8,22 @@ export class BreadcrumbController implements angular.IController {
   breadcrumbs: Crumb[];
 
   static $inject: string[] = ['$scope', 'breadcrumbService'];
-  constructor(private $scope: angular.IScope, private breadcrumbService: BreadcrumbService) {
-    $scope.$watch(() => { return breadcrumbService.get(this.id); }, (breadcrumbs: Crumb[]) => {
-      this.resetCrumbs(breadcrumbs);
-    }, true);
+  constructor(
+    private $scope: angular.IScope,
+    private breadcrumbService: BreadcrumbService
+  ) {
+    $scope.$watch(
+      () => {
+        return breadcrumbService.get(this.id);
+      },
+      (breadcrumbs: Crumb[]) => {
+        this.resetCrumbs(breadcrumbs);
+      },
+      true
+    );
   }
 
-  unregisterBreadCrumb = function(index: number) {
+  unregisterBreadCrumb = function (index: number) {
     this.breadcrumbService.setLastIndex(this.id, index);
   };
 
@@ -24,12 +33,11 @@ export class BreadcrumbController implements angular.IController {
       this.breadcrumbs.push(crumb);
     }
   }
-
 }
 
 export const BreadcrumbComponent: angular.IComponentOptions = {
   bindings: {
-    id: '@'
+    id: '@',
   },
   controller: BreadcrumbController,
   template: `
@@ -41,5 +49,5 @@ export const BreadcrumbComponent: angular.IComponentOptions = {
             <span data-ng-switch-default>{{bc.label}}</span>
         </li>
     </ol>
-  `
+  `,
 };

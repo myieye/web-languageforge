@@ -8,7 +8,7 @@ export async function login(page: Page, username: string, password: string) {
   await page.locator('input[name="_password"]').fill(password);
   return Promise.all([
     page.waitForNavigation(),
-    page.locator('button:has-text("Login")').click()
+    page.locator('button:has-text("Login")').click(),
   ]);
 }
 
@@ -25,7 +25,6 @@ export function getLoginInfo(name: usernamesForFixture) {
     return { username, password };
   } else {
     throw new Error(`No ${name}Username found in testconstants.json`);
-
   }
 }
 
@@ -35,6 +34,8 @@ export function loginAs(page: Page, name: usernamesForFixture) {
 }
 
 export async function getLoggedInPage(browser: Browser, name: string) {
-  const context = await browser.newContext({ storageState: `${name}-storageState.json` });
+  const context = await browser.newContext({
+    storageState: `${name}-storageState.json`,
+  });
   return await context.newPage();
 }

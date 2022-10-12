@@ -11,8 +11,7 @@ spec:
   selector:
     app: mail
 ---
-
-  # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#writing-a-deployment-spec
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#writing-a-deployment-spec
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,30 +29,30 @@ spec:
         app: mail
     spec:
       containers:
-      - name: mail
-        image: juanluisbaptiste/postfix:1.0.0
-        # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
-        resources:
-          requests:
-            memory: 30Mi
-            cpu: 0.1
-          limits:
-            memory: 100Mi
-        env:
-          - name: SERVER_HOSTNAME
-            value: {{SERVER_HOSTNAME}}
-          - name: SMTP_SERVER
-            valueFrom:
-              secretKeyRef:
-                key: SMTP_SERVER
-                name: mail
-          - name: SMTP_USERNAME
-            valueFrom:
-              secretKeyRef:
-                key: SMTP_USERNAME
-                name: mail
-          - name: SMTP_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: SMTP_PASSWORD
-                name: mail
+        - name: mail
+          image: juanluisbaptiste/postfix:1.0.0
+          # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
+          resources:
+            requests:
+              memory: 30Mi
+              cpu: 0.1
+            limits:
+              memory: 100Mi
+          env:
+            - name: SERVER_HOSTNAME
+              value: { { SERVER_HOSTNAME } }
+            - name: SMTP_SERVER
+              valueFrom:
+                secretKeyRef:
+                  key: SMTP_SERVER
+                  name: mail
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: SMTP_USERNAME
+                  name: mail
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: SMTP_PASSWORD
+                  name: mail

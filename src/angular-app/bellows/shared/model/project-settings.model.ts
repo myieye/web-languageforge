@@ -1,4 +1,4 @@
-import {InterfaceConfig} from './interface-config.model';
+import { InterfaceConfig } from './interface-config.model';
 
 export class ProjectSettings {
   allowInviteAFriend: boolean;

@@ -1,6 +1,5 @@
 export const websiteInstances = {
-
-  'localhost': 'local',
+  localhost: 'local',
   'qa.languageforge.org': 'qa',
   'languageforge.org': 'live',
 };

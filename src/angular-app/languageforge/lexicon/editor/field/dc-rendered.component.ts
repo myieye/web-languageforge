@@ -1,9 +1,12 @@
 import * as angular from 'angular';
 
-import {LexiconUtilityService} from '../../core/lexicon-utility.service';
-import {LexEntry} from '../../shared/model/lex-entry.model';
-import {LexConfigFieldList, LexiconConfig} from '../../shared/model/lexicon-config.model';
-import {LexOptionList} from '../../shared/model/option-list.model';
+import { LexiconUtilityService } from '../../core/lexicon-utility.service';
+import { LexEntry } from '../../shared/model/lex-entry.model';
+import {
+  LexConfigFieldList,
+  LexiconConfig,
+} from '../../shared/model/lexicon-config.model';
+import { LexOptionList } from '../../shared/model/option-list.model';
 
 class Example {
   sentence: string;
@@ -31,7 +34,7 @@ export class FieldRenderedController implements angular.IController {
   entry: Entry = new Entry();
 
   static $inject = ['$scope'];
-  constructor(private $scope: angular.IScope) { }
+  constructor(private $scope: angular.IScope) {}
 
   $onInit(): void {
     if (this.hideIfEmpty == null) {
@@ -49,13 +52,20 @@ export class FieldRenderedController implements angular.IController {
     let lastPos: string = null;
     let pos: string;
     this.entry = new Entry();
-    this.entry.word = LexiconUtilityService.getCitationForms(this.globalConfig, this.config, this.model);
+    this.entry.word = LexiconUtilityService.getCitationForms(
+      this.globalConfig,
+      this.config,
+      this.model
+    );
     const sensesConfig = this.config.fields.senses as LexConfigFieldList;
     const examplesConfig = sensesConfig.fields.examples as LexConfigFieldList;
     if (this.model.senses != null) {
       for (const senseModel of this.model.senses) {
         const sense: Sense = new Sense();
-        pos = LexiconUtilityService.getPartOfSpeechAbbreviation(senseModel.partOfSpeech, this.optionLists);
+        pos = LexiconUtilityService.getPartOfSpeechAbbreviation(
+          senseModel.partOfSpeech,
+          this.optionLists
+        );
 
         // do not repeat parts of speech
         if (lastPos === pos) {
@@ -64,15 +74,27 @@ export class FieldRenderedController implements angular.IController {
           lastPos = pos;
         }
 
-        sense.meaning = LexiconUtilityService.getMeanings(this.globalConfig, sensesConfig, senseModel);
+        sense.meaning = LexiconUtilityService.getMeanings(
+          this.globalConfig,
+          sensesConfig,
+          senseModel
+        );
         sense.partOfSpeech = pos;
         if (senseModel.examples != null) {
           for (const exampleModel of senseModel.examples) {
             const example: Example = new Example();
-            example.sentence = LexiconUtilityService.getExample(this.globalConfig, examplesConfig, exampleModel,
-              'sentence');
-            example.translation = LexiconUtilityService.getExample(this.globalConfig, examplesConfig, exampleModel,
-              'translation');
+            example.sentence = LexiconUtilityService.getExample(
+              this.globalConfig,
+              examplesConfig,
+              exampleModel,
+              'sentence'
+            );
+            example.translation = LexiconUtilityService.getExample(
+              this.globalConfig,
+              examplesConfig,
+              exampleModel,
+              'translation'
+            );
             sense.examples.push(example);
           }
         }
@@ -80,8 +102,7 @@ export class FieldRenderedController implements angular.IController {
         this.entry.senses.push(sense);
       }
     }
-  }
-
+  };
 }
 
 export const FieldRenderedComponent: angular.IComponentOptions = {
@@ -90,8 +111,9 @@ export const FieldRenderedComponent: angular.IComponentOptions = {
     globalConfig: '<',
     model: '<',
     optionLists: '<',
-    hideIfEmpty: '<?'
+    hideIfEmpty: '<?',
   },
   controller: FieldRenderedController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-rendered.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-rendered.component.html',
 };

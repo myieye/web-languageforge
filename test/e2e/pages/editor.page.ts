@@ -3,48 +3,45 @@ import { ConfigurationPage } from './configuration.page';
 import { EntriesListPage } from './entries-list.page';
 
 type LexAppToolbar = {
-  backToListButton: Locator,
-  toggleCommentsButton: Locator,
-  toggleExtraFieldsButton: Locator
+  backToListButton: Locator;
+  toggleCommentsButton: Locator;
+  toggleExtraFieldsButton: Locator;
 };
 
 // JeanneSonTODO: search/filter is also used in entries list so extract this
 type Search = {
-  searchInput: Locator,
-  matchCount: Locator
-}
+  searchInput: Locator;
+  matchCount: Locator;
+};
 
 type ActionMenu = {
-  toggleMenuButtonSelector: string,
-  deleteCardButtonSelector: string,
-  moveDownButtonSelector: string,
-  moveUpButtonSelector: string
-}
+  toggleMenuButtonSelector: string;
+  deleteCardButtonSelector: string;
+  moveDownButtonSelector: string;
+  moveUpButtonSelector: string;
+};
 
 type AudioPlayer = {
-  togglePlaybackAnchorSelector: string,
-  playIconSelector: string,
-  dropdownToggleSelector: string,
-  uploadButtonSelector: string,
-  downloadButtonSelector: string
+  togglePlaybackAnchorSelector: string;
+  playIconSelector: string;
+  dropdownToggleSelector: string;
+  uploadButtonSelector: string;
+  downloadButtonSelector: string;
 };
 
 type Dropbox = {
-  dragoverFieldSelector: string,
-  audioCancelButtonSelector: string,
-  pictureCancelButtonSelector: string,
-  browseButtonSelector: string
+  dragoverFieldSelector: string;
+  audioCancelButtonSelector: string;
+  pictureCancelButtonSelector: string;
+  browseButtonSelector: string;
 };
 
-type UploadType =
-    'Audio' |
-    'Picture'
-;
+type UploadType = 'Audio' | 'Picture';
 
 type AudioDropdownMenu = {
-  uploadReplacementButtonSelector: string,
-  deleteAudioButtonSelector: string
-}
+  uploadReplacementButtonSelector: string;
+  deleteAudioButtonSelector: string;
+};
 
 export class EditorPage {
   readonly page: Page;
@@ -90,17 +87,19 @@ export class EditorPage {
     this.lexAppToolbar = {
       backToListButton: this.page.locator('#toListLink'),
       toggleCommentsButton: this.page.locator('#toCommentsLink'),
-      toggleExtraFieldsButton: this.page.locator('#toggleHiddenFieldsBtn')
+      toggleExtraFieldsButton: this.page.locator('#toggleHiddenFieldsBtn'),
     };
     this.renderedDivs = this.page.locator('.dc-rendered-entryContainer');
 
     this.search = {
       searchInput: this.page.locator('#editor-entry-search-entries'),
-      matchCount: this.page.locator('#totalNumberOfEntries >> span')
-    }
+      matchCount: this.page.locator('#totalNumberOfEntries >> span'),
+    };
 
     this.entryCard = this.page.locator('.entry-card');
-    this.senseCard = this.page.locator('[data-ng-repeat="sense in $ctrl.model.senses"]');
+    this.senseCard = this.page.locator(
+      '[data-ng-repeat="sense in $ctrl.model.senses"]'
+    );
     this.exampleCardSelector = '.dc-example';
     this.semanticDomainSelector = '.dc-semanticdomain-value';
 
@@ -108,30 +107,34 @@ export class EditorPage {
       toggleMenuButtonSelector: '.ellipsis-menu-toggle',
       deleteCardButtonSelector: '.dropdown-item:has-text("Delete")',
       moveDownButtonSelector: '.dropdown-item:has-text("Move Down")',
-      moveUpButtonSelector: '.dropdown-item:has-text("Move Up")'
+      moveUpButtonSelector: '.dropdown-item:has-text("Move Up")',
     };
 
-    this.compactEntryListContainer = this.page.locator('#compactEntryListContainer');
-    this.compactEntryListItem = this.compactEntryListContainer.locator('.lexiconListItemCompact');
+    this.compactEntryListContainer = this.page.locator(
+      '#compactEntryListContainer'
+    );
+    this.compactEntryListItem = this.compactEntryListContainer.locator(
+      '.lexiconListItemCompact'
+    );
 
     this.audioPlayer = {
       togglePlaybackAnchorSelector: '[ng-click="$ctrl.togglePlayback()"]',
       playIconSelector: 'i.fa-play',
       dropdownToggleSelector: 'a.dropdown-toggle',
       uploadButtonSelector: 'button.upload-audio',
-      downloadButtonSelector: 'a.buttonAppend'
+      downloadButtonSelector: 'a.buttonAppend',
     };
 
     this.dropbox = {
       dragoverFieldSelector: '.drop-box',
       audioCancelButtonSelector: '#audioAddCancel',
       pictureCancelButtonSelector: '#addCancel',
-      browseButtonSelector: '#browseButton'
+      browseButtonSelector: '#browseButton',
     };
 
     this.audioDropdownMenu = {
       uploadReplacementButtonSelector: 'a >> text=Upload a replacement',
-      deleteAudioButtonSelector: 'a >> text=Delete'
+      deleteAudioButtonSelector: 'a >> text=Delete',
     };
 
     this.addPictureButtonSelector = 'a >> text=Add Picture';
@@ -155,24 +158,38 @@ export class EditorPage {
     return card.locator(`label:has-text("${label}")`).first();
   }
 
-  async getNumberOfElementsWithSameLabel(card: Locator, label: string): Promise<number> {
+  async getNumberOfElementsWithSameLabel(
+    card: Locator,
+    label: string
+  ): Promise<number> {
     return card.locator(`label:has-text("${label}")`).count();
   }
 
   getTextarea(card: Locator, field: string, ws: string): Locator {
-    return card.locator(`label:has-text("${field}") >> xpath=.. >> div.input-group:has(span.wsid:has-text("${ws}")) >> textarea`);
+    return card.locator(
+      `label:has-text("${field}") >> xpath=.. >> div.input-group:has(span.wsid:has-text("${ws}")) >> textarea`
+    );
   }
 
   getDropdown(card: Locator, field: string): Locator {
     return card.locator(`label:has-text("${field}") >> xpath=.. >> select`);
   }
 
-  async getSelectedValueFromSelectDropdown(card: Locator, field: string): Promise<string> {
-    return card.locator(`label:has-text("${field}") >> xpath=.. >> select >> [selected="selected"]`).innerText();
+  async getSelectedValueFromSelectDropdown(
+    card: Locator,
+    field: string
+  ): Promise<string> {
+    return card
+      .locator(
+        `label:has-text("${field}") >> xpath=.. >> select >> [selected="selected"]`
+      )
+      .innerText();
   }
 
   getSoundplayer(card: Locator, field: string, ws: string): Locator {
-    return card.locator(`label:has-text("${field}") >> xpath=.. >> div.input-group:has(span.wsid:has-text("${ws}")) >> dc-audio`);
+    return card.locator(
+      `label:has-text("${field}") >> xpath=.. >> div.input-group:has(span.wsid:has-text("${ws}")) >> dc-audio`
+    );
   }
 
   getPicturesOuterDiv(card: Locator): Locator {
@@ -182,17 +199,27 @@ export class EditorPage {
   // returns the locator to the picture or undefined if 0 or more than one pictures with this filename are found
   async getPicture(card: Locator, filename: string): Promise<Locator> {
     const picture: Locator = card.locator(`img[src$="${filename}"]`);
-    return (await picture.count() == 1 ? picture : undefined);
+    return (await picture.count()) == 1 ? picture : undefined;
   }
 
-  async getPictureDeleteButton(card: Locator, pictureFilename: string): Promise<Locator> {
-    const button = card.locator(`[data-ng-repeat="picture in $ctrl.pictures"]:has(img[src$="${pictureFilename}"]) >> [title="Delete Picture"]`);
-    return (await button.count() == 1 ? button : undefined);
+  async getPictureDeleteButton(
+    card: Locator,
+    pictureFilename: string
+  ): Promise<Locator> {
+    const button = card.locator(
+      `[data-ng-repeat="picture in $ctrl.pictures"]:has(img[src$="${pictureFilename}"]) >> [title="Delete Picture"]`
+    );
+    return (await button.count()) == 1 ? button : undefined;
   }
 
-  async getPictureCaption(picture: Locator, languageCode: string = "en"): Promise<Locator> {
-    const caption = picture.locator(`xpath=..//.. >> div.input-group:has-Text("${languageCode}") >> textarea`);
-    return (await caption.count() == 1 ? caption : undefined);
+  async getPictureCaption(
+    picture: Locator,
+    languageCode: string = 'en'
+  ): Promise<Locator> {
+    const caption = picture.locator(
+      `xpath=..//.. >> div.input-group:has-Text("${languageCode}") >> textarea`
+    );
+    return (await caption.count()) == 1 ? caption : undefined;
   }
 
   getCancelDropboxButton(card: Locator, uploadType: UploadType): Locator {
@@ -208,5 +235,4 @@ export class EditorPage {
         return undefined;
     }
   }
-
 }

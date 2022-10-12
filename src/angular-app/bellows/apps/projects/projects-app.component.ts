@@ -34,38 +34,50 @@ export class ProjectsAppController implements angular.IController {
   siteName: string;
   projectCount: number;
 
-  static $inject = ['$window', 'projectService',
-                    'userService',
-                    'rolesService',
-                    'sessionService', 'silNoticeService',
-                    'breadcrumbService',
-                    'siteWideNoticeService',
-                    'applicationHeaderService',
-                   ];
-  constructor(private $window: angular.IWindowService, private projectService: ProjectService,
-              private userService: UserService,
-              private rolesService: RolesService,
-              private sessionService: SessionService, private notice: NoticeService,
-              private breadcrumbService: BreadcrumbService,
-              private siteWideNoticeService: SiteWideNoticeService,
-              private applicationHeaderService: ApplicationHeaderService,
-             ) { }
+  static $inject = [
+    '$window',
+    'projectService',
+    'userService',
+    'rolesService',
+    'sessionService',
+    'silNoticeService',
+    'breadcrumbService',
+    'siteWideNoticeService',
+    'applicationHeaderService',
+  ];
+  constructor(
+    private $window: angular.IWindowService,
+    private projectService: ProjectService,
+    private userService: UserService,
+    private rolesService: RolesService,
+    private sessionService: SessionService,
+    private notice: NoticeService,
+    private breadcrumbService: BreadcrumbService,
+    private siteWideNoticeService: SiteWideNoticeService,
+    private applicationHeaderService: ApplicationHeaderService
+  ) {}
 
   $onInit() {
     this.projectTypeNames = this.projectService.data.projectTypeNames;
     this.projectTypesBySite = this.projectService.data.projectTypesBySite;
     this.applicationHeaderService.setPageName('My Projects');
-    this.breadcrumbService.set('top', [{
-          href: '/app/projects',
-          label: 'My Projects'
-        }]);
+    this.breadcrumbService.set('top', [
+      {
+        href: '/app/projects',
+        label: 'My Projects',
+      },
+    ]);
     this.siteWideNoticeService.displayNotices();
 
-    this.sessionService.getSession().then(session => {
-      this.rights.canEditProjects =
-        session.hasSiteRight(this.sessionService.domain.PROJECTS, this.sessionService.operation.EDIT);
-      this.rights.canCreateProject =
-        session.hasSiteRight(this.sessionService.domain.PROJECTS, this.sessionService.operation.CREATE);
+    this.sessionService.getSession().then((session) => {
+      this.rights.canEditProjects = session.hasSiteRight(
+        this.sessionService.domain.PROJECTS,
+        this.sessionService.operation.EDIT
+      );
+      this.rights.canCreateProject = session.hasSiteRight(
+        this.sessionService.domain.PROJECTS,
+        this.sessionService.operation.CREATE
+      );
       this.rights.showControlBar = this.rights.canCreateProject;
       this.siteName = session.baseSite();
     });
@@ -79,30 +91,39 @@ export class ProjectsAppController implements angular.IController {
   }
 
   queryProjectsForUser() {
-    this.projectService.list().then((projects: Project[]) => {
-      this.projects = projects || [];
+    this.projectService
+      .list()
+      .then((projects: Project[]) => {
+        this.projects = projects || [];
 
-      // Is this perhaps wrong? Maybe not all projects are included in the JSONRPC response?
-      // That might explain the existance of the previous result.data.count
-      this.projectCount = projects.length;
-      this.finishedLoading = true;
-    }).catch(console.error);
+        // Is this perhaps wrong? Maybe not all projects are included in the JSONRPC response?
+        // That might explain the existance of the previous result.data.count
+        this.projectCount = projects.length;
+        this.finishedLoading = true;
+      })
+      .catch(console.error);
   }
 
   isInProject(project: Project) {
-    return (project.role !== 'none');
+    return project.role !== 'none';
   }
 
   isManager(project: Project) {
-    return project.role === 'project_manager' || project.role === 'tech_support';
+    return (
+      project.role === 'project_manager' || project.role === 'tech_support'
+    );
   }
 
   // Add user as Tech Support to a project
   addTechSupportToProject(project: Project) {
-    this.projectService.joinProject(project.id, 'tech_support', result => {
+    this.projectService.joinProject(project.id, 'tech_support', (result) => {
       if (result.ok) {
-        this.notice.push(this.notice.SUCCESS, 'You are now Tech Support for the \'' +
-          project.projectName + '\' project.');
+        this.notice.push(
+          this.notice.SUCCESS,
+          "You are now Tech Support for the '" +
+            project.projectName +
+            "' project."
+        );
         this.queryProjectsForUser();
       }
     });
@@ -116,10 +137,9 @@ export class ProjectsAppController implements angular.IController {
       this.newProjectCollapsed = !this.newProjectCollapsed;
     }
   }
-
 }
 
 export const ProjectsAppComponent: angular.IComponentOptions = {
   controller: ProjectsAppController,
-  templateUrl: '/angular-app/bellows/apps/projects/projects-app.component.html'
+  templateUrl: '/angular-app/bellows/apps/projects/projects-app.component.html',
 };

@@ -10,7 +10,9 @@ export interface SemanticDomain {
   value: string;
 }
 
-export interface SemanticDomains { [key: string]: SemanticDomain; }
+export interface SemanticDomains {
+  [key: string]: SemanticDomain;
+}
 
 interface SemanticDomainProperties {
   semanticDomains_bn?: SemanticDomains;
@@ -34,31 +36,62 @@ interface SemanticDomainProperties {
   semanticDomains_zh_CN?: SemanticDomains;
 }
 
-interface WindowService extends angular.IWindowService, SemanticDomainProperties { }
+interface WindowService
+  extends angular.IWindowService,
+    SemanticDomainProperties {}
 
 export class SemanticDomainsService {
-  private readonly semanticDomainLanguageCodes = ['bn', 'en', 'es', 'fa', 'fr', 'hi', 'id', 'km', 'ko', 'ms', 'my',
-    'ne', 'pt', 'ru', 'swh', 'te', 'th', 'ur', 'zh-CN'];
+  private readonly semanticDomainLanguageCodes = [
+    'bn',
+    'en',
+    'es',
+    'fa',
+    'fr',
+    'hi',
+    'id',
+    'km',
+    'ko',
+    'ms',
+    'my',
+    'ne',
+    'pt',
+    'ru',
+    'swh',
+    'te',
+    'th',
+    'ur',
+    'zh-CN',
+  ];
   private _languageCode: string = 'en';
   private _semanticDomains: SemanticDomains;
 
-  static $inject: string[] = ['$ocLazyLoad', '$q',
-    '$window'];
-  constructor(private readonly $ocLazyLoad: oc.ILazyLoad, private readonly $q: angular.IQService,
-              private readonly $window: WindowService) { }
+  static $inject: string[] = ['$ocLazyLoad', '$q', '$window'];
+  constructor(
+    private readonly $ocLazyLoad: oc.ILazyLoad,
+    private readonly $q: angular.IQService,
+    private readonly $window: WindowService
+  ) {}
 
   get data(): SemanticDomains {
-    if (this._semanticDomains == null && this.isSemanticDomainFileLoaded(this._languageCode)) {
-      this._semanticDomains = this.$window[SemanticDomainsService.property(this._languageCode)];
+    if (
+      this._semanticDomains == null &&
+      this.isSemanticDomainFileLoaded(this._languageCode)
+    ) {
+      this._semanticDomains =
+        this.$window[SemanticDomainsService.property(this._languageCode)];
     }
 
     return this._semanticDomains;
   }
 
   setLanguageCode(languageCode: string): angular.IPromise<void> {
-    if (languageCode !== this._languageCode && this.semanticDomainLanguageCodes.includes(languageCode)) {
+    if (
+      languageCode !== this._languageCode &&
+      this.semanticDomainLanguageCodes.includes(languageCode)
+    ) {
       if (this.isSemanticDomainFileLoaded(languageCode)) {
-        this._semanticDomains = this.$window[SemanticDomainsService.property(languageCode)];
+        this._semanticDomains =
+          this.$window[SemanticDomainsService.property(languageCode)];
         this._languageCode = languageCode;
       } else {
         return this.loadSemanticDomainFile(languageCode);
@@ -69,15 +102,24 @@ export class SemanticDomainsService {
   }
 
   private isSemanticDomainFileLoaded(languageCode: string): boolean {
-    const semanticDomainProperty = SemanticDomainsService.property(languageCode);
-    return this.$window.hasOwnProperty(semanticDomainProperty) && this.$window[semanticDomainProperty] != null;
+    const semanticDomainProperty =
+      SemanticDomainsService.property(languageCode);
+    return (
+      this.$window.hasOwnProperty(semanticDomainProperty) &&
+      this.$window[semanticDomainProperty] != null
+    );
   }
 
-  private loadSemanticDomainFile(languageCode: string = 'en'): angular.IPromise<void> {
-    const semanticDomainFile = '/angular-app/languageforge/core/semantic-domains/semantic-domains.' +
-      languageCode + '.generated-data.js';
+  private loadSemanticDomainFile(
+    languageCode: string = 'en'
+  ): angular.IPromise<void> {
+    const semanticDomainFile =
+      '/angular-app/languageforge/core/semantic-domains/semantic-domains.' +
+      languageCode +
+      '.generated-data.js';
     return this.$ocLazyLoad.load(semanticDomainFile).then(() => {
-      this._semanticDomains = this.$window[SemanticDomainsService.property(languageCode)];
+      this._semanticDomains =
+        this.$window[SemanticDomainsService.property(languageCode)];
       this._languageCode = languageCode;
     });
   }
@@ -86,10 +128,8 @@ export class SemanticDomainsService {
     // replace all '-' with '_'
     return 'semanticDomains_' + languageCode.split('-').join('_');
   }
-
 }
 
 export const SemanticDomainsModule = angular
   .module('semanticDomainsModule', ['oc.lazyLoad'])
-  .service('semanticDomainsService', SemanticDomainsService)
-  .name;
+  .service('semanticDomainsService', SemanticDomainsService).name;

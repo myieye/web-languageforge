@@ -5,7 +5,10 @@ import { SessionService } from '../../core/session.service';
 
 export class SiteAdminProjectInsightsController implements angular.IController {
   static $inject = ['projectService', 'sessionService'];
-  constructor(private projectService: ProjectService, private sessionService: SessionService) { }
+  constructor(
+    private projectService: ProjectService,
+    private sessionService: SessionService
+  ) {}
 
   async downloadInsights() {
     const site = (await this.sessionService.getSession()).baseSite();
@@ -21,5 +24,5 @@ export class SiteAdminProjectInsightsController implements angular.IController {
 
 export const SiteAdminProjectInsightsComponent: angular.IComponentOptions = {
   controller: SiteAdminProjectInsightsController,
-  template: `<a href data-ng-click="$ctrl.downloadInsights()">Download project insights as CSV file</a>`
+  template: `<a href data-ng-click="$ctrl.downloadInsights()">Download project insights as CSV file</a>`,
 };

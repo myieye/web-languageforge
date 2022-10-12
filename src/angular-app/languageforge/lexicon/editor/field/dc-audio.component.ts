@@ -1,16 +1,18 @@
-
 import * as angular from 'angular';
 import { format, addMinutes } from 'date-fns';
 
-import {BytesFilterFunction} from '../../../../bellows/core/filters';
-import {ModalService} from '../../../../bellows/core/modal/modal.service';
-import {NoticeService} from '../../../../bellows/core/notice/notice.service';
-import {SessionService} from '../../../../bellows/core/session.service';
-import {InterfaceConfig} from '../../../../bellows/shared/model/interface-config.model';
-import {UploadFile, UploadResponse} from '../../../../bellows/shared/model/upload.model';
-import {LexiconProjectService} from '../../core/lexicon-project.service';
-import {Rights} from '../../core/lexicon-rights.service';
-import {LexiconUtilityService} from '../../core/lexicon-utility.service';
+import { BytesFilterFunction } from '../../../../bellows/core/filters';
+import { ModalService } from '../../../../bellows/core/modal/modal.service';
+import { NoticeService } from '../../../../bellows/core/notice/notice.service';
+import { SessionService } from '../../../../bellows/core/session.service';
+import { InterfaceConfig } from '../../../../bellows/shared/model/interface-config.model';
+import {
+  UploadFile,
+  UploadResponse,
+} from '../../../../bellows/shared/model/upload.model';
+import { LexiconProjectService } from '../../core/lexicon-project.service';
+import { Rights } from '../../core/lexicon-rights.service';
+import { LexiconUtilityService } from '../../core/lexicon-utility.service';
 
 export class FieldAudioController implements angular.IController {
   dcFilename: string;
@@ -21,18 +23,31 @@ export class FieldAudioController implements angular.IController {
   showAudioUpload: boolean = false;
   showAudioRecorder: boolean = false;
 
-  static $inject = ['$filter', '$state',
-    'Upload', 'modalService',
-    'silNoticeService', 'sessionService',
-    'lexProjectService', '$scope'
+  static $inject = [
+    '$filter',
+    '$state',
+    'Upload',
+    'modalService',
+    'silNoticeService',
+    'sessionService',
+    'lexProjectService',
+    '$scope',
   ];
-  constructor(private $filter: angular.IFilterService, private $state: angular.ui.IStateService,
-              private Upload: any, private modalService: ModalService,
-              private notice: NoticeService, private sessionService: SessionService,
-              private lexProjectService: LexiconProjectService, private $scope: angular.IScope) {
-
-                this.$scope.$watch(() => this.dcFilename, () => this.showAudioRecorder = false);
-              }
+  constructor(
+    private $filter: angular.IFilterService,
+    private $state: angular.ui.IStateService,
+    private Upload: any,
+    private modalService: ModalService,
+    private notice: NoticeService,
+    private sessionService: SessionService,
+    private lexProjectService: LexiconProjectService,
+    private $scope: angular.IScope
+  ) {
+    this.$scope.$watch(
+      () => this.dcFilename,
+      () => (this.showAudioRecorder = false)
+    );
+  }
 
   hasAudio(): boolean {
     if (this.dcFilename == null) {
@@ -49,7 +64,8 @@ export class FieldAudioController implements angular.IController {
   audioPlayUrl(): string {
     let url = '';
     if (this.hasAudio()) {
-      url = '/assets/lexicon/' + this.dcProjectSlug + '/audio/' + this.dcFilename;
+      url =
+        '/assets/lexicon/' + this.dcProjectSlug + '/audio/' + this.dcFilename;
     }
 
     return url;
@@ -70,20 +86,33 @@ export class FieldAudioController implements angular.IController {
 
   deleteAudio(): void {
     if (this.hasAudio()) {
-      const deleteMsg = 'Are you sure you want to delete the audio <b>\'' +
-        FieldAudioController.originalFileName(this.dcFilename) + '\'</b>';
-      this.modalService.showModalSimple('Delete Audio', deleteMsg, 'Cancel', 'Delete Audio')
-        .then(() => {
-          this.lexProjectService.removeMediaFile('audio', this.dcFilename, result => {
-            if (result.ok) {
-              if (result.data.result) {
-                this.dcFilename = '';
-              } else {
-                this.notice.push(this.notice.ERROR, result.data.errorMessage);
+      const deleteMsg =
+        "Are you sure you want to delete the audio <b>'" +
+        FieldAudioController.originalFileName(this.dcFilename) +
+        "'</b>";
+      this.modalService
+        .showModalSimple('Delete Audio', deleteMsg, 'Cancel', 'Delete Audio')
+        .then(
+          () => {
+            this.lexProjectService.removeMediaFile(
+              'audio',
+              this.dcFilename,
+              (result) => {
+                if (result.ok) {
+                  if (result.data.result) {
+                    this.dcFilename = '';
+                  } else {
+                    this.notice.push(
+                      this.notice.ERROR,
+                      result.data.errorMessage
+                    );
+                  }
+                }
               }
-            }
-          });
-        }, () => { });
+            );
+          },
+          () => {}
+        );
     }
   }
 
@@ -92,11 +121,18 @@ export class FieldAudioController implements angular.IController {
       return;
     }
 
-    this.sessionService.getSession().then(session => {
+    this.sessionService.getSession().then((session) => {
       if (file.size > session.fileSizeMax()) {
-        this.notice.push(this.notice.ERROR, '<b>' + file.name + '</b> (' +
-          this.$filter<BytesFilterFunction>('bytes')(file.size) + ') is too large. It must be smaller than ' +
-          this.$filter<BytesFilterFunction>('bytes')(session.fileSizeMax()) + '.');
+        this.notice.push(
+          this.notice.ERROR,
+          '<b>' +
+            file.name +
+            '</b> (' +
+            this.$filter<BytesFilterFunction>('bytes')(file.size) +
+            ') is too large. It must be smaller than ' +
+            this.$filter<BytesFilterFunction>('bytes')(session.fileSizeMax()) +
+            '.'
+        );
         return;
       }
 
@@ -106,20 +142,33 @@ export class FieldAudioController implements angular.IController {
         data: {
           file,
           previousFilename: this.dcFilename,
-          projectId: session.project().id
-        }
-      }).then((response: UploadResponse) => {
+          projectId: session.project().id,
+        },
+      }).then(
+        (response: UploadResponse) => {
           this.notice.cancelLoading();
           const isUploadSuccess = response.data.result;
           if (isUploadSuccess) {
             this.dcFilename = response.data.data.fileName;
             this.showAudioUpload = false;
-            this.notice.push(this.notice.SUCCESS, 'File uploaded successfully.');
-            if(response.data.data.fileSize > 1000000){ //1 MB file size limit 2022-10
-              this.notice.push(this.notice.WARN, 'WARNING: Because the audio file - ' + response.data.data.fileName + ' - is larger than 1 MB, it will not be synced with FLEx.');
+            this.notice.push(
+              this.notice.SUCCESS,
+              'File uploaded successfully.'
+            );
+            if (response.data.data.fileSize > 1000000) {
+              //1 MB file size limit 2022-10
+              this.notice.push(
+                this.notice.WARN,
+                'WARNING: Because the audio file - ' +
+                  response.data.data.fileName +
+                  ' - is larger than 1 MB, it will not be synced with FLEx.'
+              );
             }
           } else {
-            this.notice.push(this.notice.ERROR, response.data.data.errorMessage);
+            this.notice.push(
+              this.notice.ERROR,
+              response.data.data.errorMessage
+            );
           }
         },
 
@@ -141,20 +190,29 @@ export class FieldAudioController implements angular.IController {
         },
 
         (evt: ProgressEvent) => {
-          this.notice.setPercentComplete(Math.floor(100.0 * evt.loaded / evt.total));
-        });
+          this.notice.setPercentComplete(
+            Math.floor((100.0 * evt.loaded) / evt.total)
+          );
+        }
+      );
     });
   }
 
   audioRecorderCallback = (blob: Blob) => {
     if (blob) {
       const date = new Date();
-      const fileName = 'recording_' + format(addMinutes(date, date.getTimezoneOffset()), 'yyyy_MM_dd_HH_mm_ss') + '.webm';
+      const fileName =
+        'recording_' +
+        format(
+          addMinutes(date, date.getTimezoneOffset()),
+          'yyyy_MM_dd_HH_mm_ss'
+        ) +
+        '.webm';
       const file = new File([blob], fileName);
       this.uploadAudio(file);
     }
     this.showAudioRecorder = false;
-  }
+  };
 
   // strips the timestamp file prefix (returns everything after the '_')
   private static originalFileName(filename: string) {
@@ -168,7 +226,6 @@ export class FieldAudioController implements angular.IController {
 
     return filename.substr(filename.indexOf('_') + 1);
   }
-
 }
 
 export const FieldAudioComponent: angular.IComponentOptions = {
@@ -176,8 +233,9 @@ export const FieldAudioComponent: angular.IComponentOptions = {
     dcFilename: '=',
     dcRights: '<',
     dcInterfaceConfig: '<',
-    dcProjectSlug: '<'
+    dcProjectSlug: '<',
   },
   controller: FieldAudioController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-audio.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-audio.component.html',
 };

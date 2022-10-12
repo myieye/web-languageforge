@@ -1,10 +1,10 @@
 import * as angular from 'angular';
 
-import {UserService} from '../../../core/api/user.service';
-import {SiteWideNoticeService} from '../../../core/site-wide-notice-service';
-import {SessionService} from '../../../core/session.service';
-import {CaptchaData} from '../../../shared/model/captcha.model';
-import {UserWithPassword} from '../../../shared/model/user-password.model';
+import { UserService } from '../../../core/api/user.service';
+import { SiteWideNoticeService } from '../../../core/site-wide-notice-service';
+import { SessionService } from '../../../core/session.service';
+import { CaptchaData } from '../../../shared/model/captcha.model';
+import { UserWithPassword } from '../../../shared/model/user-password.model';
 
 class UserSignup extends UserWithPassword {
   captcha?: string;
@@ -30,14 +30,22 @@ export class SignupAppController implements angular.IController {
   record = new UserSignup();
   hostname: string;
 
-  static $inject = ['$scope', '$location',
+  static $inject = [
+    '$scope',
+    '$location',
     '$window',
     'siteWideNoticeService',
-    'userService', 'sessionService'];
-  constructor(private readonly $scope: any, private readonly $location: angular.ILocationService,
-              private readonly $window: angular.IWindowService,
-              private siteWideNoticeService: SiteWideNoticeService,
-              private readonly userService: UserService, private readonly sessionService: SessionService) {}
+    'userService',
+    'sessionService',
+  ];
+  constructor(
+    private readonly $scope: any,
+    private readonly $location: angular.ILocationService,
+    private readonly $window: angular.IWindowService,
+    private siteWideNoticeService: SiteWideNoticeService,
+    private readonly userService: UserService,
+    private readonly sessionService: SessionService
+  ) {}
 
   $onInit() {
     this.record.id = '';
@@ -64,7 +72,7 @@ export class SignupAppController implements angular.IController {
       this.avatarProvided = true;
     }
 
-    this.sessionService.getSession().then(session => {
+    this.sessionService.getSession().then((session) => {
       // signup app should only show when no user is present (not logged in)
       if (session.userId() != null) {
         this.$window.location.href = '/app/projects';
@@ -75,19 +83,25 @@ export class SignupAppController implements angular.IController {
 
     // we need to watch the passwordStrength score because zxcvbn seems to be changing the score
     // after the ng-change event.  Only after zxcvbn changes should we validate the form
-    this.$scope.$watch(() => this.passwordStrength.score, () => {
-      this.validateForm();
-    });
+    this.$scope.$watch(
+      () => this.passwordStrength.score,
+      () => {
+        this.validateForm();
+      }
+    );
 
     this.getCaptchaData();
   }
 
   validateForm() {
-    this.emailValid = this.$scope.signupForm.email.$pristine ||
-      ((this.$scope.signupForm.email.$dirty || this.emailProvided) && !this.$scope.signupForm.$error.email);
+    this.emailValid =
+      this.$scope.signupForm.email.$pristine ||
+      ((this.$scope.signupForm.email.$dirty || this.emailProvided) &&
+        !this.$scope.signupForm.$error.email);
 
     if (this.record.password) {
-      this.passwordIsWeak = this.passwordStrength.score < 2 || this.record.password.length < 7;
+      this.passwordIsWeak =
+        this.passwordStrength.score < 2 || this.record.password.length < 7;
     } else {
       this.passwordIsWeak = false;
     }
@@ -100,7 +114,7 @@ export class SignupAppController implements angular.IController {
   }
 
   private getCaptchaData() {
-    this.sessionService.getCaptchaData().then(result => {
+    this.sessionService.getCaptchaData().then((result) => {
       if (result.ok) {
         this.captchaData = result.data as CaptchaData;
         this.record.captcha = null;
@@ -111,7 +125,7 @@ export class SignupAppController implements angular.IController {
   private registerUser(successCallback: (url: string) => void) {
     this.captchaFailed = false;
     this.submissionInProgress = true;
-    this.userService.register(this.record).then(result => {
+    this.userService.register(this.record).then((result) => {
       if (result.ok) {
         switch (result.data) {
           case 'captchaFail':
@@ -132,10 +146,10 @@ export class SignupAppController implements angular.IController {
       this.submissionInProgress = false;
     });
   }
-
 }
 
 export const SignupAppComponent: angular.IComponentOptions = {
   controller: SignupAppController,
-  templateUrl: '/angular-app/bellows/apps/public/signup/signup-app.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/public/signup/signup-app.component.html',
 };

@@ -25,31 +25,42 @@ export class UserManagementAppController implements angular.IController {
   project = {
     roles: [] as Role[],
     projectName: '',
-    appLink: ''
+    appLink: '',
   };
   list = {
     visibleUsers: {},
     users: {},
     allUsers: {},
-    userCount: 0
+    userCount: 0,
   };
   joinRequests = {};
 
   currentUser = {
-    id: ''
+    id: '',
   };
 
-  static $inject = ['$location', 'projectService', 'sessionService', 'applicationHeaderService',
-                    'siteWideNoticeService', 'breadcrumbService', 'lexProjectService'];
-  constructor(private $location: angular.ILocationService, private projectService: ProjectService,
-              private sessionService: SessionService, private applicationHeaderService: ApplicationHeaderService,
-              private siteWideNoticeService: SiteWideNoticeService,
-              private breadcrumbService: BreadcrumbService, private lexProjectService: LexiconProjectService,
-             ) { }
+  static $inject = [
+    '$location',
+    'projectService',
+    'sessionService',
+    'applicationHeaderService',
+    'siteWideNoticeService',
+    'breadcrumbService',
+    'lexProjectService',
+  ];
+  constructor(
+    private $location: angular.ILocationService,
+    private projectService: ProjectService,
+    private sessionService: SessionService,
+    private applicationHeaderService: ApplicationHeaderService,
+    private siteWideNoticeService: SiteWideNoticeService,
+    private breadcrumbService: BreadcrumbService,
+    private lexProjectService: LexiconProjectService
+  ) {}
 
   $onInit(): void {
     this.joinRequests = [];
-    this.projectService.getJoinRequests(result => {
+    this.projectService.getJoinRequests((result) => {
       this.joinRequests = result.data;
     });
 
@@ -60,12 +71,19 @@ export class UserManagementAppController implements angular.IController {
 
     this.siteWideNoticeService.displayNotices();
 
-    this.sessionService.getSession().then(session => {
-      this.rights.remove = session.hasProjectRight(this.sessionService.domain.USERS,
-        this.sessionService.operation.DELETE);
-      this.rights.add = session.hasProjectRight(this.sessionService.domain.USERS, this.sessionService.operation.CREATE);
-      this.rights.changeRole = session.hasProjectRight(this.sessionService.domain.USERS,
-        this.sessionService.operation.EDIT);
+    this.sessionService.getSession().then((session) => {
+      this.rights.remove = session.hasProjectRight(
+        this.sessionService.domain.USERS,
+        this.sessionService.operation.DELETE
+      );
+      this.rights.add = session.hasProjectRight(
+        this.sessionService.domain.USERS,
+        this.sessionService.operation.CREATE
+      );
+      this.rights.changeRole = session.hasProjectRight(
+        this.sessionService.domain.USERS,
+        this.sessionService.operation.EDIT
+      );
       this.rights.showControlBar =
         this.rights.add || this.rights.remove || this.rights.changeRole;
 
@@ -79,26 +97,30 @@ export class UserManagementAppController implements angular.IController {
   }
 
   queryUserList() {
-    this.projectService.listUsers( result => {
+    this.projectService.listUsers((result) => {
       if (result.ok) {
         this.list.users = result.data.users;
         this.list.userCount = result.data.userCount;
-        this.list.allUsers = result.data.users.concat(result.data.invitees.map((invitee: any) => {
-          invitee.isInvitee = true;
-          return invitee;
-        }));
+        this.list.allUsers = result.data.users.concat(
+          result.data.invitees.map((invitee: any) => {
+            invitee.isInvitee = true;
+            return invitee;
+          })
+        );
         this.project = result.data.project;
         this.roles = this.project.roles;
-        this.applicationHeaderService.setPageName(this.project.projectName + ' User Management');
+        this.applicationHeaderService.setPageName(
+          this.project.projectName + ' User Management'
+        );
         this.lexProjectService.setBreadcrumbs('', 'User Management');
         this.lexProjectService.setupSettings();
       }
     });
   }
-
 }
 
 export const UserManagementAppComponent: angular.IComponentOptions = {
   controller: UserManagementAppController,
-  templateUrl: '/angular-app/bellows/apps/usermanagement/user-management-app.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/usermanagement/user-management-app.component.html',
 };

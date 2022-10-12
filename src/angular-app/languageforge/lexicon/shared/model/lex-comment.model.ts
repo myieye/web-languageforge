@@ -1,5 +1,5 @@
-import {LexAuthorInfo} from './lex-author-info.model';
-import {LexConfigField} from './lexicon-config.model';
+import { LexAuthorInfo } from './lex-author-info.model';
+import { LexConfigField } from './lexicon-config.model';
 
 export class LexComment {
   authorInfo?: LexAuthorInfo;

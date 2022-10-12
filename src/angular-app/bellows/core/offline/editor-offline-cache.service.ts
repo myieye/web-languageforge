@@ -5,9 +5,16 @@ import { OfflineCacheUtilsService } from './offline-cache-utils.service';
 import { OfflineCacheService } from './offline-cache.service';
 
 export class EditorOfflineCacheService {
-  static $inject: string[] = ['sessionService', 'offlineCache', 'offlineCacheUtils'];
-  constructor(private sessionService: SessionService, private offlineCache: OfflineCacheService,
-              private offlineCacheUtils: OfflineCacheUtilsService) { }
+  static $inject: string[] = [
+    'sessionService',
+    'offlineCache',
+    'offlineCacheUtils',
+  ];
+  constructor(
+    private sessionService: SessionService,
+    private offlineCache: OfflineCacheService,
+    private offlineCacheUtils: OfflineCacheUtilsService
+  ) {}
 
   canCache = OfflineCacheService.canCache;
 
@@ -16,15 +23,21 @@ export class EditorOfflineCacheService {
   }
 
   getAllEntries(): angular.IPromise<any> {
-    return this.offlineCache.getAllFromStore('entries', this.sessionService.projectId());
+    return this.offlineCache.getAllFromStore(
+      'entries',
+      this.sessionService.projectId()
+    );
   }
 
   getProjectData = this.offlineCacheUtils.getProjectData;
 
   updateEntries(entries: any): angular.IPromise<any> {
-    return this.offlineCache.setObjectsInStore('entries', this.sessionService.projectId(), entries);
+    return this.offlineCache.setObjectsInStore(
+      'entries',
+      this.sessionService.projectId(),
+      entries
+    );
   }
 
   updateProjectData = this.offlineCacheUtils.updateProjectData;
-
 }

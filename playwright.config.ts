@@ -19,7 +19,7 @@ const config: PlaywrightTestConfig = {
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: 5000
+    timeout: 5000,
   },
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
@@ -31,7 +31,9 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   outputDir: 'test-results', // referenced in pull-request.yml
-  reporter: process.env.CI ? [['github'], ['list']] : [['html', {outputFolder: 'test-results/_html-report'}]],
+  reporter: process.env.CI
+    ? [['github'], ['list']]
+    : [['html', { outputFolder: 'test-results/_html-report' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
@@ -101,7 +103,8 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'docker-compose -f docker/docker-compose.yml up app-for-playwright',
+    command:
+      'docker-compose -f docker/docker-compose.yml up app-for-playwright',
     port: 3238,
     timeout: 15 * 1000,
     reuseExistingServer: true,

@@ -1,7 +1,7 @@
-import {browser, ExpectedConditions} from 'protractor';
+import { browser, ExpectedConditions } from 'protractor';
 
-import {BellowsLoginPage} from './shared/login.page';
-import {SignupPage} from './shared/signup.page';
+import { BellowsLoginPage } from './shared/login.page';
+import { SignupPage } from './shared/signup.page';
 
 describe('Bellows E2E Signup app', () => {
   const constants = require('./../testConstants.json');
@@ -87,7 +87,7 @@ describe('Bellows E2E Signup app', () => {
     expect<any>(await page.emailTaken.isDisplayed()).toBe(true);
   });
 
-  it('can prefill email address that can\'t be changed', async () => {
+  it("can prefill email address that can't be changed", async () => {
     await SignupPage.getPrefilledEmail(constants.unusedEmail);
     expect<any>(await page.emailInput.isEnabled()).toBe(false);
   });
@@ -112,7 +112,10 @@ describe('Bellows E2E Signup app', () => {
 
     // added to stop intermittent error
     // "Failed: javascript error: document unloaded while waiting for result"
-    await browser.wait(ExpectedConditions.urlContains('projects'), constants.conditionTimeout);
+    await browser.wait(
+      ExpectedConditions.urlContains('projects'),
+      constants.conditionTimeout
+    );
 
     // Verify new user logged in and redirected to projects page
     expect(await browser.getCurrentUrl()).toContain('/app/projects');
@@ -122,7 +125,10 @@ describe('Bellows E2E Signup app', () => {
     await BellowsLoginPage.logout();
     await loginPage.loginAsUser();
     await SignupPage.get();
-    await browser.wait(ExpectedConditions.urlContains('projects'), constants.conditionTimeout);
+    await browser.wait(
+      ExpectedConditions.urlContains('projects'),
+      constants.conditionTimeout
+    );
     expect(await browser.getCurrentUrl()).toContain('/app/projects');
   });
 });

@@ -1,10 +1,10 @@
-import {LexAuthorInfo} from './lex-author-info.model';
-import {LexExample} from './lex-example.model';
-import {LexField} from './lex-field.model';
-import {LexMultiText} from './lex-multi-text.model';
-import {LexMultiValue} from './lex-multi-value.model';
-import {LexPicture} from './lex-picture.model';
-import {LexValue} from './lex-value.model';
+import { LexAuthorInfo } from './lex-author-info.model';
+import { LexExample } from './lex-example.model';
+import { LexField } from './lex-field.model';
+import { LexMultiText } from './lex-multi-text.model';
+import { LexMultiValue } from './lex-multi-value.model';
+import { LexPicture } from './lex-picture.model';
+import { LexValue } from './lex-value.model';
 
 export class LexSense {
   liftId: string;

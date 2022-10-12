@@ -12,7 +12,7 @@ export class MockUploadController implements angular.IController {
   showControls: boolean = false;
 
   static $inject: string[] = [];
-  constructor() { }
+  constructor() {}
 
   toggleControls() {
     this.showControls = !this.showControls;
@@ -24,13 +24,12 @@ export class MockUploadController implements angular.IController {
     // see http://stackoverflow.com/questions/23477859/angularjs-call-function-on-directive-parent-scope-with-directive-scope-argumen
     this.puiDoUpload({ file: this.mockFile });
   }
-
 }
 
 export const MockUploadComponent: angular.IComponentOptions = {
   bindings: {
-    puiDoUpload: '&'
+    puiDoUpload: '&',
   },
   controller: MockUploadController,
-  templateUrl: '/angular-app/bellows/shared/mock-upload.component.html'
+  templateUrl: '/angular-app/bellows/shared/mock-upload.component.html',
 };

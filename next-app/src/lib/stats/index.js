@@ -1,6 +1,6 @@
-import Stats from './Stats.svelte'
-import Stat from './Stat.svelte'
+import Stats from './Stats.svelte';
+import Stat from './Stat.svelte';
 
-Stats.Stat = Stat
+Stats.Stat = Stat;
 
-export default Stats
+export default Stats;

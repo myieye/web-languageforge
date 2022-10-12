@@ -1,7 +1,7 @@
 import * as angular from 'angular';
 
-import {LexiconNewProjectState} from '../lexicon-new-project-state.model';
-import {LexiconNewProjectController} from '../lexicon-new-project.component';
+import { LexiconNewProjectState } from '../lexicon-new-project-state.model';
+import { LexiconNewProjectController } from '../lexicon-new-project.component';
 
 export class NewProjectVerifyDataController implements angular.IController {
   npvEntriesImported: number;
@@ -20,16 +20,16 @@ export class NewProjectVerifyDataController implements angular.IController {
 
     return 'Show non-critical import errors';
   }
-
 }
 
 export const NewProjectVerifyDataComponent: angular.IComponentOptions = {
   bindings: {
     npvEntriesImported: '<',
-    npvImportErrors: '<'
+    npvImportErrors: '<',
   },
   controller: NewProjectVerifyDataController,
-  templateUrl: '/angular-app/languageforge/lexicon/new-project/non-send-receive/new-project-verify-data.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/new-project/non-send-receive/new-project-verify-data.component.html',
 };
 
 export const NewProjectVerifyDataState = {
@@ -45,19 +45,20 @@ export const NewProjectVerifyDataState = {
     show: {
       backButton: false,
       nextButton: true,
-      step3: true
+      step3: true,
     },
     nextButtonLabel: 'Dictionary',
     progressIndicatorStep1Label: 'Name',
     progressIndicatorStep2Label: 'Initial Data',
     progressIndicatorStep3Label: 'Verify',
-    isFormValid(controller: LexiconNewProjectController): angular.IPromise<boolean> {
+    isFormValid(
+      controller: LexiconNewProjectController
+    ): angular.IPromise<boolean> {
       return controller.neutral();
     },
     goNextState(controller: LexiconNewProjectController): void {
       controller.gotoEditor();
     },
-    goPreviousState(): void {
-    }
-  }
+    goPreviousState(): void {},
+  },
 } as LexiconNewProjectState;

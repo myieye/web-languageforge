@@ -1,4 +1,4 @@
-import {browser, by, element} from 'protractor';
+import { browser, by, element } from 'protractor';
 import { Utils } from './utils';
 
 export class SiteAdminPage {
@@ -14,7 +14,7 @@ export class SiteAdminPage {
 
   tabs = {
     reports: element(by.id('users')),
-    archivedProjects: element(by.id('archivedprojects'))
+    archivedProjects: element(by.id('archivedprojects')),
   };
 
   archivedProjectsTab = {
@@ -25,7 +25,7 @@ export class SiteAdminPage {
       const projectRow = this.archivedProjectsTab.projectsList.get(row);
       const rowCheckbox = projectRow.element(by.css('input[type="checkbox"]'));
       return this.util.setCheckbox(rowCheckbox, value);
-    }
+    },
   };
 
   //noinspection JSUnusedGlobalSymbols

@@ -1,11 +1,12 @@
 <div class="grow-wrap">
-    <textarea
-        fit-text
-        dir="{{$ctrl.fteDir}}" 
-        data-ng-model="$ctrl.textFieldValue" 
-        data-ng-change="$ctrl.inputChanged()"
-        data-ng-disabled="$ctrl.fteDisabled" 
-        title="{{$ctrl.fteDisabled ? $ctrl.disabledMsg() : ''}}"
-        autocapitalize="{{$ctrl.autocapitalize}}">
-    </textarea>
+  <textarea
+    fit-text
+    dir="{{ $ctrl.fteDir }}"
+    data-ng-model="$ctrl.textFieldValue"
+    data-ng-change="$ctrl.inputChanged()"
+    data-ng-disabled="$ctrl.fteDisabled"
+    title="{{ $ctrl.fteDisabled ? $ctrl.disabledMsg() : '' }}"
+    autocapitalize="{{ $ctrl.autocapitalize }}"
+  >
+  </textarea>
 </div>

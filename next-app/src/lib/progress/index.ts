@@ -1,21 +1,21 @@
-import { writable } from 'svelte/store'
+import { writable } from 'svelte/store';
 
-export const loading = writable(false)
+export const loading = writable(false);
 
-const pending = []
+const pending = [];
 
 export function start(id) {
-  loading.set(true)
+  loading.set(true);
 
-  pending.push(id)
+  pending.push(id);
 }
 
 export function stop(id) {
-  const i = pending.findIndex(anId => anId === id)
+  const i = pending.findIndex((anId) => anId === id);
 
   if (i >= 0) {
-    pending.splice(i,1)
+    pending.splice(i, 1);
 
-    loading.set(!!pending.length)
+    loading.set(!!pending.length);
   }
 }

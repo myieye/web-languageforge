@@ -1,24 +1,24 @@
 import * as angular from 'angular';
 
-import {AudioRecorder} from '../../../../bellows/shared/audio-recorder/audio-recorder.module'
-import {NoticeModule} from '../../../../bellows/core/notice/notice.module';
-import {MockModule} from '../../../../bellows/shared/mock.module';
-import {SoundModule} from '../../../../bellows/shared/sound.module';
-import {LexiconCoreModule} from '../../core/lexicon-core.module';
-import {EditorCommentsModule} from '../comment/comment.module';
-import {FieldAudioComponent} from './dc-audio.component';
-import {FieldEntryComponent} from './dc-entry.component';
-import {FieldExampleComponent} from './dc-example.component';
-import {FieldRepeatComponent} from './dc-fieldrepeat.component';
-import {FieldMultiOptionListComponent} from './dc-multioptionlist.component';
-import {FieldMultiParagraphComponent} from './dc-multiparagraph.component';
-import {FieldMultiTextComponent} from './dc-multitext.component';
-import {FieldOptionListComponent} from './dc-optionlist.component';
-import {FieldPictureComponent} from './dc-picture.component';
-import {FieldRenderedComponent} from './dc-rendered.component';
-import {FieldSemanticDomainComponent} from './dc-semanticdomain.component';
-import {FieldSenseComponent} from './dc-sense.component';
-import {FieldTextComponent} from './dc-text.component';
+import { AudioRecorder } from '../../../../bellows/shared/audio-recorder/audio-recorder.module';
+import { NoticeModule } from '../../../../bellows/core/notice/notice.module';
+import { MockModule } from '../../../../bellows/shared/mock.module';
+import { SoundModule } from '../../../../bellows/shared/sound.module';
+import { LexiconCoreModule } from '../../core/lexicon-core.module';
+import { EditorCommentsModule } from '../comment/comment.module';
+import { FieldAudioComponent } from './dc-audio.component';
+import { FieldEntryComponent } from './dc-entry.component';
+import { FieldExampleComponent } from './dc-example.component';
+import { FieldRepeatComponent } from './dc-fieldrepeat.component';
+import { FieldMultiOptionListComponent } from './dc-multioptionlist.component';
+import { FieldMultiParagraphComponent } from './dc-multiparagraph.component';
+import { FieldMultiTextComponent } from './dc-multitext.component';
+import { FieldOptionListComponent } from './dc-optionlist.component';
+import { FieldPictureComponent } from './dc-picture.component';
+import { FieldRenderedComponent } from './dc-rendered.component';
+import { FieldSemanticDomainComponent } from './dc-semanticdomain.component';
+import { FieldSenseComponent } from './dc-sense.component';
+import { FieldTextComponent } from './dc-text.component';
 import { FitTextDirective } from '../../shared/fit-text.directive';
 
 export const EditorFieldModule = angular
@@ -29,7 +29,7 @@ export const EditorFieldModule = angular
     SoundModule,
     LexiconCoreModule,
     EditorCommentsModule,
-    AudioRecorder    
+    AudioRecorder,
   ])
   .component('dcAudio', FieldAudioComponent)
   .component('dcEntry', FieldEntryComponent)
@@ -44,5 +44,4 @@ export const EditorFieldModule = angular
   .component('dcSemanticdomain', FieldSemanticDomainComponent)
   .component('dcSense', FieldSenseComponent)
   .component('dcText', FieldTextComponent)
-  .directive('fitText', FitTextDirective.factory())
-  .name;
+  .directive('fitText', FitTextDirective.factory()).name;

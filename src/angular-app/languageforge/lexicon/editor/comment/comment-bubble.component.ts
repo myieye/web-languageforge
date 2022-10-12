@@ -1,12 +1,12 @@
 import * as angular from 'angular';
 
-import {LexiconCommentService} from '../../../../bellows/core/offline/lexicon-comments.service';
-import {InputSystem} from '../../../../bellows/shared/model/input-system.model';
-import {LexiconConfigService} from '../../core/lexicon-config.service';
-import {LexEntry} from '../../shared/model/lex-entry.model';
-import {LexField} from '../../shared/model/lex-field.model';
-import {LexPicture} from '../../shared/model/lex-picture.model';
-import {FieldControl} from '../field/field-control.model';
+import { LexiconCommentService } from '../../../../bellows/core/offline/lexicon-comments.service';
+import { InputSystem } from '../../../../bellows/shared/model/input-system.model';
+import { LexiconConfigService } from '../../core/lexicon-config.service';
+import { LexEntry } from '../../shared/model/lex-entry.model';
+import { LexField } from '../../shared/model/lex-field.model';
+import { LexPicture } from '../../shared/model/lex-picture.model';
+import { FieldControl } from '../field/field-control.model';
 
 export class CommentBubbleController implements angular.IController {
   field: string;
@@ -23,29 +23,44 @@ export class CommentBubbleController implements angular.IController {
   pictureSrc: string = '';
   contextGuid: string;
 
-  static $inject = ['$element', '$scope',
-    'lexCommentService', 'lexConfigService'];
-  constructor(private $element: angular.IRootElementService, private $scope: angular.IScope,
-              private commentService: LexiconCommentService, private lexConfig: LexiconConfigService) { }
+  static $inject = [
+    '$element',
+    '$scope',
+    'lexCommentService',
+    'lexConfigService',
+  ];
+  constructor(
+    private $element: angular.IRootElementService,
+    private $scope: angular.IScope,
+    private commentService: LexiconCommentService,
+    private lexConfig: LexiconConfigService
+  ) {}
 
   $onInit(): void {
     if (this.inputSystem == null) {
       this.inputSystem = {
         abbreviation: '',
-        tag: ''
+        tag: '',
       } as InputSystem;
     }
 
     this.setContextGuid();
 
-    this.$scope.$watch(() => this.model, () => {
-      this.checkValidModelContextChange();
-    }, true);
+    this.$scope.$watch(
+      () => this.model,
+      () => {
+        this.checkValidModelContextChange();
+      },
+      true
+    );
 
-    this.$scope.$watch(() => this.inputSystem, () => {
-      this.setContextGuid();
-    }, true);
-
+    this.$scope.$watch(
+      () => this.inputSystem,
+      () => {
+        this.setContextGuid();
+      },
+      true
+    );
   }
 
   getCountForDisplay(): number | string {
@@ -69,11 +84,20 @@ export class CommentBubbleController implements angular.IController {
         bubbleOffsetTop = this.$element.offset().top;
       }
 
-      const rightPanel = document.querySelector('.comments-right-panel') as HTMLElement;
+      const rightPanel = document.querySelector(
+        '.comments-right-panel'
+      ) as HTMLElement;
       const offsetAuthor = 40;
-      rightPanel.style.paddingTop = (bubbleOffsetTop - rightPanel.getBoundingClientRect().top - offsetAuthor) + 'px';
-      if (this.control.rightPanelVisible === false ||
-        !document.querySelector('#lexAppCommentView').classList.contains('panel-visible')
+      rightPanel.style.paddingTop =
+        bubbleOffsetTop -
+        rightPanel.getBoundingClientRect().top -
+        offsetAuthor +
+        'px';
+      if (
+        this.control.rightPanelVisible === false ||
+        !document
+          .querySelector('#lexAppCommentView')
+          .classList.contains('panel-visible')
       ) {
         this.control.showCommentsPanel();
       }
@@ -81,8 +105,11 @@ export class CommentBubbleController implements angular.IController {
   }
 
   isCommentingAvailable(): boolean {
-    return !CommentBubbleController.isEntryNew(this.control.currentEntry) && this.control.rights.canComment() &&
-      (this.field !== 'entry' || this.getCount() > 0);
+    return (
+      !CommentBubbleController.isEntryNew(this.control.currentEntry) &&
+      this.control.rights.canComment() &&
+      (this.field !== 'entry' || this.getCount() > 0)
+    );
   }
 
   private getCount(): number {
@@ -93,7 +120,9 @@ export class CommentBubbleController implements angular.IController {
 
   private checkValidModelContextChange(): void {
     const newComment = this.control.getNewComment();
-    if (this.configType === 'optionlist' && newComment.regarding != null &&
+    if (
+      this.configType === 'optionlist' &&
+      newComment.regarding != null &&
       newComment.regarding.field === this.field
     ) {
       this.selectFieldForComment();
@@ -101,17 +130,22 @@ export class CommentBubbleController implements angular.IController {
   }
 
   private selectFieldForComment(): void {
-    this.control.selectFieldForComment(this.field,
+    this.control.selectFieldForComment(
+      this.field,
       this.model,
       this.inputSystem.tag,
       this.multiOptionValue,
       this.pictureSrc,
-      this.contextGuid);
+      this.contextGuid
+    );
   }
 
   private setContextGuid(): void {
-    this.lexConfig.getFieldConfig(this.field).then(fieldConfig => {
-      this.contextGuid = this.parentContextGuid + (this.parentContextGuid ? ' ' : '') + this.field;
+    this.lexConfig.getFieldConfig(this.field).then((fieldConfig) => {
+      this.contextGuid =
+        this.parentContextGuid +
+        (this.parentContextGuid ? ' ' : '') +
+        this.field;
       if (this.configType == null) {
         this.configType = fieldConfig.type;
       }
@@ -123,7 +157,9 @@ export class CommentBubbleController implements angular.IController {
         this.contextGuid += '#' + this.multiOptionValue;
       }
 
-      this.contextGuid += (this.inputSystem.tag ? '.' + this.inputSystem.tag : '');
+      this.contextGuid += this.inputSystem.tag
+        ? '.' + this.inputSystem.tag
+        : '';
       if (!this.contextGuid.includes('undefined')) {
         this.active = true;
       }
@@ -133,7 +169,6 @@ export class CommentBubbleController implements angular.IController {
   private static isEntryNew(entry: LexEntry): boolean {
     return entry.id != null && entry.id.includes('_new_');
   }
-
 }
 
 export const CommentBubbleComponent: angular.IComponentOptions = {
@@ -146,8 +181,9 @@ export const CommentBubbleComponent: angular.IComponentOptions = {
     inputSystem: '<?',
     multiOptionValue: '<?',
     picture: '<?',
-    getPictureUrl: '&?'
+    getPictureUrl: '&?',
   },
   controller: CommentBubbleController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/comment/comment-bubble.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/comment/comment-bubble.component.html',
 };

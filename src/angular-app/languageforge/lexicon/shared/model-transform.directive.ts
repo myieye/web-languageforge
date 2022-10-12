@@ -6,14 +6,15 @@ export function ModelTransformLimit(): angular.IDirective {
     restrict: 'A',
     require: 'ngModel',
     scope: {
-      modelTransformLimit: '@'
+      modelTransformLimit: '@',
     },
     link(scope, element, attrs, modelCtrl: angular.INgModelController) {
       modelCtrl.$parsers.push((inputValue: string): string => {
         let transformedInput = '';
         if (inputValue) {
-          transformedInput =
-            inputValue.toLowerCase().substring(0, parseInt(attrs.modelTransformLimit, 10));
+          transformedInput = inputValue
+            .toLowerCase()
+            .substring(0, parseInt(attrs.modelTransformLimit, 10));
           if (transformedInput !== inputValue) {
             modelCtrl.$setViewValue(transformedInput);
             modelCtrl.$render();
@@ -22,7 +23,7 @@ export function ModelTransformLimit(): angular.IDirective {
 
         return transformedInput;
       });
-    }
+    },
   };
 }
 
@@ -44,12 +45,11 @@ export function ModelTransformNoSpace(): angular.IDirective {
 
         return transformedInput;
       });
-    }
+    },
   };
 }
 
 export const ModelTransformModule = angular
   .module('palaso.util.model.transform', [])
   .directive('modelTransformLimit', ModelTransformLimit)
-  .directive('modelTransformNoSpace', ModelTransformNoSpace)
-  .name;
+  .directive('modelTransformNoSpace', ModelTransformNoSpace).name;

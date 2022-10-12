@@ -1,10 +1,10 @@
 import * as angular from 'angular';
 
-import {InputSystemLanguage} from '../../shared/model/input-system-language.model';
-import {inputSystemsLanguagesSmall} from './input-systems-languages-small.generated-data';
-import {inputSystemsLanguages} from './input-systems-languages.generated-data';
-import {inputSystemsRegions} from './input-systems-regions.generated-data';
-import {inputSystemsScripts} from './input-systems-scripts.generated-data';
+import { InputSystemLanguage } from '../../shared/model/input-system-language.model';
+import { inputSystemsLanguagesSmall } from './input-systems-languages-small.generated-data';
+import { inputSystemsLanguages } from './input-systems-languages.generated-data';
+import { inputSystemsRegions } from './input-systems-regions.generated-data';
+import { inputSystemsScripts } from './input-systems-scripts.generated-data';
 
 export class InputSystemsService {
   private languages: InputSystemLanguage[];
@@ -23,10 +23,10 @@ export class InputSystemsService {
     const unlisted: InputSystemLanguage = {
       name: 'Unlisted Language',
       code: {
-        three: 'qaa'
+        three: 'qaa',
       },
       country: ['?'],
-      altNames: [] as string[]
+      altNames: [] as string[],
     };
 
     let languages: InputSystemLanguage[] = [];
@@ -64,18 +64,20 @@ export class InputSystemsService {
   static isRightToLeft(code: string) {
     // TODO. Enhance. find a source for this list; manually update for now. IJH 2014-04
     const rtlCodes = ['fa', 'fas'];
-    return (rtlCodes.includes(code));
+    return rtlCodes.includes(code);
   }
-
 }
 
 export type InputSystemsScript = string[];
 export type InputSystemsRegion = string;
 
-interface InputSystemsScripts { [scriptCode: string]: InputSystemsScript; }
-interface InputSystemsRegions { [regionCode: string]: InputSystemsRegion; }
+interface InputSystemsScripts {
+  [scriptCode: string]: InputSystemsScript;
+}
+interface InputSystemsRegions {
+  [regionCode: string]: InputSystemsRegion;
+}
 
 export const InputSystemsModule = angular
   .module('inputSystemsModule', [])
-  .service('inputSystems', InputSystemsService)
-  .name;
+  .service('inputSystems', InputSystemsService).name;

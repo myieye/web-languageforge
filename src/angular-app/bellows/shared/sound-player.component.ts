@@ -12,10 +12,12 @@ export class SoundController implements angular.IController {
 
   static $inject = ['$scope', '$element'];
 
-  constructor(private $scope: angular.IScope, private $element: angular.IRootElementService) {}
+  constructor(
+    private $scope: angular.IScope,
+    private $element: angular.IRootElementService
+  ) {}
 
   $onInit(): void {
-
     this.slider = this.$element.find('.seek-slider').get(0) as HTMLInputElement;
 
     //So that duration appears immediately once it is available
@@ -28,10 +30,8 @@ export class SoundController implements angular.IController {
         if (this.playing) {
           this.togglePlayback();
         }
-
       });
     });
-
 
     const previousFormattedTime: string = null;
     this.audioElement.addEventListener('timeupdate', () => {
@@ -54,7 +54,6 @@ export class SoundController implements angular.IController {
     this.slider.addEventListener('input', () => {
       this.isUserMovingSlider = true;
     });
-
   }
 
   $onChanges(changes: angular.IOnChangesObject): void {
@@ -69,7 +68,7 @@ export class SoundController implements angular.IController {
   }
 
   $onDestroy(): void {
-    if (!this.audioElement.paused){
+    if (!this.audioElement.paused) {
       this.audioElement.pause();
     }
   }
@@ -78,14 +77,11 @@ export class SoundController implements angular.IController {
     return this.playing ? 'fa-pause' : 'fa-play';
   }
 
-
   async playAudio() {
-    try{
+    try {
       let loadedAudioPlayer = await this.audioElement.play();
       return loadedAudioPlayer;
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   togglePlayback(): void {
@@ -95,11 +91,10 @@ export class SoundController implements angular.IController {
       this.audioElement.currentTime = 0;
       this.playAudio();
     } else {
-      if(!this.audioElement.paused){
+      if (!this.audioElement.paused) {
         this.audioElement.pause();
       }
     }
-
   }
 
   currentTimeInSeconds(): number {
@@ -115,7 +110,9 @@ export class SoundController implements angular.IController {
   }
 
   currentTime(): string {
-    return SoundController.formatTimestamp(this.audioElement.currentTime * 1000);
+    return SoundController.formatTimestamp(
+      this.audioElement.currentTime * 1000
+    );
   }
 
   private static formatTimestamp(timestamp: number): string {
@@ -129,8 +126,8 @@ export class SoundController implements angular.IController {
 
 export const SoundComponent: angular.IComponentOptions = {
   bindings: {
-    puiUrl: '<'
+    puiUrl: '<',
   },
   controller: SoundController,
-  templateUrl: '/angular-app/bellows/shared/sound-player.component.html'
+  templateUrl: '/angular-app/bellows/shared/sound-player.component.html',
 };

@@ -4,12 +4,12 @@ export interface LdapiUserInfo {
   firstname: string;
   lastname: string;
   language?: string;
-  admin?: boolean|number;
+  admin?: boolean | number;
 }
 
 export interface LdapiProjectMembership {
-  user: LdapiUserInfo,
-  role: string
+  user: LdapiUserInfo;
+  role: string;
 }
 
 // Old, for the .NET Core API:

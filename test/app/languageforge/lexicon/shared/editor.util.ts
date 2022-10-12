@@ -1,5 +1,5 @@
-import {browser, by, element, Key} from 'protractor';
-import {ElementArrayFinder, ElementFinder} from 'protractor/built/element';
+import { browser, by, element, Key } from 'protractor';
+import { ElementArrayFinder, ElementFinder } from 'protractor/built/element';
 
 // Utility functions for parsing dc-* directives (dc-multitext, etc)
 export class EditorUtil {
@@ -7,8 +7,10 @@ export class EditorUtil {
 
   // Return the multitext's values as [{wsid: 'en', value: 'word'}, {wsid: 'de', value: 'Wort'}]
   // NOTE: Returns a promise. Use .then() to access the actual data.
-  dcMultitextToArray = (elem: ElementFinder|ElementArrayFinder) => {
-    const inputSystemDivs = elem.all(by.repeater('tag in $ctrl.config.inputSystems'));
+  dcMultitextToArray = (elem: ElementFinder | ElementArrayFinder) => {
+    const inputSystemDivs = elem.all(
+      by.repeater('tag in $ctrl.config.inputSystems')
+    );
     return inputSystemDivs.map((div: any) => {
       const wsidSpan = div.element(by.css('.input-group > span.wsid'));
       const wordInput = div.element(by.css('.input-group > .dc-text textarea'));
@@ -18,7 +20,7 @@ export class EditorUtil {
             return wordInput.getAttribute('value').then((word: string) => {
               return {
                 wsid,
-                value: word
+                value: word,
               };
             });
           } else {
@@ -27,11 +29,11 @@ export class EditorUtil {
         });
       });
     });
-  }
+  };
 
   // Return the multitext's values as {en: 'word', de: 'Wort'}
   // NOTE: Returns a promise. Use .then() to access the actual data.
-  dcMultitextToObject = (elem: ElementFinder|ElementArrayFinder) => {
+  dcMultitextToObject = (elem: ElementFinder | ElementArrayFinder) => {
     return this.dcMultitextToArray(elem).then((values: any) => {
       const result = {};
       for (let i = 0, l = values.length; i < l; i++) {
@@ -40,28 +42,31 @@ export class EditorUtil {
 
       return result;
     });
-  }
+  };
 
   // Returns the value of the multitext's first writing system, no matter what writing system is
   // first. NOTE: Returns a promise. Use .then() to access the actual data.
-  dcMultitextToFirstValue = (elem: ElementFinder|ElementArrayFinder) => {
+  dcMultitextToFirstValue = (elem: ElementFinder | ElementArrayFinder) => {
     return this.dcMultitextToArray(elem).then((values: any) => {
       return values[0].value;
     });
-  }
+  };
 
   static dcOptionListToValue(elem: any) {
     const select = elem.element(by.css('.controls select'));
-    return select.element(by.css('option:checked')).getText().then((text: string) => {
-      return text;
-    });
+    return select
+      .element(by.css('option:checked'))
+      .getText()
+      .then((text: string) => {
+        return text;
+      });
   }
 
   // At the moment these are identical to dc-optionlist directives.
   // When they change, this function will need to be rewritten
   dcMultiOptionListToValue = EditorUtil.dcOptionListToValue;
 
-  dcPicturesToObject = (elem: ElementFinder|ElementArrayFinder) => {
+  dcPicturesToObject = (elem: ElementFinder | ElementArrayFinder) => {
     const pictures = elem.all(by.repeater('picture in $ctrl.pictures'));
     return pictures.map((div: any) => {
       const img = div.element(by.css('img'));
@@ -69,66 +74,96 @@ export class EditorUtil {
       return img.getAttribute('src').then((src: string) => {
         return {
           fileName: src.replace(/^.*[\\\/]/, ''),
-          caption: this.dcMultitextToObject(caption)
+          caption: this.dcMultitextToObject(caption),
         };
       });
     });
-  }
+  };
 
   dcParsingFuncs = {
     multitext: {
       multitext_as_object: this.dcMultitextToObject,
       multitext_as_array: this.dcMultitextToArray,
       multitext_as_first_value: this.dcMultitextToFirstValue,
-      default_strategy: 'multitext_as_object'
+      default_strategy: 'multitext_as_object',
     },
     optionlist: EditorUtil.dcOptionListToValue,
     multioptionlist: this.dcMultiOptionListToValue,
-    pictures: this.dcPicturesToObject
+    pictures: this.dcPicturesToObject,
   };
 
-  getParser(elem: any, multitextStrategy: string = this.dcParsingFuncs.multitext.default_strategy) {
-    const switchDiv = elem.element(by.css('[data-on="$ctrl.config.fields[fieldName].type"] > div'));
-    return switchDiv.getAttribute('data-ng-switch-when').then((fieldType: any) => {
-      let parser;
-      if (fieldType === 'multitext') {
-        parser = this.dcParsingFuncs[fieldType][multitextStrategy];
-      } else {
-        parser = this.dcParsingFuncs[fieldType];
-      }
+  getParser(
+    elem: any,
+    multitextStrategy: string = this.dcParsingFuncs.multitext.default_strategy
+  ) {
+    const switchDiv = elem.element(
+      by.css('[data-on="$ctrl.config.fields[fieldName].type"] > div')
+    );
+    return switchDiv
+      .getAttribute('data-ng-switch-when')
+      .then((fieldType: any) => {
+        let parser;
+        if (fieldType === 'multitext') {
+          parser = this.dcParsingFuncs[fieldType][multitextStrategy];
+        } else {
+          parser = this.dcParsingFuncs[fieldType];
+        }
 
-      return parser;
-    });
+        return parser;
+      });
   }
 
   parseDcField(elem: any, multitextStrategy?: string) {
-    return this.getParser(elem, multitextStrategy).then((parser: any) => parser(elem));
-  }
-
-  static getFields(searchLabel: string, rootElem: ElementFinder = element(by.className('dc-entry'))) {
-    return rootElem.all(by.cssContainingText('div[data-ng-repeat="fieldName in $ctrl.config.fieldOrder"]', searchLabel)).filter(elem => {
-      return elem.getText().then(text => {
-        // getText returns text including child elements, which for fields is generally on a new line
-        if(text.indexOf('\n') !== -1) text = text.substring(0, text.indexOf('\n'));
-        return text === searchLabel;
-      })
-    });
-  }
-
-  getFieldValues(searchLabel: string, rootElem: ElementFinder = element(by.className('dc-entry')),
-                 multitextStrategy?: string) {
-    return EditorUtil.getFields(searchLabel, rootElem).map(
-      (fieldElem: any) => this.parseDcField(fieldElem, multitextStrategy)
+    return this.getParser(elem, multitextStrategy).then((parser: any) =>
+      parser(elem)
     );
   }
 
-  static getOneField(searchLabel: string, idx: number = 0,
-                     rootElem: ElementFinder = element(by.className('dc-entry'))) {
+  static getFields(
+    searchLabel: string,
+    rootElem: ElementFinder = element(by.className('dc-entry'))
+  ) {
+    return rootElem
+      .all(
+        by.cssContainingText(
+          'div[data-ng-repeat="fieldName in $ctrl.config.fieldOrder"]',
+          searchLabel
+        )
+      )
+      .filter((elem) => {
+        return elem.getText().then((text) => {
+          // getText returns text including child elements, which for fields is generally on a new line
+          if (text.indexOf('\n') !== -1)
+            text = text.substring(0, text.indexOf('\n'));
+          return text === searchLabel;
+        });
+      });
+  }
+
+  getFieldValues(
+    searchLabel: string,
+    rootElem: ElementFinder = element(by.className('dc-entry')),
+    multitextStrategy?: string
+  ) {
+    return EditorUtil.getFields(searchLabel, rootElem).map((fieldElem: any) =>
+      this.parseDcField(fieldElem, multitextStrategy)
+    );
+  }
+
+  static getOneField(
+    searchLabel: string,
+    idx: number = 0,
+    rootElem: ElementFinder = element(by.className('dc-entry'))
+  ) {
     return EditorUtil.getFields(searchLabel, rootElem).get(idx);
   }
 
-  getOneFieldValue(searchLabel: string, idx: number = 0, rootElem: ElementFinder = element(by.className('dc-entry')),
-                   multitextStrategy?: string) {
+  getOneFieldValue(
+    searchLabel: string,
+    idx: number = 0,
+    rootElem: ElementFinder = element(by.className('dc-entry')),
+    multitextStrategy?: string
+  ) {
     const fieldElement = EditorUtil.getOneField(searchLabel, idx, rootElem);
     return this.parseDcField(fieldElement, multitextStrategy);
   }
@@ -146,7 +181,7 @@ export class EditorUtil {
     p: 'Particle',
     prep: 'Preposition',
     pro: 'Pronoun',
-    v: 'Verb'
+    v: 'Verb',
   };
 
   // Take an abbreviation for a part of speech and return the value that will
@@ -165,15 +200,17 @@ export class EditorUtil {
     async clear(elem: any) {
       // fix problem with protractor not scrolling to element before click
       await elem.getLocation().then((navDivLocation: any) => {
-        const initTop = (navDivLocation.y - 150) > 0 ? navDivLocation.y - 150 : 1;
+        const initTop = navDivLocation.y - 150 > 0 ? navDivLocation.y - 150 : 1;
         const initLeft = navDivLocation.x;
-        browser.executeScript('window.scrollTo(' + initLeft + ',' + initTop + ');');
+        browser.executeScript(
+          'window.scrollTo(' + initLeft + ',' + initTop + ');'
+        );
       });
 
       await elem.click();
       const ctrlA = Key.chord(Key.CONTROL, 'a');
       await elem.sendKeys(ctrlA);
       return elem.sendKeys(Key.DELETE);
-    }
+    },
   };
 }

@@ -1,22 +1,23 @@
 import * as angular from 'angular';
 
-import {LexiconSendReceiveService} from '../../core/lexicon-send-receive.service';
-import {LexiconNewProjectState} from '../lexicon-new-project-state.model';
-import {LexiconNewProjectController} from '../lexicon-new-project.component';
+import { LexiconSendReceiveService } from '../../core/lexicon-send-receive.service';
+import { LexiconNewProjectState } from '../lexicon-new-project-state.model';
+import { LexiconNewProjectController } from '../lexicon-new-project.component';
 
-export class NewProjectSendReceiveCloneController implements angular.IController {
+export class NewProjectSendReceiveCloneController
+  implements angular.IController
+{
   cloneNotice = this.sendReceive.cloneNotice;
 
   static $inject = ['lexSendReceive'];
-  constructor(private readonly sendReceive: LexiconSendReceiveService) { }
-
+  constructor(private readonly sendReceive: LexiconSendReceiveService) {}
 }
 
 export const NewProjectSendReceiveCloneComponent: angular.IComponentOptions = {
-  bindings: {
-  },
+  bindings: {},
   controller: NewProjectSendReceiveCloneController,
-  templateUrl: '/angular-app/languageforge/lexicon/new-project/send-receive/new-project-clone.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/new-project/send-receive/new-project-clone.component.html',
 };
 
 export const NewProjectSendReceiveCloneState = {
@@ -28,13 +29,15 @@ export const NewProjectSendReceiveCloneState = {
     show: {
       backButton: false,
       nextButton: false,
-      step3: false
+      step3: false,
     },
     nextButtonLabel: 'Get Started',
     progressIndicatorStep1Label: 'Connect',
     progressIndicatorStep2Label: 'Verify',
     progressIndicatorStep3Label: '',
-    isFormValid(controller: LexiconNewProjectController): angular.IPromise<boolean> {
+    isFormValid(
+      controller: LexiconNewProjectController
+    ): angular.IPromise<boolean> {
       if (controller.sendReceive.isInProgress()) {
         return controller.error();
       }
@@ -45,7 +48,6 @@ export const NewProjectSendReceiveCloneState = {
         controller.gotoEditor();
       }
     },
-    goPreviousState(): void {
-    }
-  }
+    goPreviousState(): void {},
+  },
 } as LexiconNewProjectState;

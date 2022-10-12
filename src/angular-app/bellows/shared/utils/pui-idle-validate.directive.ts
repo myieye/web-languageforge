@@ -1,18 +1,20 @@
 import * as angular from 'angular';
 
 interface IdleValidateScope extends angular.IScope {
-  idleValidate: () => { };
-  idleValidateKeypress: () => { };
+  idleValidate: () => {};
+  idleValidateKeypress: () => {};
   idleValidateMsec: number;
 }
 
-export function PuiIdleValidate($interval: angular.IIntervalService): angular.IDirective {
+export function PuiIdleValidate(
+  $interval: angular.IIntervalService
+): angular.IDirective {
   return {
     restrict: 'A',
     scope: {
       idleValidate: '&',
       idleValidateKeypress: '&',
-      idleValidateMsec: '<'
+      idleValidateMsec: '<',
     },
     link($scope: IdleValidateScope, $element) {
       let intervalTimer: angular.IPromise<any>;
@@ -32,7 +34,7 @@ export function PuiIdleValidate($interval: angular.IIntervalService): angular.ID
 
         intervalTimer = $interval(() => $scope.idleValidate(), milliseconds, 1);
       });
-    }
+    },
   };
 }
 PuiIdleValidate.$inject = ['$interval'];

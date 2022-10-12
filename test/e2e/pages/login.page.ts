@@ -11,7 +11,7 @@ export class LoginPage {
     this.page = page;
     this.usernameInput = page.locator('#username');
     this.passwordInput = page.locator('#password');
-    this.submitButton = page.locator('#login-submit')
+    this.submitButton = page.locator('#login-submit');
   }
 
   async goto() {
@@ -21,7 +21,7 @@ export class LoginPage {
 
   async loginAs(username: string, password: string) {
     // navigate to login page if not already there
-    if (! this.page.url().endsWith(LoginPage.url)) {
+    if (!this.page.url().endsWith(LoginPage.url)) {
       await this.page.goto(LoginPage.url);
     }
     await this.usernameInput.fill(username);

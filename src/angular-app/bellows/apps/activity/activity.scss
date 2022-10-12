@@ -169,10 +169,10 @@
                 .activity-value {
                   font-weight: bold;
                   &:before {
-                    content: "\"";
+                    content: '"';
                   }
                   &:after {
-                    content: "\"";
+                    content: '"';
                   }
                 }
               }
@@ -308,7 +308,7 @@
       position: absolute;
       border-top: 1px solid #b2b2b2;
       margin-top: 16px;
-      content: "";
+      content: '';
       width: 100%;
     }
     &:hover {

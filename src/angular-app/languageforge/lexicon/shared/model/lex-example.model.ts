@@ -1,6 +1,6 @@
-import {LexAuthorInfo} from './lex-author-info.model';
-import {LexField} from './lex-field.model';
-import {LexMultiText} from './lex-multi-text.model';
+import { LexAuthorInfo } from './lex-author-info.model';
+import { LexField } from './lex-field.model';
+import { LexMultiText } from './lex-multi-text.model';
 
 export class LexExample {
   liftId: string;

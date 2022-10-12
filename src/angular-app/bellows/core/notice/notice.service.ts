@@ -22,14 +22,17 @@ export type NoticeType = 'info' | 'danger' | 'warning' | 'success';
 
 export class NoticeService {
   private notices: Notice[];
-  private timers: { [id: string]: angular.IPromise<any>; };
+  private timers: { [id: string]: angular.IPromise<any> };
   private percentComplete: number;
   private isProgressBarShown: boolean;
   private isLoadingNotice: boolean;
   private loadingMessage: string;
 
   static $inject: string[] = ['$interval', '$location'];
-  constructor(private $interval: angular.IIntervalService, private $location: angular.ILocationService) {
+  constructor(
+    private $interval: angular.IIntervalService,
+    private $location: angular.ILocationService
+  ) {
     this.notices = [];
     this.timers = {};
     this.percentComplete = 0;
@@ -46,7 +49,7 @@ export class NoticeService {
   }
 
   checkUrlForNotices(): void {
-    const query: {[key: string]: string} = this.$location.search();
+    const query: { [key: string]: string } = this.$location.search();
     if (query.errorMessage) {
       this.push(this.ERROR, atob(query.errorMessage));
       this.$location.search('errorMessage', null);
@@ -61,12 +64,24 @@ export class NoticeService {
     }
   }
 
-  push(type: () => string, message: string, details?: string, cannotClose?: boolean, time?: number): string {
+  push(
+    type: () => string,
+    message: string,
+    details?: string,
+    cannotClose?: boolean,
+    time?: number
+  ): string {
     const id = UtilityService.uuid();
 
     if (!time && type() === this.SUCCESS()) time = 4 * 1000;
     if (time) {
-      this.timers[id] = this.$interval(() => { this.removeById(id); }, time, 1);
+      this.timers[id] = this.$interval(
+        () => {
+          this.removeById(id);
+        },
+        time,
+        1
+      );
     }
 
     const notice = new Notice(type(), message, id, details, false);

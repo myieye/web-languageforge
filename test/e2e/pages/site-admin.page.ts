@@ -23,12 +23,14 @@ export class SiteAdminPage {
     this.pageName = page.locator('.page-name >> text=Site Administration');
     this.tabs = {
       reports: page.locator('#useres'),
-      archivedProjects: page.locator('#archivedprojects')
+      archivedProjects: page.locator('#archivedprojects'),
     };
     this.archivedProjectsTab = {
       deleteButton: page.locator('#site-admin-delete-btn'),
       republishButton: page.locator('#site-admin-republish-btn'),
-      projectsList: page.locator('[data-ng-repeat="project in visibleProjects"]')
+      projectsList: page.locator(
+        '[data-ng-repeat="project in visibleProjects"]'
+      ),
     };
   }
 

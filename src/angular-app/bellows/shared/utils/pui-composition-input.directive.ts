@@ -23,6 +23,6 @@ export function PuiCompositionInput(): angular.IDirective {
           $scope.$eval($attrs.cstInput, { answer: $scope.ngModel });
         });
       });
-    }
+    },
   };
 }

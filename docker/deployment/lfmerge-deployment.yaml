@@ -9,15 +9,14 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
-  - name: http
-    protocol: TCP
-    port: 80
-    targetPort: 80
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
   selector:
     app: lfmerge
 
 ---
-
 # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -32,7 +31,6 @@ spec:
   storageClassName: weekly-snapshots-retain-4 # provided by LTOps
 
 ---
-
 # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -47,7 +45,6 @@ spec:
   storageClassName: weekly-snapshots-retain-4 # provided by LTOps
 
 ---
-
 # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#writing-a-deployment-spec
 apiVersion: apps/v1
 kind: Deployment
@@ -69,72 +66,72 @@ spec:
         # need to keep this on the same pod as the app since inotify only gets notification when updates occur on the same kernel
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - app
-            topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - app
+              topologyKey: kubernetes.io/hostname
       volumes:
-      - name: sendreceive-data
-        persistentVolumeClaim:
-          claimName: lfmerge-sendreceive-data
+        - name: sendreceive-data
+          persistentVolumeClaim:
+            claimName: lfmerge-sendreceive-data
       initContainers:
-      - name: initialize-volume-ownership
-        image: busybox:1.33
-        resources:
-          requests:
-            memory: 25Mi
-            cpu: 0.1
-          limits:
-            memory: 50Mi
-        command:
-          - 'sh'
-          - '-c'
-          - |-
-            mkdir -m 02775 -p /var/lib/languageforge/lexicon/sendreceive/state /var/lib/languageforge/lexicon/sendreceive/syncqueue /var/lib/languageforge/lexicon/sendreceive/webwork /var/lib/languageforge/lexicon/sendreceive/Templates
-            chown www-data:www-data /var/lib/languageforge/lexicon/sendreceive /var/lib/languageforge/lexicon/sendreceive/state /var/lib/languageforge/lexicon/sendreceive/syncqueue /var/lib/languageforge/lexicon/sendreceive/webwork /var/lib/languageforge/lexicon/sendreceive/Templates
-        volumeMounts:
-          - mountPath: /var/lib/languageforge/lexicon/sendreceive
-            name: sendreceive-data
+        - name: initialize-volume-ownership
+          image: busybox:1.33
+          resources:
+            requests:
+              memory: 25Mi
+              cpu: 0.1
+            limits:
+              memory: 50Mi
+          command:
+            - 'sh'
+            - '-c'
+            - |-
+              mkdir -m 02775 -p /var/lib/languageforge/lexicon/sendreceive/state /var/lib/languageforge/lexicon/sendreceive/syncqueue /var/lib/languageforge/lexicon/sendreceive/webwork /var/lib/languageforge/lexicon/sendreceive/Templates
+              chown www-data:www-data /var/lib/languageforge/lexicon/sendreceive /var/lib/languageforge/lexicon/sendreceive/state /var/lib/languageforge/lexicon/sendreceive/syncqueue /var/lib/languageforge/lexicon/sendreceive/webwork /var/lib/languageforge/lexicon/sendreceive/Templates
+          volumeMounts:
+            - mountPath: /var/lib/languageforge/lexicon/sendreceive
+              name: sendreceive-data
       containers:
-      - name: lfmerge
-        image: ghcr.io/sillsdev/lfmerge:{{VERSION_LFMERGE}}
-        imagePullPolicy: Always
-        # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
-        resources:
-          requests:
-            memory: 120Mi
-            cpu: 0.25
-          limits:
-            memory: 2.5Gi
-        volumeMounts:
-          - mountPath: /var/lib/languageforge/lexicon/sendreceive
-            name: sendreceive-data
-        env:
-          - name: ENVIRONMENT
-            value: production
-          - name: LFMERGE_LOGGING_DEST
-            value: syslog
-          - name: LFMERGE_BASE_DIR
-            value: /var/lib/languageforge/lexicon/sendreceive
-          - name: LFMERGE_WEBWORK_DIR
-            value: webwork
-          - name: LFMERGE_TEMPLATES_DIR
-            value: Templates
-          - name: LFMERGE_MONGO_HOSTNAME
-            value: db
-          - name: LFMERGE_MONGO_PORT
-            value: "27017"
-          - name: LFMERGE_MONGO_MAIN_DB_NAME
-            value: scriptureforge
-          - name: LFMERGE_MONGO_DB_NAME_PREFIX
-            value: sf_
-          - name: LFMERGE_VERBOSE_PROGRESS
-            value: "true"
-          - name: LANGUAGE_DEPOT_TRUST_TOKEN
-            valueFrom:
-              secretKeyRef:
-                key: LD_TRUST_TOKEN
-                name: ld-trust-token
+        - name: lfmerge
+          image: ghcr.io/sillsdev/lfmerge:{{VERSION_LFMERGE}}
+          imagePullPolicy: Always
+          # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
+          resources:
+            requests:
+              memory: 120Mi
+              cpu: 0.25
+            limits:
+              memory: 2.5Gi
+          volumeMounts:
+            - mountPath: /var/lib/languageforge/lexicon/sendreceive
+              name: sendreceive-data
+          env:
+            - name: ENVIRONMENT
+              value: production
+            - name: LFMERGE_LOGGING_DEST
+              value: syslog
+            - name: LFMERGE_BASE_DIR
+              value: /var/lib/languageforge/lexicon/sendreceive
+            - name: LFMERGE_WEBWORK_DIR
+              value: webwork
+            - name: LFMERGE_TEMPLATES_DIR
+              value: Templates
+            - name: LFMERGE_MONGO_HOSTNAME
+              value: db
+            - name: LFMERGE_MONGO_PORT
+              value: '27017'
+            - name: LFMERGE_MONGO_MAIN_DB_NAME
+              value: scriptureforge
+            - name: LFMERGE_MONGO_DB_NAME_PREFIX
+              value: sf_
+            - name: LFMERGE_VERBOSE_PROGRESS
+              value: 'true'
+            - name: LANGUAGE_DEPOT_TRUST_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: LD_TRUST_TOKEN
+                  name: ld-trust-token

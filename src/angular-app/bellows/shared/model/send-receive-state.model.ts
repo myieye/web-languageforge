@@ -9,5 +9,5 @@ export enum SendReceiveState {
   Synced = 'SYNCED',
   CloneRequested = 'LF_CLONING',
   Unsynced = 'LF_UNSYNCED',
-  Unknown = 'LF_CHECK'
+  Unknown = 'LF_CHECK',
 }

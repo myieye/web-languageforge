@@ -18,7 +18,7 @@
 
 .dc-text {
   width: 100%;
-  
+
   textarea {
     padding: 0.25rem;
     // height: 38px;
@@ -103,7 +103,7 @@
 }
 .dc-text .ta-editor span:hover {
   /*border: 1px solid #ADDDDD;*/
-  background-color: #ADDDDD;
+  background-color: #addddd;
 }
 
 /* auto hide the toolbar when not selected (focused) */
@@ -118,7 +118,7 @@
 }
 .grow-wrap::after {
   /* Note the weird space! Needed to prevent jumpy behavior */
-  content: attr(data-replicated-value) " ";
+  content: attr(data-replicated-value) ' ';
 
   /* This is how textarea text behaves */
   white-space: pre-wrap;
@@ -142,4 +142,3 @@
   /* Place on top of each other */
   grid-area: 1 / 1 / 2 / 2;
 }
-

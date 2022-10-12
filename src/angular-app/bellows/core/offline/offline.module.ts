@@ -14,5 +14,4 @@ export const OfflineModule = angular
   .service('editorOfflineCache', EditorOfflineCacheService)
   .service('lexCommentService', LexiconCommentService)
   .service('offlineCacheUtils', OfflineCacheUtilsService)
-  .service('offlineCache', OfflineCacheService)
-  .name;
+  .service('offlineCache', OfflineCacheService).name;

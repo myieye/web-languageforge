@@ -1,8 +1,8 @@
 import * as angular from 'angular';
 
-import {OfflineCacheService} from '../offline/offline-cache.service';
-import {Session, SessionService} from '../session.service';
-import {ApiService, JsonRpcCallback} from './api.service';
+import { OfflineCacheService } from '../offline/offline-cache.service';
+import { Session, SessionService } from '../session.service';
+import { ApiService, JsonRpcCallback } from './api.service';
 
 export interface ProjectTypeNames {
   [projectType: string]: string;
@@ -40,7 +40,7 @@ export class ProjectService {
       },
       projectTypesBySite: () => {
         return this.projectTypesBySite;
-      }
+      },
     } as ProjectData;
 
     this.sessionService.getSession().then((session: Session) => {
@@ -51,20 +51,42 @@ export class ProjectService {
 
       this.projectTypesBySite = types[session.baseSite()];
     });
-
   }
 
-  create(projectName: string, projectCode: string, appName: string, srProject: any = {}, callback?: JsonRpcCallback) {
-    return this.api.call('project_create', [projectName, projectCode, appName, srProject], callback);
+  create(
+    projectName: string,
+    projectCode: string,
+    appName: string,
+    srProject: any = {},
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'project_create',
+      [projectName, projectCode, appName, srProject],
+      callback
+    );
   }
 
-  createSwitchSession(projectName: string, projectCode: string, appName: string, srProject: any = {},
-                      callback?: JsonRpcCallback) {
-    return this.api.call('project_create_switchSession', [projectName, projectCode, appName, srProject], callback);
+  createSwitchSession(
+    projectName: string,
+    projectCode: string,
+    appName: string,
+    srProject: any = {},
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'project_create_switchSession',
+      [projectName, projectCode, appName, srProject],
+      callback
+    );
   }
 
   joinSwitchSession(srProject: any, role: string, callback?: JsonRpcCallback) {
-    return this.api.call('project_join_switchSession', [srProject, role], callback);
+    return this.api.call(
+      'project_join_switchSession',
+      [srProject, role],
+      callback
+    );
   }
 
   archiveProject(callback?: JsonRpcCallback) {
@@ -83,7 +105,7 @@ export class ProjectService {
     if (navigator.onLine /* TODO use Offline.state */) {
       const deferred = this.$q.defer();
 
-      this.api.call('project_list_dto', [], response => {
+      this.api.call('project_list_dto', [], (response) => {
         if (response.ok) deferred.resolve(response.data.entries);
         else deferred.reject();
       });
@@ -138,8 +160,16 @@ export class ProjectService {
     return this.api.call('project_management_dto', [], callback);
   }
 
-  runReport(reportName: string, params: any[] = [], callback?: JsonRpcCallback) {
-    return this.api.call('project_management_report_' + reportName, params, callback);
+  runReport(
+    reportName: string,
+    params: any[] = [],
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'project_management_report_' + reportName,
+      params,
+      callback
+    );
   }
 
   getInviteLink(callback?: JsonRpcCallback) {
@@ -170,11 +200,28 @@ export class ProjectService {
     return this.api.call('ldapi_get_all_projects', [], callback);
   }
 
-  updateLdapiUserRole(projectCode: string, username: string, role: string, callback?: JsonRpcCallback) {
-    return this.api.call('ldapi_project_updateUserRole', [projectCode, username, role], callback);
+  updateLdapiUserRole(
+    projectCode: string,
+    username: string,
+    role: string,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'ldapi_project_updateUserRole',
+      [projectCode, username, role],
+      callback
+    );
   }
 
-  removeUserFromLdapiProject(projectCode: string, username: string, callback?: JsonRpcCallback) {
-    return this.api.call('ldapi_project_removeUser', [projectCode, username], callback);
+  removeUserFromLdapiProject(
+    projectCode: string,
+    username: string,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'ldapi_project_removeUser',
+      [projectCode, username],
+      callback
+    );
   }
 }

@@ -1,13 +1,13 @@
 import * as angular from 'angular';
 
-import {UserService} from '../../core/api/user.service';
-import {ApplicationHeaderService} from '../../core/application-header.service';
-import {BreadcrumbService} from '../../core/breadcrumbs/breadcrumb.service';
-import {SiteWideNoticeService} from '../../core/site-wide-notice-service';
-import {ModalService} from '../../core/modal/modal.service';
-import {NoticeService} from '../../core/notice/notice.service';
-import {UtilityService} from '../../core/utility.service';
-import {UserProfile} from '../../shared/model/user-profile.model';
+import { UserService } from '../../core/api/user.service';
+import { ApplicationHeaderService } from '../../core/application-header.service';
+import { BreadcrumbService } from '../../core/breadcrumbs/breadcrumb.service';
+import { SiteWideNoticeService } from '../../core/site-wide-notice-service';
+import { ModalService } from '../../core/modal/modal.service';
+import { NoticeService } from '../../core/notice/notice.service';
+import { UtilityService } from '../../core/utility.service';
+import { UserProfile } from '../../shared/model/user-profile.model';
 
 interface UserProfileAppControllerScope extends angular.IScope {
   userprofileForm: angular.IFormController;
@@ -21,7 +21,7 @@ export class UserProfileAppController implements angular.IController {
   originalUsername = '';
   dropdown = {
     avatarColors: {},
-    avatarShapes: {}
+    avatarShapes: {},
   };
   takenEmail = '';
   takenUsername = '';
@@ -32,33 +32,55 @@ export class UserProfileAppController implements angular.IController {
   private initColor = '';
   private initShape = '';
 
-  static $inject = ['$scope', '$window',
-    'userService', 'modalService', 'silNoticeService',
+  static $inject = [
+    '$scope',
+    '$window',
+    'userService',
+    'modalService',
+    'silNoticeService',
     'breadcrumbService',
     'siteWideNoticeService',
-    'applicationHeaderService'];
-  constructor(private $scope: UserProfileAppControllerScope, private $window: angular.IWindowService,
-              private userService: UserService, private modalService: ModalService, private notice: NoticeService,
-              private breadcrumbService: BreadcrumbService,
-              private siteWideNoticeService: SiteWideNoticeService,
-              private applicationHeaderService: ApplicationHeaderService) {}
+    'applicationHeaderService',
+  ];
+  constructor(
+    private $scope: UserProfileAppControllerScope,
+    private $window: angular.IWindowService,
+    private userService: UserService,
+    private modalService: ModalService,
+    private notice: NoticeService,
+    private breadcrumbService: BreadcrumbService,
+    private siteWideNoticeService: SiteWideNoticeService,
+    private applicationHeaderService: ApplicationHeaderService
+  ) {}
 
   $onInit(): void {
     this.user.avatar_ref = UserProfileAppController.getAvatarRef('', '');
 
-    this.$scope.$watch(() => this.user.avatar_color, () => {
-      this.user.avatar_ref = UserProfileAppController.getAvatarRef(this.user.avatar_color, this.user.avatar_shape);
-      if (this.user.avatar_color === '') {
-        this.user.avatar_color = null;
+    this.$scope.$watch(
+      () => this.user.avatar_color,
+      () => {
+        this.user.avatar_ref = UserProfileAppController.getAvatarRef(
+          this.user.avatar_color,
+          this.user.avatar_shape
+        );
+        if (this.user.avatar_color === '') {
+          this.user.avatar_color = null;
+        }
       }
-    });
+    );
 
-    this.$scope.$watch(() => this.user.avatar_shape, () => {
-      this.user.avatar_ref = UserProfileAppController.getAvatarRef(this.user.avatar_color, this.user.avatar_shape);
-      if (this.user.avatar_shape === '') {
-        this.user.avatar_shape = null;
+    this.$scope.$watch(
+      () => this.user.avatar_shape,
+      () => {
+        this.user.avatar_ref = UserProfileAppController.getAvatarRef(
+          this.user.avatar_color,
+          this.user.avatar_shape
+        );
+        if (this.user.avatar_shape === '') {
+          this.user.avatar_shape = null;
+        }
       }
-    });
+    );
 
     this.siteWideNoticeService.displayNotices();
 
@@ -80,7 +102,7 @@ export class UserProfileAppController implements angular.IController {
       { value: 'DarkGoldenrod3', label: 'Dark Golden' },
       { value: 'chartreuse', label: 'Chartreuse' },
       { value: 'LightBlue', label: 'Light Blue' },
-      { value: 'LightYellow', label: 'Light Yellow' }
+      { value: 'LightYellow', label: 'Light Yellow' },
     ];
 
     this.dropdown.avatarShapes = [
@@ -99,95 +121,116 @@ export class UserProfileAppController implements angular.IController {
       { value: 'rabbit', label: 'Rabbit' },
       { value: 'rhino', label: 'Rhino' },
       { value: 'sheep', label: 'Sheep' },
-      { value: 'tortoise', label: 'Tortoise' }
+      { value: 'tortoise', label: 'Tortoise' },
     ];
   }
 
   validateForm(): void {
-    this.emailValid = this.$scope.userprofileForm.email.$pristine ||
-      (this.$scope.userprofileForm.email.$dirty && !this.$scope.userprofileForm.$error.email);
+    this.emailValid =
+      this.$scope.userprofileForm.email.$pristine ||
+      (this.$scope.userprofileForm.email.$dirty &&
+        !this.$scope.userprofileForm.$error.email);
 
-    this.usernameValid = this.$scope.userprofileForm.username.$pristine ||
-      (this.$scope.userprofileForm.username.$dirty && !this.$scope.userprofileForm.$error.username);
+    this.usernameValid =
+      this.$scope.userprofileForm.username.$pristine ||
+      (this.$scope.userprofileForm.username.$dirty &&
+        !this.$scope.userprofileForm.$error.username);
 
-    this.userService.checkUniqueIdentity(this.user.id, this.user.username, this.user.email,
-       result => {
-      if (result.ok) {
-        switch (result.data) {
-          case 'usernameExists' :
-            this.usernameExists = true;
-            this.emailExists = false;
-            this.takenUsername = this.user.username.toLowerCase();
-            this.$scope.userprofileForm.username.$setPristine();
-            break;
-          case 'emailExists' :
-            this.usernameExists = false;
-            this.emailExists = true;
-            this.takenEmail = this.user.email.toLowerCase();
-            this.$scope.userprofileForm.email.$setPristine();
-            break;
-          case 'usernameAndEmailExists' :
-            this.usernameExists = true;
-            this.emailExists = true;
-            this.takenUsername = this.user.username.toLowerCase();
-            this.takenEmail = this.user.email.toLowerCase();
-            this.$scope.userprofileForm.username.$setPristine();
-            this.$scope.userprofileForm.email.$setPristine();
-            break;
-          default:
-            this.usernameExists = false;
-            this.emailExists = false;
+    this.userService.checkUniqueIdentity(
+      this.user.id,
+      this.user.username,
+      this.user.email,
+      (result) => {
+        if (result.ok) {
+          switch (result.data) {
+            case 'usernameExists':
+              this.usernameExists = true;
+              this.emailExists = false;
+              this.takenUsername = this.user.username.toLowerCase();
+              this.$scope.userprofileForm.username.$setPristine();
+              break;
+            case 'emailExists':
+              this.usernameExists = false;
+              this.emailExists = true;
+              this.takenEmail = this.user.email.toLowerCase();
+              this.$scope.userprofileForm.email.$setPristine();
+              break;
+            case 'usernameAndEmailExists':
+              this.usernameExists = true;
+              this.emailExists = true;
+              this.takenUsername = this.user.username.toLowerCase();
+              this.takenEmail = this.user.email.toLowerCase();
+              this.$scope.userprofileForm.username.$setPristine();
+              this.$scope.userprofileForm.email.$setPristine();
+              break;
+            default:
+              this.usernameExists = false;
+              this.emailExists = false;
+          }
         }
       }
-    });
+    );
   }
 
   submit(): void {
     if (this.user.username !== this.originalUsername) {
       // Confirmation for username change
-      const message = 'Changing Username from <b>' + this.originalUsername + '</b> to <b>' +
-        this.user.username + '</b> will force you to login again.<br><br>' +
+      const message =
+        'Changing Username from <b>' +
+        this.originalUsername +
+        '</b> to <b>' +
+        this.user.username +
+        '</b> will force you to login again.<br><br>' +
         'Do you want to save changes?';
       const modalOptions = {
         closeButtonText: 'Cancel',
         actionButtonText: 'Save changes',
         headerText: 'Changing username?',
-        bodyText: message
+        bodyText: message,
       };
-      this.modalService.showModal({}, modalOptions).then(() => {
-        this.updateUser();
+      this.modalService
+        .showModal({}, modalOptions)
+        .then(() => {
+          this.updateUser();
 
-        // catch is necessary to properly implement promise API, which angular 1.6 complains if we
-        // don't have a catch
-      }).catch(() => {});
+          // catch is necessary to properly implement promise API, which angular 1.6 complains if we
+          // don't have a catch
+        })
+        .catch(() => {});
     } else {
       this.updateUser();
     }
   }
 
   private loadUser(): void {
-    this.userService.readProfile(result => {
+    this.userService.readProfile((result) => {
       if (result.ok) {
         this.user = result.data.userProfile;
         this.originalUsername = this.user.username;
         this.initColor = this.user.avatar_color;
         this.initShape = this.user.avatar_shape;
         this.projectsSettings = result.data.projectsSettings;
-        this.breadcrumbService.set('top', [
-          { label: 'User Profile' }
-        ]);
-        this.applicationHeaderService.setPageName(this.user.name + '\'s User Profile');
+        this.breadcrumbService.set('top', [{ label: 'User Profile' }]);
+        this.applicationHeaderService.setPageName(
+          this.user.name + "'s User Profile"
+        );
 
         // populate the project pickList default values with the userProfile picked values
         for (const project of this.projectsSettings) {
-          if (project.userProperties && project.userProperties.userProfilePickLists) {
-            angular.forEach(project.userProperties.userProfilePickLists,
+          if (
+            project.userProperties &&
+            project.userProperties.userProfilePickLists
+          ) {
+            angular.forEach(
+              project.userProperties.userProfilePickLists,
               (pickList, pickListId) => {
                 // ensure user has profile data
                 if (this.user.projectUserProfiles[project.id]) {
                   if (this.user.projectUserProfiles[project.id][pickListId]) {
-                    project.userProperties.userProfilePickLists[pickListId]
-                      .defaultKey = this.user.projectUserProfiles[project.id][pickListId];
+                    project.userProperties.userProfilePickLists[
+                      pickListId
+                    ].defaultKey =
+                      this.user.projectUserProfiles[project.id][pickListId];
                   }
                 }
               }
@@ -202,27 +245,40 @@ export class UserProfileAppController implements angular.IController {
     // populate the userProfile picked values from the project pickLists
     for (const project of this.projectsSettings) {
       this.user.projectUserProfiles[project.id] = {};
-      if (project.userProperties && project.userProperties.userProfilePickLists) {
-        angular.forEach(project.userProperties.userProfilePickLists,
+      if (
+        project.userProperties &&
+        project.userProperties.userProfilePickLists
+      ) {
+        angular.forEach(
+          project.userProperties.userProfilePickLists,
           (pickList, pickListId) => {
-            this.user.projectUserProfiles[project.id][pickListId] = pickList.defaultKey;
+            this.user.projectUserProfiles[project.id][pickListId] =
+              pickList.defaultKey;
           }
         );
       }
     }
 
-    this.userService.updateProfile(this.user, result => {
+    this.userService.updateProfile(this.user, (result) => {
       if (result.ok) {
-        if (this.user.avatar_color !== this.initColor || this.user.avatar_shape !== this.initShape) {
+        if (
+          this.user.avatar_color !== this.initColor ||
+          this.user.avatar_shape !== this.initShape
+        ) {
           const newAvatarUrl = this.getAvatarUrl(this.user.avatar_ref);
-          ['mobileSmallAvatarURL', 'smallAvatarURL'].forEach(id => {
-            const imageElement = this.$window.document.getElementById(id) as HTMLImageElement;
+          ['mobileSmallAvatarURL', 'smallAvatarURL'].forEach((id) => {
+            const imageElement = this.$window.document.getElementById(
+              id
+            ) as HTMLImageElement;
             if (imageElement) imageElement.src = newAvatarUrl;
           });
         }
 
         if (result.data === 'login') {
-          this.notice.push(this.notice.SUCCESS, 'Username changed. Please login.');
+          this.notice.push(
+            this.notice.SUCCESS,
+            'Username changed. Please login.'
+          );
           this.$window.location.href = '/auth/logout';
         } else {
           this.notice.push(this.notice.SUCCESS, 'Profile updated successfully');
@@ -233,7 +289,9 @@ export class UserProfileAppController implements angular.IController {
 
   static getAvatarUrl(avatarRef: string): string {
     if (avatarRef) {
-      return (avatarRef.startsWith('http')) ? avatarRef : '/Site/views/shared/image/avatar/' + avatarRef;
+      return avatarRef.startsWith('http')
+        ? avatarRef
+        : '/Site/views/shared/image/avatar/' + avatarRef;
     } else {
       return '';
     }
@@ -246,10 +304,10 @@ export class UserProfileAppController implements angular.IController {
 
     return color + '-' + shape + '-128x128.png';
   }
-
 }
 
 export const UserProfileAppComponent: angular.IComponentOptions = {
   controller: UserProfileAppController,
-  templateUrl: '/angular-app/bellows/apps/userprofile/user-profile-app.component.html'
+  templateUrl:
+    '/angular-app/bellows/apps/userprofile/user-profile-app.component.html',
 };

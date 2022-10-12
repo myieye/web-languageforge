@@ -4,8 +4,14 @@ import { ProjectService } from '../../bellows/core/api/project.service';
 import { UserService } from '../../bellows/core/api/user.service';
 import { RolesService } from '../../bellows/core/api/roles.service';
 import { NoticeService } from '../../bellows/core/notice/notice.service';
-import { ProjectRole, ProjectRoles } from '../../bellows/shared/model/project.model';
-import { LdapiProjectDto, LdapiUserInfo } from '../../bellows/shared/model/ldapi.model';
+import {
+  ProjectRole,
+  ProjectRoles,
+} from '../../bellows/shared/model/project.model';
+import {
+  LdapiProjectDto,
+  LdapiUserInfo,
+} from '../../bellows/shared/model/ldapi.model';
 import { JsonRpcResult } from '../../bellows/core/api/api.service';
 
 export class LdProjectMembersController implements angular.IController {
@@ -16,8 +22,17 @@ export class LdProjectMembersController implements angular.IController {
   projectMembers: [LdapiUserInfo, ProjectRole][];
   // TODO: Two role arrays? That seems redundant. Whittle that down to one; just use rolesWithTechSupport (and rename it to "roles")
   // TODO: Simplify this *greatly* now that we have a better API; e.g., could use numeric keys for the LD roles
-  roles: ProjectRole[] = [ProjectRoles.MANAGER, ProjectRoles.CONTRIBUTOR, ProjectRoles.NONE];
-  rolesWithTechSupport: ProjectRole[] = [ProjectRoles.MANAGER, ProjectRoles.CONTRIBUTOR, ProjectRoles.TECH_SUPPORT, ProjectRoles.NONE];
+  roles: ProjectRole[] = [
+    ProjectRoles.MANAGER,
+    ProjectRoles.CONTRIBUTOR,
+    ProjectRoles.NONE,
+  ];
+  rolesWithTechSupport: ProjectRole[] = [
+    ProjectRoles.MANAGER,
+    ProjectRoles.CONTRIBUTOR,
+    ProjectRoles.TECH_SUPPORT,
+    ProjectRoles.NONE,
+  ];
 
   userFilter = '';
   selected: LdapiUserInfo[] = [];
@@ -27,7 +42,7 @@ export class LdProjectMembersController implements angular.IController {
   defaultAddRole: ProjectRole = ProjectRoles.CONTRIBUTOR;
   typeahead = {
     userName: '',
-    fullName: ''
+    fullName: '',
   };
   warningText = '';
 
@@ -39,18 +54,20 @@ export class LdProjectMembersController implements angular.IController {
     'userService',
     'projectService',
     'rolesService',
-    'silNoticeService'
+    'silNoticeService',
   ];
-  constructor(private $window: angular.IWindowService,
-              private $q: angular.IQService,
-              private userService: UserService,
-              private projectService: ProjectService,
-              private rolesService: RolesService,
-              private notice: NoticeService) {
-                this.boundSearchUsers = this.searchUsers.bind(this);
-              }
+  constructor(
+    private $window: angular.IWindowService,
+    private $q: angular.IQService,
+    private userService: UserService,
+    private projectService: ProjectService,
+    private rolesService: RolesService,
+    private notice: NoticeService
+  ) {
+    this.boundSearchUsers = this.searchUsers.bind(this);
+  }
 
-  $onInit(): void { }
+  $onInit(): void {}
 
   $onChanges(changes: angular.IOnChangesObject): void {
     const rolesChangeObj = changes.roles as angular.IChangesObject<any>;
@@ -59,7 +76,8 @@ export class LdProjectMembersController implements angular.IController {
       // this.rolesAsOwner = [{roleKey: 'project_manager', roleName: 'Manager and Project Owner'}];
       // this.rolesWithoutTechSupport = roles.filter((elem: any) => elem.roleKey !== 'tech_support');
     }
-    const projectChange = changes.project as angular.IChangesObject<LdapiProjectDto>;
+    const projectChange =
+      changes.project as angular.IChangesObject<LdapiProjectDto>;
     if (projectChange != null && projectChange.currentValue) {
       if (this.project && this.project.members) {
         this.updateRoles();
@@ -86,7 +104,9 @@ export class LdProjectMembersController implements angular.IController {
 
   fullname(user: LdapiUserInfo) {
     if (user.lastname) {
-      return user.firstname ? user.firstname + ' ' + user.lastname : user.lastname;
+      return user.firstname
+        ? user.firstname + ' ' + user.lastname
+        : user.lastname;
     } else {
       return user.firstname;
     }
@@ -97,20 +117,23 @@ export class LdProjectMembersController implements angular.IController {
     angular.forEach(this.project.members, (userAndLdRole) => {
       const user = userAndLdRole.user;
       const ldRole = userAndLdRole.role;
-      this.rolesService.ldRoleToLfRole(ldRole).then(lfRole => {
+      this.rolesService.ldRoleToLfRole(ldRole).then((lfRole) => {
         this.projectMembers.push([user, lfRole]);
       });
     });
   }
 
   queryUserList(): void {
-    this.projectService.getLdapiProjectDto(this.project.projectCode, result => {
-      if (result.ok) {
-        this.project = result.data;
-        this.updateRoles();
+    this.projectService.getLdapiProjectDto(
+      this.project.projectCode,
+      (result) => {
+        if (result.ok) {
+          this.project = result.data;
+          this.updateRoles();
+        }
       }
-    });
-  };
+    );
+  }
 
   // getRoles(user: User) {
   //   if (user.id === this.project.ownerRef.id) {
@@ -129,10 +152,9 @@ export class LdProjectMembersController implements angular.IController {
     const l = this.selected.length;
     // TODO: Remove for loop below since we check for project manager removal elsewhere now
     for (let i = 0; i < l; i++) {
-
       // Guard against project owner being removed
       // if (this.selected[i].id !== this.project.ownerRef.id) {
-        usersToRemove.push(this.selected[i]);
+      usersToRemove.push(this.selected[i]);
       // } else {
       //   this.notice.push(this.notice.WARN, 'Project owner cannot be removed');
       // }
@@ -142,18 +164,28 @@ export class LdProjectMembersController implements angular.IController {
       return;
     }
 
-    var promises = this.selected.map(user => {
+    var promises = this.selected.map((user) => {
       // TODO: "user" here is user-and-role, so we need to disentangle them
-      return this.projectService.removeUserFromLdapiProject(this.project.projectCode, user.username, updateResult => {
-        if (updateResult.ok) {
-          this.notice.push(this.notice.SUCCESS, '"' + this.fullname(user) + '" was removed from ' +
-            this.project.name + ' successfully');
-          // TODO: Make this a notice, not a console log
-          // console.log('"' + this.fullname(user) + '" was removed from ' + this.project.name + ' successfully');
+      return this.projectService.removeUserFromLdapiProject(
+        this.project.projectCode,
+        user.username,
+        (updateResult) => {
+          if (updateResult.ok) {
+            this.notice.push(
+              this.notice.SUCCESS,
+              '"' +
+                this.fullname(user) +
+                '" was removed from ' +
+                this.project.name +
+                ' successfully'
+            );
+            // TODO: Make this a notice, not a console log
+            // console.log('"' + this.fullname(user) + '" was removed from ' + this.project.name + ' successfully');
+          }
         }
-      });
+      );
     }, this);
-    this.$q.all(promises).then(result => {
+    this.$q.all(promises).then((result) => {
       // Possibly pop up a notice saying "N users were removed from project X: (list of names)" or just "(name) was removed from project X"
       this.selected.splice(0);
       this.queryUserList();
@@ -164,35 +196,43 @@ export class LdProjectMembersController implements angular.IController {
 
   // TODO: rewrite as arrow function so boundSearchUsers won't be needed
   searchUsers(searchText: string): void {
-    this.userService.searchLdapiUsers(searchText).then(result => {
-      if (result.ok) {
-        this.userSearchResults = result.data;
-      } else {
+    this.userService
+      .searchLdapiUsers(searchText)
+      .then((result) => {
+        if (result.ok) {
+          this.userSearchResults = result.data;
+        } else {
+          this.userSearchResults = [];
+        }
+      })
+      .catch((err) => {
         this.userSearchResults = [];
-      }
-    }).catch(err => {
-      this.userSearchResults = [];
-    });
+      });
   }
 
   userIsManager(username: string) {
-    return this.userService.ldapiUserIsManagerOfProject(username, this.project.projectCode).then(result => {
-      if (result.ok) {
-        return result.data;
-      } else {
-        return false;
-      }
-    });
+    return this.userService
+      .ldapiUserIsManagerOfProject(username, this.project.projectCode)
+      .then((result) => {
+        if (result.ok) {
+          return result.data;
+        } else {
+          return false;
+        }
+      });
   }
 
   userIsLastManager(username: string) {
     // Note that at this point, projectMembers has already recorded the change from Manager to something else, so we can't
     // just look up whether the username is in projectMembers as a manager
-    return this.userIsManager(username).then(isManager => {
+    return this.userIsManager(username).then((isManager) => {
       if (isManager) {
-        const otherManagers = this.projectMembers.filter(([user, role]) => user.username !== username && role.key === ProjectRoles.MANAGER.key);
+        const otherManagers = this.projectMembers.filter(
+          ([user, role]) =>
+            user.username !== username && role.key === ProjectRoles.MANAGER.key
+        );
         // NOTE: Tech Support roles are NOT counted here. We want at least one real manager role.
-        return (otherManagers.length === 0);
+        return otherManagers.length === 0;
       } else {
         return false;
       }
@@ -200,25 +240,34 @@ export class LdProjectMembersController implements angular.IController {
   }
 
   // noinspection JSUnusedGlobalSymbols
-  onRoleChange(userAndRole: [LdapiUserInfo, ProjectRole]): angular.IPromise<JsonRpcResult> {
+  onRoleChange(
+    userAndRole: [LdapiUserInfo, ProjectRole]
+  ): angular.IPromise<JsonRpcResult> {
     // TODO: warning if you're about to remove yourself as a manager, saying "You won't be able to make further edits to this project if you proceed"
     // TODO: redirect to /app/projects if you just removed yourself from this project as a manager and confirmed that
     const [user, newRole] = userAndRole;
-    return this.rolesService.lfRoleToLdRole(newRole.key).then(ldRole => {
-      return this.userIsLastManager(user.username).then(isLast => {
+    return this.rolesService.lfRoleToLdRole(newRole.key).then((ldRole) => {
+      return this.userIsLastManager(user.username).then((isLast) => {
         if (isLast) {
-          console.log(`User ${user.username} is the last manager; warn the user about it`)
+          console.log(
+            `User ${user.username} is the last manager; warn the user about it`
+          );
           // TODO: actually notify the warning message
           userAndRole[1] = ProjectRoles.MANAGER;
         } else {
-          return this.projectService.updateLdapiUserRole(this.project.projectCode, user.username, ldRole, result => {
-            if (result.ok) {
-              const name = this.fullname(user);
-              const message = `${name}'s role was changed to ${newRole.name}.`;
-              this.notice.push(this.notice.SUCCESS, message);
-              console.log(message);
+          return this.projectService.updateLdapiUserRole(
+            this.project.projectCode,
+            user.username,
+            ldRole,
+            (result) => {
+              if (result.ok) {
+                const name = this.fullname(user);
+                const message = `${name}'s role was changed to ${newRole.name}.`;
+                this.notice.push(this.notice.SUCCESS, message);
+                console.log(message);
+              }
             }
-          });
+          );
         }
       });
     });
@@ -229,31 +278,44 @@ export class LdProjectMembersController implements angular.IController {
     if (user && this.usersPendingAdd.indexOf(user) < 0) {
       this.usersPendingAdd.push(user);
     }
-  }
+  };
 
   addProjectUsers(): void {
     this.typeahead.userName = '';
     this.typeahead.fullName = '';
-    var promises = this.usersPendingAdd.map(user => {
+    var promises = this.usersPendingAdd.map((user) => {
       // TODO: Make this a notice, not a console log
       // console.log("Adding user", this.project.code, user, this.rolesService.contributor);
-      return this.rolesService.lfRoleToLdRole(this.defaultAddRole.key).then(ldRole => {
-        return this.projectService.updateLdapiUserRole(this.project.projectCode, user.username, ldRole, updateResult => {
-          if (updateResult.ok) {
-            this.notice.push(this.notice.SUCCESS, '"' + this.fullname(user) + '" was added to ' +
-              this.project.name + ' as ' + this.defaultAddRole.name);
-            // TODO: Make this a notice, not a console log
-            // console.log('"' + this.fullname(user) + '" was added to ' + this.project.name + ' as ' + this.defaultAddRole.name);
-          }
+      return this.rolesService
+        .lfRoleToLdRole(this.defaultAddRole.key)
+        .then((ldRole) => {
+          return this.projectService.updateLdapiUserRole(
+            this.project.projectCode,
+            user.username,
+            ldRole,
+            (updateResult) => {
+              if (updateResult.ok) {
+                this.notice.push(
+                  this.notice.SUCCESS,
+                  '"' +
+                    this.fullname(user) +
+                    '" was added to ' +
+                    this.project.name +
+                    ' as ' +
+                    this.defaultAddRole.name
+                );
+                // TODO: Make this a notice, not a console log
+                // console.log('"' + this.fullname(user) + '" was added to ' + this.project.name + ' as ' + this.defaultAddRole.name);
+              }
+            }
+          );
         });
-      });
     }, this);
-    this.$q.all(promises).then(result => {
+    this.$q.all(promises).then((result) => {
       this.usersPendingAdd.splice(0);
       this.queryUserList();
     });
   }
-
 }
 
 export const LdProjectMembersComponent: angular.IComponentOptions = {
@@ -262,5 +324,6 @@ export const LdProjectMembersComponent: angular.IComponentOptions = {
     isAdmin: '<',
   },
   controller: LdProjectMembersController,
-  templateUrl: '/angular-app/languageforge/ldproject/ldproject-members.component.html'
+  templateUrl:
+    '/angular-app/languageforge/ldproject/ldproject-members.component.html',
 };

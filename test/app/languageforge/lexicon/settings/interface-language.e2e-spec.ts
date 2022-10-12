@@ -1,6 +1,6 @@
-import {BellowsForgotPasswordPage} from '../../../bellows/shared/forgot-password.page';
-import {BellowsLoginPage} from '../../../bellows/shared/login.page';
-import {PageHeader} from '../../../bellows/shared/page-header.element';
+import { BellowsForgotPasswordPage } from '../../../bellows/shared/forgot-password.page';
+import { BellowsLoginPage } from '../../../bellows/shared/login.page';
+import { PageHeader } from '../../../bellows/shared/page-header.element';
 
 describe('Interface Language picker (LF only so far)', () => {
   const header = new PageHeader();
@@ -18,7 +18,6 @@ describe('Interface Language picker (LF only so far)', () => {
   });
 
   describe('local storage', async () => {
-
     it('should still be using French in another page', async () => {
       await BellowsForgotPasswordPage.get();
       expect<any>(await header.language.button.getText()).toEqual('Français');
@@ -28,7 +27,6 @@ describe('Interface Language picker (LF only so far)', () => {
       await BellowsLoginPage.get();
       expect<any>(await header.language.button.getText()).toEqual('Français');
     });
-
   });
 
   it('can change user interface language to back English', async () => {
@@ -36,5 +34,4 @@ describe('Interface Language picker (LF only so far)', () => {
     await header.language.findItem('English').click();
     expect<any>(await header.language.button.getText()).toEqual('English');
   });
-
 });

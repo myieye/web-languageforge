@@ -1,3 +1,5 @@
-import {LexValue} from './lex-value.model';
+import { LexValue } from './lex-value.model';
 
-export interface LexMultiText { [languageTag: string]: LexValue; }
+export interface LexMultiText {
+  [languageTag: string]: LexValue;
+}

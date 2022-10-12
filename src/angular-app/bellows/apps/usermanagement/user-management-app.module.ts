@@ -1,16 +1,16 @@
 import * as angular from 'angular';
 import uiRouter from 'angular-ui-router';
 
-import {LexiconCoreModule} from '../../../languageforge/lexicon/core/lexicon-core.module';
-import {BreadcrumbModule} from '../../core/breadcrumbs/breadcrumb.module';
-import {SiteWideNoticeModule} from '../../core/site-wide-notice-service';
-import {CoreModule} from '../../core/core.module';
-import {NoticeModule} from '../../core/notice/notice.module';
-import {ListViewModule} from '../../shared/list-view.component';
-import {TypeAheadModule} from '../../shared/type-ahead.module';
-import {UserManagementJoinRequestsComponent} from './join-requests.component';
-import {UserManagementMembersComponent} from './members.component';
-import {UserManagementAppComponent} from './user-management-app.component';
+import { LexiconCoreModule } from '../../../languageforge/lexicon/core/lexicon-core.module';
+import { BreadcrumbModule } from '../../core/breadcrumbs/breadcrumb.module';
+import { SiteWideNoticeModule } from '../../core/site-wide-notice-service';
+import { CoreModule } from '../../core/core.module';
+import { NoticeModule } from '../../core/notice/notice.module';
+import { ListViewModule } from '../../shared/list-view.component';
+import { TypeAheadModule } from '../../shared/type-ahead.module';
+import { UserManagementJoinRequestsComponent } from './join-requests.component';
+import { UserManagementMembersComponent } from './members.component';
+import { UserManagementAppComponent } from './user-management-app.component';
 
 export const UserManagementAppModule = angular
   .module('usermanagement', [
@@ -22,13 +22,18 @@ export const UserManagementAppModule = angular
     TypeAheadModule,
     BreadcrumbModule,
     SiteWideNoticeModule,
-    LexiconCoreModule
+    LexiconCoreModule,
   ])
   .component('userManagementApp', UserManagementAppComponent)
   .component('userManagementMembers', UserManagementMembersComponent)
   .component('userManagementJoinRequests', UserManagementJoinRequestsComponent)
-  .config(['$stateProvider', '$urlRouterProvider',
-    ($stateProvider: angular.ui.IStateProvider, $urlRouterProvider: angular.ui.IUrlRouterProvider) => {
+  .config([
+    '$stateProvider',
+    '$urlRouterProvider',
+    (
+      $stateProvider: angular.ui.IStateProvider,
+      $urlRouterProvider: angular.ui.IUrlRouterProvider
+    ) => {
       console.log('config uiRouter:', uiRouter);
       $urlRouterProvider.otherwise('/members');
 
@@ -40,20 +45,18 @@ export const UserManagementAppModule = angular
               template: `<user-management-members query-user-list="$ctrl.queryUserList()"
                 list="$ctrl.list" project="$ctrl.project" roles="$ctrl.roles" rights="$ctrl.rights"
                 current-user="$ctrl.currentUser">
-                </user-management-members>`
-            }
-          }
+                </user-management-members>`,
+            },
+          },
         })
         .state('joinRequests', {
           url: '/joinRequests',
           views: {
             '@': {
               template: `<user-management-join-requests join-requests="$ctrl.joinRequests"
-                roles="$ctrl.roles" rights="$ctrl.rights"></user-management-join-requests>`
-            }
-          }
-        })
-      ;
-    }
-  ])
-  .name;
+                roles="$ctrl.roles" rights="$ctrl.rights"></user-management-join-requests>`,
+            },
+          },
+        });
+    },
+  ]).name;

@@ -19,7 +19,7 @@ const autocapitalizeHints = {
   sociolinguisticsNote: 'sentences',
   sentence: 'sentences',
   reference: 'sentences',
-}
+};
 
 export class FieldTextController implements angular.IController {
   fteModel: string;
@@ -29,19 +29,22 @@ export class FieldTextController implements angular.IController {
   fteMultiline: boolean;
   fteDir: string;
   fteFieldName: string;
-  
+
   fte: any = {};
   textFieldValue: string = '';
-  autocapitalize: string
+  autocapitalize: string;
 
   static $inject = ['$scope'];
-  constructor(private $scope: angular.IScope) { }
+  constructor(private $scope: angular.IScope) {}
 
   $onInit(): void {
     if (!this.fteMultiline) {
-      this.$scope.$watch(() => this.fteModel, (newVal: string) => {
-        this.textFieldValue = FieldTextController.unescapeHTML(newVal);
-      });
+      this.$scope.$watch(
+        () => this.fteModel,
+        (newVal: string) => {
+          this.textFieldValue = FieldTextController.unescapeHTML(newVal);
+        }
+      );
     }
 
     if (this.fteToolbar != null) {
@@ -50,20 +53,23 @@ export class FieldTextController implements angular.IController {
       this.fte.toolbar = '[[]]';
     }
 
-    this.autocapitalize = autocapitalizeHints[this.fteFieldName] || 'none'
+    this.autocapitalize = autocapitalizeHints[this.fteFieldName] || 'none';
   }
 
   disabledMsg(): string {
     switch (this.fteDisabledReason) {
       case 'would-lose-metadata':
-        return 'This field cannot be edited because it contains metadata that would '
-          + 'be lost by editing in Language Forge. Fields with metadata may be edited in '
-          + 'FieldWorks Language Explorer.';
+        return (
+          'This field cannot be edited because it contains metadata that would ' +
+          'be lost by editing in Language Forge. Fields with metadata may be edited in ' +
+          'FieldWorks Language Explorer.'
+        );
       case 'sr-in-progress':
-        return 'A Send/Receive is in progress. Any edits made now would be lost. Please '
-          + 'wait until the Send/Receive has completed before making further edits.';
+        return (
+          'A Send/Receive is in progress. Any edits made now would be lost. Please ' +
+          'wait until the Send/Receive has completed before making further edits.'
+        );
       case 'editing-not-permitted':
-
         // When someone's just an observer on the project, we want NO explanation popup
         return '';
       default:
@@ -88,7 +94,6 @@ export class FieldTextController implements angular.IController {
     div.textContent = str;
     return div.innerHTML;
   }
-
 }
 
 export const FieldTextComponent: angular.IComponentOptions = {
@@ -102,5 +107,6 @@ export const FieldTextComponent: angular.IComponentOptions = {
     fteFieldName: '<',
   },
   controller: FieldTextController,
-  templateUrl: '/angular-app/languageforge/lexicon/editor/field/dc-text.component.html'
+  templateUrl:
+    '/angular-app/languageforge/lexicon/editor/field/dc-text.component.html',
 };

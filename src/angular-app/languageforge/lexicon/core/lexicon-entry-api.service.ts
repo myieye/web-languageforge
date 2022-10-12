@@ -1,8 +1,11 @@
-import { ApiService, JsonRpcCallback } from '../../../bellows/core/api/api.service';
+import {
+  ApiService,
+  JsonRpcCallback,
+} from '../../../bellows/core/api/api.service';
 
 export class LexiconEntryApiService {
   static $inject: string[] = ['apiService'];
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService) {}
 
   update(entryData: any, callback?: JsonRpcCallback) {
     return this.api.call('lex_entry_update', [entryData], callback);
@@ -16,8 +19,15 @@ export class LexiconEntryApiService {
     return this.api.call('lex_dbeDtoFull', [browserId, offset], callback);
   }
 
-  dbeDtoUpdatesOnly(browserId: string, lastFetchTime: number, callback?: JsonRpcCallback) {
-    return this.api.call('lex_dbeDtoUpdatesOnly', [browserId, lastFetchTime], callback);
+  dbeDtoUpdatesOnly(
+    browserId: string,
+    lastFetchTime: number,
+    callback?: JsonRpcCallback
+  ) {
+    return this.api.call(
+      'lex_dbeDtoUpdatesOnly',
+      [browserId, lastFetchTime],
+      callback
+    );
   }
-
 }
