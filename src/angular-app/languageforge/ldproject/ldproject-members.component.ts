@@ -25,7 +25,7 @@ export class LdProjectMembersController implements angular.IController {
   roles: ProjectRole[] = [
     ProjectRoles.MANAGER,
     ProjectRoles.CONTRIBUTOR,
-    ProjectRoles.NONE,
+    ProjectRoles.NONE
   ];
   rolesWithTechSupport: ProjectRole[] = [
     ProjectRoles.MANAGER,
