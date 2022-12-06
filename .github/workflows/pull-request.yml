@@ -18,11 +18,11 @@ jobs:
     outputs:
       status: ${{ steps.check-labels.outputs.status }}
     steps:
-     - name: Dump GitHub context
-       env:
-         GITHUB_CONTEXT: ${{ toJson(github) }}
-       run: |
-         echo "$GITHUB_CONTEXT"
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
 
       - uses: mheap/github-action-required-labels@v2
         id: check-labels
