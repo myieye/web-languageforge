@@ -23,7 +23,7 @@ jobs:
         with:
           mode: exactly
           count: 1
-          labels: "bug, feature, engineering, security fix, testing"
+          labels: "bug, feature, engineering, 'security fix', testing"
       - uses: mheap/github-action-required-labels@v2
         with:
           mode: exactly
