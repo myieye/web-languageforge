@@ -6,7 +6,8 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
-# test-3
+  GITHUB_TOKEN: ${{ github.token }}
+
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -25,8 +26,6 @@ jobs:
           echo "$GITHUB_CONTEXT"
 
       - uses: mheap/github-action-required-labels@v2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         id: check-labels
         with:
           mode: exactly
