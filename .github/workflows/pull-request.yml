@@ -25,6 +25,8 @@ jobs:
           echo "$GITHUB_CONTEXT"
 
       - uses: mheap/github-action-required-labels@v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         id: check-labels
         with:
           mode: exactly
