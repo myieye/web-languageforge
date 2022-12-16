@@ -38,7 +38,7 @@ test.describe('User Profile', () => {
     await userProfilePage.saveBtn.click();
     await Promise.all([
       userProfilePage.page.reload(),
-      userProfilePage.waitForPage(),
+      userProfilePage.waitFor(),
     ]);
 
     await expect(userProfilePage.accountTab.emailField).toHaveValue(newEmail);
@@ -70,7 +70,7 @@ test.describe('User Profile', () => {
 
     await Promise.all([
       userProfilePage.modal.saveChangesBtn.click(),
-      loginPage.waitForPage(),
+      loginPage.waitFor(),
     ]);
 
     await Promise.all([
@@ -78,7 +78,7 @@ test.describe('User Profile', () => {
         ...currDetails,
         username: newUsername,
       }),
-      new ProjectsPage(tab).waitForPage(),
+      new ProjectsPage(tab).waitFor(),
     ]);
   };
 
