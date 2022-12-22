@@ -16,8 +16,8 @@ ui-builder:
 e2e-tests-ci:
 	npm ci
 	docker compose up -d e2e-app
-	npx playwright install chromium
-	npx playwright test -c ./test/e2e/playwright.config.ts
+	npx playwright install --with-deps
+	npx playwright test -c ./test/e2e/playwright.config.ts --shard=${shard}/${shards}
 
 .PHONY: e2e-tests
 e2e-tests: ui-builder
