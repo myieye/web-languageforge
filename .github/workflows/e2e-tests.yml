@@ -7,43 +7,29 @@ jobs:
   e2e-tests:
 
     strategy:
+        fail-fast: false
         matrix:
-          shard: [1, 2, 3, 4, 5, 6, 7, 8]
-          shards: [8]
+          browser: [chromium, firefox]
+          shard: [1, 2, 3, 4]
+          shards: [4]
 
     runs-on: ubuntu-latest
+
+    # see https://playwright.dev/docs/ci#github-actions-via-containers
+    container:
+      image: mcr.microsoft.com/playwright:v1.29.0-focal
 
     steps:
       -
         uses: actions/checkout@v3
       -
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16.14.0'
-          cache: 'npm'
-      -
-        name: Get installed Playwright version
-        id: playwright-version
-        run: echo -n "version=$(cd node_modules/@playwright/test && node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-      -
-        name: Cache playwright browsers
-        uses: actions/cache@v3
-        id: playwright-cache
-        with:
-          path: '~/.cache/ms-playwright'
-          # Make each playwright version use its own cache in case it uses different browser versions
-          # Cache entries are deleted if not accessed for 7 days
-          # https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#usage-limits-and-eviction-policy
-          key: 'playwright-${{ steps.playwright-version.outputs.version }}'
-      -
         name: Playwright E2E Tests
-        # see https://playwright.dev/docs/ci#github-actions
-        run: make e2e-tests-ci shard=${{ matrix.shard }} shards=${{ matrix.shards }}
+        run: make e2e-tests-ci browser=${{ matrix.browser }} shard=${{ matrix.shard }} shards=${{ matrix.shards }}
       -
         name: Upload Playwright test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: test-results-${{ matrix.shard }}
+          name: test-results-${{ matrix.browser }}-${{ matrix.shard }}
           path: test/e2e/test-results
           if-no-files-found: error
