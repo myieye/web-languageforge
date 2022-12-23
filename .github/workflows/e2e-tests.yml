@@ -5,6 +5,7 @@ on:
 
 jobs:
   e2e-tests:
+    name: ${{matrix.browser}} (${{ matrix.shard }} / ${{ matrix.shards }})
 
     strategy:
         fail-fast: false
