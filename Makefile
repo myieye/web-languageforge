@@ -19,7 +19,6 @@ e2e-tests-ci:
 	npx playwright install --with-deps ${browser}
 	npx playwright test -c ./test/e2e/playwright.config.ts --project=${browser} --shard=${shard}/${shards}
 
-
 .PHONY: e2e-tests
 e2e-tests: ui-builder
 	npm install
