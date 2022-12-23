@@ -5,14 +5,14 @@ on:
 
 jobs:
   e2e-tests:
-    name: ${{matrix.browser}} (${{ matrix.shard }} / ${{ matrix.shards }})
+    name: ${{matrix.browser}} (${{ matrix.shard }}/${{ matrix.shards }})
 
     strategy:
         fail-fast: false
         matrix:
           browser: [chromium, firefox]
-          shard: [1, 2, 3, 4]
-          shards: [4]
+          shard: [1, 2, 3, 4, 5, 6]
+          shards: [6]
 
     runs-on: ubuntu-latest
 

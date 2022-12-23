@@ -15,15 +15,15 @@ ui-builder:
 .PHONY: e2e-tests-ci
 e2e-tests-ci:
 	npm ci
-	docker compose up -d e2e-app
+	$(MAKE) e2e-app
 	npx playwright install --with-deps ${browser}
 	npx playwright test -c ./test/e2e/playwright.config.ts --project=${browser} --shard=${shard}/${shards}
 
 .PHONY: e2e-tests
 e2e-tests: ui-builder
 	npm install
-	npx playwright install chromium firefox
 	$(MAKE) e2e-app
+	npx playwright install chromium firefox
 	npx playwright test -c ./test/e2e/playwright.config.ts $(params)
 
 .PHONY: e2e-app
