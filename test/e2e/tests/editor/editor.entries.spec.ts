@@ -14,6 +14,7 @@ test.describe('Editor entries', () => {
   });
 
   test('Can go from entry editor to entries list', async () => {
+    expect(true).toBe(false);
     await editorPageManager.goto();
     await Promise.all([
       editorPageManager.navigateToEntriesList(),
